@@ -4,11 +4,9 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.Table;
 import java.util.Date; // Import java.util.Date untuk mendukung tanggal lahir
 import java.util.List;
@@ -107,7 +105,7 @@ public class UserEntity {
     @Column(name = "password")
     private String password; // Ganti dengan tipe Boolean untuk kolom boolean
 
-    // Constructor
+    
     public UserEntity(String nik, String namaKaryawan, String noKtp, String noNpwp, String noTelepon,
                       String email, String tempatLahir, Date tanggalLahir, String jenisKelamin,
                       String golDarah, String statusNikah, String agama, String jenjangPendidikan,

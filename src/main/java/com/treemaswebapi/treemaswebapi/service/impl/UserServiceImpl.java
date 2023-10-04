@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
         String nik = user.getNik();
         String password = user.getPassword();
 
+        
         Optional<UserEntity> existingUser = userRepository.findById(nik);
     
         if (!existingUser.isPresent()) {

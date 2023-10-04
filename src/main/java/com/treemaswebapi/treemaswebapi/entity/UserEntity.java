@@ -1,20 +1,15 @@
 package com.treemaswebapi.treemaswebapi.entity;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.Table;
 import java.util.Date; // Import java.util.Date untuk mendukung tanggal lahir
-import java.util.List;
 
 @Entity
 @Table(name = "usermaster", schema = "public")
+@EntityListeners(UserEntityListener.class)
 public class UserEntity {
 
     @Id
@@ -96,16 +91,11 @@ public class UserEntity {
     @Column(name = "jenis_karyawan")
     private String jenisKaryawan;
 
-    @ElementCollection
-    @CollectionTable(name = "user_list_member", joinColumns = @JoinColumn (name = "nik"))
-    @Column(name = "list_member")
-    private List<Integer> listMember; // biar bisa ngisi nama orang banyak dalem sini
-
     @Column(name = "leader")
     private Boolean leader; // Ganti dengan tipe Boolean untuk kolom boolean
     
-    @Column(name = "password")
-    private String password; // Ganti dengan tipe Boolean untuk kolom boolean
+    @Column(name = "password", nullable = false)
+    private String password = "123456"; // Set default value here
 
     // Constructor
     public UserEntity(String nik, String namaKaryawan, String noKtp, String noNpwp, String noTelepon,
@@ -114,7 +104,7 @@ public class UserEntity {
                       String noRekening, String kewarganegaraan, String alamatKtp, String alamatSekarang,
                       String kodePos, String kontakDarurat, String statusKontak, String alamatKontak,
                       String teleponDarurat, String androidId, Date tanggalGabung, int hakCuti,
-                      String jenisKaryawan,  List<Integer> listMember, Boolean leader, String password) {
+                      String jenisKaryawan, Boolean leader, String password) {
                         
         this.nik = nik;
         this.namaKaryawan = namaKaryawan;
@@ -142,7 +132,6 @@ public class UserEntity {
         this.tanggalGabung = tanggalGabung;
         this.hakCuti = hakCuti;
         this.jenisKaryawan = jenisKaryawan;
-        this.listMember = listMember;
         this.leader = leader;
         this.password = password;
     }
@@ -359,14 +348,6 @@ public class UserEntity {
 
     public void setJenisKaryawan(String jenisKaryawan) {
         this.jenisKaryawan = jenisKaryawan;
-    }
-
-    public List<Integer> getListMember() {
-        return listMember;
-    }
-
-    public void setListMember(List<Integer> listMember) {
-        this.listMember = listMember;
     }
 
     public Boolean getLeader() {

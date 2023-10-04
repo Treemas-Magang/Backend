@@ -16,9 +16,10 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @PostMapping("/register")
-    public void registerUser(@RequestBody UserEntity user) {
+    public String registerUser(@RequestBody UserEntity user) {
         userService.registerUser(user);
-        System.out.println(user);
+        return "Register success!";
+        
         
     }
 }

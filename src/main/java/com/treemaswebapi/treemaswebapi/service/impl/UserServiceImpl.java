@@ -2,6 +2,7 @@ package com.treemaswebapi.treemaswebapi.service.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.entity.UserEntity;
@@ -15,6 +16,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Override
     public void registerUser(UserEntity user) {
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String encryptedPassword = bcrypt.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
         userRepository.save(user);
         System.out.println("User Registered");
     }

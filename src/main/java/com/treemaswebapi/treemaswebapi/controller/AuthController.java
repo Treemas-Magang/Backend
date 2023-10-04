@@ -15,11 +15,17 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
     @PostMapping("/register")
     public String registerUser(@RequestBody UserEntity user) {
         userService.registerUser(user);
         return "Register success!";
-        
-        
+
+    }
+
+    @PostMapping("/login")
+    public String loginUser(@RequestBody UserEntity user) {
+        userService.loginUser(user);
+        return "Login Success!";
     }
 }

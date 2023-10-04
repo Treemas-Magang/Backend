@@ -1,9 +1,12 @@
 package com.treemaswebapi.treemaswebapi.service.impl;
 
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.treemaswebapi.treemaswebapi.entity.UserEntity;
 import com.treemaswebapi.treemaswebapi.repository.UserRepository;
@@ -22,12 +25,27 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         System.out.println("User Registered");
     }
+    
 
     public void loginUser(UserEntity user) {
         String nik = user.getNik();
-        String password = user.getPassword();
+        Optional<UserEntity> userFromDatabase = userRepository.findById(nik);
+        BCryptPasswordEncoder mec = new BCryptPasswordEncoder();
+        if (userFromDatabase.isPresent()){
+            UserEntity userEntity = userFromDatabase.get();
+            String storedHashedPassword = userEntity.getPassword();
 
-        System.out.println("Nik : "+nik);
-        System.out.println("Password : "+password);
+            String providedPassword = user.getPassword();
+            
+            if (mec.matches(providedPassword, storedHashedPassword)){
+                System.out.println("Login successful for user with Nik: " + nik);
+            }else{
+                System.out.println("Login failed for user with Nik: " + nik);
+            }
+        }else{
+            System.out.println("User with Nik: " + nik + " not found");
+        }
     }
+        
 }
+

@@ -1,6 +1,8 @@
 package com.treemaswebapi.treemaswebapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +19,13 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody UserEntity user) {
-        userService.registerUser(user);
-        return "Register success!";
-
+    public ResponseEntity<String> registerUser(@RequestBody UserEntity user) {
+        try {
+            userService.registerUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User Created!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed To Create User: "+e.getMessage());
+        }
     }
 
     @PostMapping("/login")

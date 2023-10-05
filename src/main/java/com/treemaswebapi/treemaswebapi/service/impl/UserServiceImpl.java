@@ -4,7 +4,6 @@ package com.treemaswebapi.treemaswebapi.service.impl;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -23,7 +22,6 @@ public class UserServiceImpl implements UserService {
         String encryptedPassword = bcrypt.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         userRepository.save(user);
-        System.out.println("User Registered");
     }
     
 
@@ -34,11 +32,10 @@ public class UserServiceImpl implements UserService {
         if (userFromDatabase.isPresent()){
             UserEntity userEntity = userFromDatabase.get();
             String storedHashedPassword = userEntity.getPassword();
-
             String providedPassword = user.getPassword();
             
             if (mec.matches(providedPassword, storedHashedPassword)){
-                System.out.println("Login successful for user with Nik: " + nik);
+                
             }else{
                 System.out.println("Login failed for user with Nik: " + nik);
             }

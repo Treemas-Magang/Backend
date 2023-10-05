@@ -14,7 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Service
 public class JwtService {
-    @Value("secretGue") // Read secret from configuration
+    @Value("$2a$10$Fd7hDbC/fjU.QFVpaCcMB.LtdHm0I9fl7QyJk38YgNS4w/j/gqzum") // Read secret from configuration
     private String secret;
 
     @Value("3600000") // Read token expiration from configuration

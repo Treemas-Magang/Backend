@@ -3,12 +3,11 @@ package com.treemaswebapi.treemaswebapi.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.treemaswebapi.treemaswebapi.entity.UserEntity;
 import com.treemaswebapi.treemaswebapi.repository.UserRepository;
@@ -18,8 +17,6 @@ import com.treemaswebapi.treemaswebapi.service.UserService;
 @RestController
 @RequestMapping("/api")
 public class AuthController {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private UserService userService;
@@ -43,8 +40,7 @@ public class AuthController {
         } else {
             // User not found or passwords do not match
             ApiResponse response = new ApiResponse(false, "Invalid username or password", null);
-            log.info("Response status: {}", 401);
-            log.info("Response Message: {}","Invalid username or password");
+            
             return ResponseEntity.status(401).body(response);
         }
     }
@@ -54,5 +50,10 @@ public class AuthController {
         return "Register success!";
         
         
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "Hello";
     }
 }

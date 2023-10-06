@@ -123,6 +123,7 @@ public class UserEntity {
         this.kewarganegaraan = kewarganegaraan;
         this.alamatKtp = alamatKtp;
         this.alamatSekarang = alamatSekarang;
+
         this.kodePos = kodePos;
         this.kontakDarurat = kontakDarurat;
         this.statusKontak = statusKontak;
@@ -363,6 +364,5 @@ public class UserEntity {
     }
 
     public void setPassword(String leader) {
-        this.password = password;
     }
 }

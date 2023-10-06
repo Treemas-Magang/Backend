@@ -52,7 +52,7 @@ public class AuthController {
         
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping("/dashboard-mobile")
     public String dashboard() {
         return "Hello";
     }

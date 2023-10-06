@@ -362,7 +362,7 @@ public class UserEntity {
         return password;
     }
 
-    public void setPassword(String leader) {
+    public void setPassword(String password) {
         this.password = password;
     }
 }

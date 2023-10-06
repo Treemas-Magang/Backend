@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ import com.treemaswebapi.treemaswebapi.service.JwtService;
 import com.treemaswebapi.treemaswebapi.service.UserService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -44,12 +45,15 @@ public class AuthController {
             return ResponseEntity.status(401).body(response);
         }
     }
+    
     @PostMapping("/register")
-    public String registerUser(@RequestBody UserEntity user) {
-        userService.registerUser(user);
-        return "Register success!";
-        
-        
+    public ResponseEntity<String> registerUser(@RequestBody UserEntity user) {
+        try {
+            userService.registerUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User Created!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed To Create User: "+e.getMessage());
+        }
     }
 
     @GetMapping("/dashboard")

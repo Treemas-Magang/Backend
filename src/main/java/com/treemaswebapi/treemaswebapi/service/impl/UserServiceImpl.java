@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     public void loginUser(UserEntity user) {
         String nik = user.getNik();
         String password = user.getPassword();
-
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         
         Optional<UserEntity> existingUser = userRepository.findById(nik);
     
@@ -39,11 +39,22 @@ public class UserServiceImpl implements UserService {
         }
         UserEntity userEntity = existingUser.get();
         if (passwordEncoder.matches(password, userEntity.getPassword())){
+        Optional<UserEntity> userFromDatabase = userRepository.findById(nik);
+        BCryptPasswordEncoder mec = new BCryptPasswordEncoder();
+        if (userFromDatabase.isPresent()){
+            String storedHashedPassword = userEntity.getPassword();
 
+            String providedPassword = user.getPassword();
+            
+            if (mec.matches(providedPassword, storedHashedPassword)){
+                System.out.println("Login successful for user with Nik: " + nik);
+            }else{
+                System.out.println("Login failed for user with Nik: " + nik);
+            }
         }else{
             System.out.println("User with Nik: " + nik + " not found");
         }
     }
         
 }
-
+}

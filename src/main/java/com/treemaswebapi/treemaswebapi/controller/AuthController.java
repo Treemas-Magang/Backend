@@ -20,6 +20,7 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -63,9 +64,9 @@ public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest)
     public String registerUser(@RequestBody UserEntity user) {
         userService.registerUser(user);
         return "Register success!";
-        
-        
+
     }
+
 
     @GetMapping("/dashboard-mobile")
     public String dashboard() {

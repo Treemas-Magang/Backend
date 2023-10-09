@@ -1,10 +1,12 @@
 package com.treemaswebapi.treemaswebapi.service.impl;
 
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.treemaswebapi.treemaswebapi.entity.UserEntity;
 import com.treemaswebapi.treemaswebapi.repository.UserRepository;
@@ -15,15 +17,16 @@ public class UserServiceImpl implements UserService {
     
     @Autowired
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
     @Override
     public void registerUser(UserEntity user) {
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String encryptedPassword = bcrypt.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
         userRepository.save(user);
         System.out.println("User Registered");
     }
+    
 
-
-    @Override
     public void loginUser(UserEntity user) {
         String nik = user.getNik();
         String password = user.getPassword();
@@ -38,7 +41,9 @@ public class UserServiceImpl implements UserService {
         if (passwordEncoder.matches(password, userEntity.getPassword())){
 
         }else{
-            throw new IllegalArgumentException("Invalid Password.");
+            System.out.println("User with Nik: " + nik + " not found");
         }
     }
+        
 }
+

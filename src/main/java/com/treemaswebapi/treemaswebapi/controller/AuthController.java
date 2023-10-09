@@ -27,23 +27,38 @@ public class AuthController {
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping("/login") // Updated login endpoint
-    public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
-        // Find the user by username (assuming the username is the NIK)
-        UserEntity userEntity = userRepository.findByNik(loginRequest.getNik());
+    @PostMapping("/login")
+public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
+    // Find the user by username (assuming the username is the NIK)
+    UserEntity userEntity = userRepository.findByNik(loginRequest.getNik());
 
-        if (userEntity != null && passwordEncoder.matches(loginRequest.getPassword(), userEntity.getPassword())) {
-            // Passwords match, generate a JWT token
-            String token = jwtService.generateToken(userEntity.getNik());
-            ApiResponse response = new ApiResponse(true, "Login successful", token);
-            return ResponseEntity.ok(response);
-        } else {
-            // User not found or passwords do not match
-            ApiResponse response = new ApiResponse(false, "Invalid username or password", null);
-            
-            return ResponseEntity.status(401).body(response);
+    ApiResponse response; // Declare ApiResponse variable here
+
+    if (userEntity != null && passwordEncoder.matches(loginRequest.getPassword(), userEntity.getPassword())) {
+        String deviceId = userEntity.getDeviceId();
+        if (deviceId == null) {
+            // If deviceId is null in the database, store it
+            deviceId = loginRequest.getDeviceId();
+            userEntity.setDeviceId(deviceId);
+            userRepository.save(userEntity);
         }
+        
+        // Passwords match, generate a JWT token
+        String token = jwtService.generateToken(
+            userEntity.getNik(),
+            userEntity.getNamaKaryawan(),
+            deviceId // Use the deviceId obtained from the database or request
+        );
+        response = new ApiResponse(true, "Login successful", token, userEntity.getNamaKaryawan(), deviceId, userEntity.getNik());
+    } else {
+        // User not found or passwords do not match
+        response = new ApiResponse(false, "Invalid username or password", null, null, null, null);
     }
+    
+    return ResponseEntity.ok(response); // Return ResponseEntity with ApiResponse
+}
+
+
     @PostMapping("/register")
     public String registerUser(@RequestBody UserEntity user) {
         userService.registerUser(user);

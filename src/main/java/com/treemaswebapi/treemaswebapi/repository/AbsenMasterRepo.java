@@ -1,9 +1,9 @@
-package com.treemaswebapi.treemaswebapi.repository;
+// package com.treemaswebapi.treemaswebapi.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+// import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.treemaswebapi.treemaswebapi.entity.AbsenMaster;
+// import com.treemaswebapi.treemaswebapi.entity.AbsenMaster;
 
-public interface AbsenMasterRepo extends JpaRepository<AbsenMaster, String> {
-    AbsenMaster findByIdAbsen(String idAbsen);
-}
+// public interface AbsenMasterRepo extends JpaRepository<AbsenMaster, String> {
+//     AbsenMaster findByIdAbsen(String idAbsen);
+// }

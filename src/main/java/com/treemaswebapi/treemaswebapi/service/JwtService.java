@@ -20,12 +20,14 @@ public class JwtService {
     @Value("3600000") // Read token expiration from configuration
     private long expirationMs;
     
-   public String generateToken(String username) {
+   public String generateToken(String nik, String namaKaryawan, String androidId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
 
         Map<String, Object> claims = new HashMap<String, Object>();
-        claims.put("sub", username);
+        claims.put("nik", nik);
+        claims.put("namaKaryawan", namaKaryawan);
+        claims.put("deviceId", androidId);
 
         Key signingKey = new SecretKeySpec(secret.getBytes(), SignatureAlgorithm.HS512.getJcaName());
 
@@ -37,13 +39,25 @@ public class JwtService {
                 .compact();
     }
     public Claims validateToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(secret.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // Check token expiration
+            Date now = new Date();
+            if (claims.getExpiration().before(now)) {
+                throw new IllegalArgumentException("Token has expired.");
+            }
+
+            return claims;
+        } catch (Exception e) {
+            // Handle token validation errors, e.g., invalid signature or token format
+            throw new IllegalArgumentException("Invalid token.");
+        }
     
 }
-
+}
 

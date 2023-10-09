@@ -79,8 +79,8 @@ public class UserEntity {
     @Column(name = "telepon_darurat")
     private String teleponDarurat;
 
-    @Column(name = "android_id")
-    private String androidId;
+    @Column(name = "device_id")
+    private String deviceId;
 
     @Column(name = "tanggal_gabung")
     private Date tanggalGabung; // Gunakan tipe Date untuk tanggal gabung
@@ -103,7 +103,7 @@ public class UserEntity {
                       String golDarah, String statusNikah, String agama, String jenjangPendidikan,
                       String noRekening, String kewarganegaraan, String alamatKtp, String alamatSekarang,
                       String kodePos, String kontakDarurat, String statusKontak, String alamatKontak,
-                      String teleponDarurat, String androidId, Date tanggalGabung, int hakCuti,
+                      String teleponDarurat, String deviceId, Date tanggalGabung, int hakCuti,
                       String jenisKaryawan, Boolean leader, String password) {
                         
         this.nik = nik;
@@ -129,7 +129,7 @@ public class UserEntity {
         this.statusKontak = statusKontak;
         this.alamatKontak = alamatKontak;
         this.teleponDarurat = teleponDarurat;
-        this.androidId = androidId;
+        this.deviceId = deviceId;
         this.tanggalGabung = tanggalGabung;
         this.hakCuti = hakCuti;
         this.jenisKaryawan = jenisKaryawan;
@@ -318,12 +318,12 @@ public class UserEntity {
         this.teleponDarurat = teleponDarurat;
     }
 
-    public String getAndroidId() {
-        return androidId;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setAndroidId(String androidId) {
-        this.androidId = androidId;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public Date getTanggalGabung() {

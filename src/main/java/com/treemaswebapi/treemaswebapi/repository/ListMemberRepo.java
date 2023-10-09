@@ -1,9 +1,9 @@
-package com.treemaswebapi.treemaswebapi.repository;
+// package com.treemaswebapi.treemaswebapi.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+// import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.treemaswebapi.treemaswebapi.entity.ListMemberProject;
+// import com.treemaswebapi.treemaswebapi.entity.ListMemberProject;
 
-public interface ListMemberRepo extends JpaRepository<ListMemberProject, String> {
-    ListMemberProject findByListMemberID(String listMemberId);
-}
+// public interface ListMemberRepo extends JpaRepository<ListMemberProject, String> {
+//     ListMemberProject findByListMemberID(String listMemberId);
+// }

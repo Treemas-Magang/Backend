@@ -6,4 +6,5 @@ public interface UserService {
     
     void registerUser(UserEntity user);
     void loginUser(UserEntity user);
+    
 }

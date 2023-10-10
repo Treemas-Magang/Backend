@@ -1,167 +1,148 @@
-// package com.treemaswebapi.treemaswebapi.entity;
+package com.treemaswebapi.treemaswebapi.entity;
 
-// import java.math.BigDecimal;
-// import java.time.LocalTime;
-// import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 
-// import javax.persistence.Column;
-// import javax.persistence.Entity;
-// import javax.persistence.Id;
-// import javax.persistence.JoinColumn;
-// import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-// import jakarta.persistence.ManyToOne;
-// import jakarta.persistence.OneToMany;
+@Entity
+@Table(name = "projectmaster", schema = "public")
+public class ProjectMaster {
+    @Id
+    @Column(name = "kode_project")
+    private String kodeProject;
 
-// import com.treemaswebapi.treemaswebapi.entity.ListMemberProject;
+    @Column(name = "nama_project")
+    private String namaProject;
 
-// @Entity
-// @Table(name = "projectmaster", schema = "public")
-// public class ProjectMaster {
-//     @Id
-//     @Column(name = "kode_project")
-//     private String kodeProject;
+    @Column(name = "no_telpon")
+    private String noTelpon;
 
-//     @Column(name = "nama_project")
-//     private String namaProject;
+    @Column(name = "kota")
+    private String kota;
 
-//     @Column(name = "no_telpon")
-//     private String noTelpon;
+    @Column(name = "alamat_project")
+    private String alamatProject;
 
-//     @Column(name = "kota")
-//     private String kota;
+    @Column(name = "latitude_project")
+    private BigDecimal latitudeProject;
 
-//     @Column(name = "alamat_project")
-//     private String alamatProject;
+    @Column(name = "longitude_project")
+    private BigDecimal longitudeProject;
 
-//     @Column(name = "latitude_project")
-//     private BigDecimal latitudeProject;
+    @Column(name = "reimburse_project")
+    private BigDecimal reimburseProject;
 
-//     @Column(name = "longitude_project")
-//     private BigDecimal longitudeProject;
+    @Column(name = "jarak_maksimal")
+    private BigDecimal jarakMaksimal;
 
-//     @Column(name = "reimburse_project")
-//     private BigDecimal reimburseProject;
+    @Column(name = "total_jam_kerja")
+    private Short totalJamKerja;
 
-//     @Column(name = "jarak_maksimal")
-//     private BigDecimal jarakMaksimal;
+    @Column(name = "jam_masuk")
+    private LocalTime jamMasuk;
 
-//     @Column(name = "total_jam_kerja")
-//     private Short totalJamKerja;
+    @Column(name = "jam_keluar")
+    private LocalTime jamKeluar;
 
-//     @Column(name = "jam_masuk")
-//     private LocalTime jamMasuk;
+    public String getKodeProject() {
+        return kodeProject;
+    }
 
-//     @Column(name = "jam_keluar")
-//     private LocalTime jamKeluar;
+    public void setKodeProject(String kodeProject) {
+        this.kodeProject = kodeProject;
+    }
 
-//     @OneToMany(targetEntity = ListMemberProject.class, mappedBy="idlistmember")
-//     @JoinColumn(name = "idlistmember")
-//     private List <ListMemberProject> listMemberProjects;
+    public String getNamaProject() {
+        return namaProject;
+    }
 
-//     public List<ListMemberProject> getListMemberProjects() {
-//         return listMemberProjects;
-//     }
+    public void setNamaProject(String namaProject) {
+        this.namaProject = namaProject;
+    }
 
-//     public void setListMemberProjects(List<ListMemberProject> listMemberProjects) {
-//         this.listMemberProjects = listMemberProjects;
-//     }
+    public String getNoTelpon() {
+        return noTelpon;
+    }
 
-//     public String getKodeProject() {
-//         return kodeProject;
-//     }
+    public void setNoTelpon(String noTelpon) {
+        this.noTelpon = noTelpon;
+    }
 
-//     public void setKodeProject(String kodeProject) {
-//         this.kodeProject = kodeProject;
-//     }
+    public String getKota() {
+        return kota;
+    }
 
-//     public String getNamaProject() {
-//         return namaProject;
-//     }
+    public void setKota(String kota) {
+        this.kota = kota;
+    }
 
-//     public void setNamaProject(String namaProject) {
-//         this.namaProject = namaProject;
-//     }
+    public String getAlamatProject() {
+        return alamatProject;
+    }
 
-//     public String getNoTelpon() {
-//         return noTelpon;
-//     }
+    public void setAlamatProject(String alamatProject) {
+        this.alamatProject = alamatProject;
+    }
 
-//     public void setNoTelpon(String noTelpon) {
-//         this.noTelpon = noTelpon;
-//     }
+    public BigDecimal getLatitudeProject() {
+        return latitudeProject;
+    }
 
-//     public String getKota() {
-//         return kota;
-//     }
+    public void setLatitudeProject(BigDecimal latitudeProject) {
+        this.latitudeProject = latitudeProject;
+    }
 
-//     public void setKota(String kota) {
-//         this.kota = kota;
-//     }
+    public BigDecimal getLongitudeProject() {
+        return longitudeProject;
+    }
 
-//     public String getAlamatProject() {
-//         return alamatProject;
-//     }
+    public void setLongitudeProject(BigDecimal longitudeProject) {
+        this.longitudeProject = longitudeProject;
+    }
 
-//     public void setAlamatProject(String alamatProject) {
-//         this.alamatProject = alamatProject;
-//     }
+    public BigDecimal getReimburseProject() {
+        return reimburseProject;
+    }
 
-//     public BigDecimal getLatitudeProject() {
-//         return latitudeProject;
-//     }
+    public void setReimburseProject(BigDecimal reimburseProject) {
+        this.reimburseProject = reimburseProject;
+    }
 
-//     public void setLatitudeProject(BigDecimal latitudeProject) {
-//         this.latitudeProject = latitudeProject;
-//     }
+    public BigDecimal getJarakMaksimal() {
+        return jarakMaksimal;
+    }
 
-//     public BigDecimal getLongitudeProject() {
-//         return longitudeProject;
-//     }
+    public void setJarakMaksimal(BigDecimal jarakMaksimal) {
+        this.jarakMaksimal = jarakMaksimal;
+    }
 
-//     public void setLongitudeProject(BigDecimal longitudeProject) {
-//         this.longitudeProject = longitudeProject;
-//     }
+    public Short getTotalJamKerja() {
+        return totalJamKerja;
+    }
 
-//     public BigDecimal getReimburseProject() {
-//         return reimburseProject;
-//     }
+    public void setTotalJamKerja(Short totalJamKerja) {
+        this.totalJamKerja = totalJamKerja;
+    }
 
-//     public void setReimburseProject(BigDecimal reimburseProject) {
-//         this.reimburseProject = reimburseProject;
-//     }
+    public LocalTime getJamMasuk() {
+        return jamMasuk;
+    }
 
-//     public BigDecimal getJarakMaksimal() {
-//         return jarakMaksimal;
-//     }
+    public void setJamMasuk(LocalTime jamMasuk) {
+        this.jamMasuk = jamMasuk;
+    }
 
-//     public void setJarakMaksimal(BigDecimal jarakMaksimal) {
-//         this.jarakMaksimal = jarakMaksimal;
-//     }
+    public LocalTime getJamKeluar() {
+        return jamKeluar;
+    }
 
-//     public Short getTotalJamKerja() {
-//         return totalJamKerja;
-//     }
+    public void setJamKeluar(LocalTime jamKeluar) {
+        this.jamKeluar = jamKeluar;
+    }
 
-//     public void setTotalJamKerja(Short totalJamKerja) {
-//         this.totalJamKerja = totalJamKerja;
-//     }
-
-//     public LocalTime getJamMasuk() {
-//         return jamMasuk;
-//     }
-
-//     public void setJamMasuk(LocalTime jamMasuk) {
-//         this.jamMasuk = jamMasuk;
-//     }
-
-//     public LocalTime getJamKeluar() {
-//         return jamKeluar;
-//     }
-
-//     public void setJamKeluar(LocalTime jamKeluar) {
-//         this.jamKeluar = jamKeluar;
-//     }
-
-//     // Getters and setters
-// }
+    // Getters and setters
+}

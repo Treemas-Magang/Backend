@@ -6,4 +6,5 @@ import com.treemaswebapi.treemaswebapi.entity.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, String> {
     UserEntity findByNik(String nik);
+    long countByNik(String nik);
 }

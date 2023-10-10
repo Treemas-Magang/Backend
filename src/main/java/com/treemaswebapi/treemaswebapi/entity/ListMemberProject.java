@@ -1,65 +1,61 @@
-// package com.treemaswebapi.treemaswebapi.entity;
+package com.treemaswebapi.treemaswebapi.entity;
 
-// import javax.persistence.Column;
-// import javax.persistence.Entity;
-// import javax.persistence.GeneratedValue;
-// import javax.persistence.GenerationType;
-// import javax.persistence.Id;
-// import javax.persistence.JoinColumn;
-// import javax.persistence.ManyToOne;
-// import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+@Entity
+@Table(name = "listmember_project", schema="public")
+public class ListMemberProject {
+    @Id
+    @Column(name = "idlistmember")
+    private String idListMember;
 
-// import com.treemaswebapi.treemaswebapi.entity.ProjectMaster;
+    @ManyToOne(targetEntity=ProjectMaster.class)
+    @JoinColumn( name = "kode_project", referencedColumnName = "kode_project")
+    private ProjectMaster kodeProject;
 
-// @Entity
-// @Table(name = "listmember_project", schema="public")
-// public class ListMemberProject {
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     @Column(name = "idlistmember")
-//     private String idListMember;
+    @ManyToOne
+    @JoinColumn(name = "nik", referencedColumnName = "nik")
+    private UserEntity userNik;
 
-//     @ManyToOne(targetEntity=ProjectMaster.class)
-//     @JoinColumn( name = "kode_project", referencedColumnName = "kode_project")
-//     private ProjectMaster kodeProject;
+    @ManyToOne
+    @JoinColumn(name = "nama_karyawan", referencedColumnName = "nik", insertable = false, updatable = false)
+    private UserEntity userName;
 
-//     @ManyToOne
-//     @JoinColumn(name = "nik", referencedColumnName = "nik")
-//     private UserEntity userNik;
+    public String getIdListMember() {
+        return idListMember;
+    }
 
-//     @ManyToOne
-//     @JoinColumn(name = "nama_karyawan", referencedColumnName = "nik", insertable = false, updatable = false)
-//     private UserEntity userName;
+    public void setIdListMember(String idListMember) {
+        this.idListMember = idListMember;
+    }
 
-//     public String getIdListMember() {
-//         return idListMember;
-//     }
+    public ProjectMaster getProject() {
+        return kodeProject;
+    }
 
-//     public void setIdListMember(String idListMember) {
-//         this.idListMember = idListMember;
-//     }
+    public void setProject(ProjectMaster kodeProject) {
+        this.kodeProject= kodeProject;
+    }
 
-//     public ProjectMaster getProject() {
-//         return kodeProject;
-//     }
+    public UserEntity getUserNik() {
+        return userNik;
+    }
 
-//     public void setProject(ProjectMaster kodeProject) {
-//         this.kodeProject= kodeProject;
-//     }
+    public void setUserNik(UserEntity userNik) {
+        this.userNik = userNik;
+    }
 
-//     public UserEntity getUserNik() {
-//         return userNik;
-//     }
+    public UserEntity getUserName() {
+        return userName;
+    }
 
-//     public void setUserNik(UserEntity userNik) {
-//         this.userNik = userNik;
-//     }
-
-//     public UserEntity getUserName() {
-//         return userName;
-//     }
-
-//     public void setUserName(UserEntity userName) {
-//         this.userName = userName;
-//     }
-// }
+    public void setUserName(UserEntity userName) {
+        this.userName = userName;
+    }
+}

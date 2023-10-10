@@ -1,38 +1,15 @@
 
 package com.treemaswebapi.treemaswebapi.controller;
 
+import java.util.List;
+import java.util.Map;
+
 public class ApiResponse {
     private boolean success;
     private String message;
-    private Object token;
-    private String namaKaryawan;
-    private String nik;
-    private String deviceId;
-
-    public String getNamaKaryawan() {
-        return namaKaryawan;
-    }
-
-    public void setNamaKaryawan(String namaKaryawan) {
-        this.namaKaryawan = namaKaryawan;
-    }
-
-    public String getNik() {
-        return nik;
-    }
-
-    public void setNik(String nik) {
-        this.nik = nik;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
+    private List<Map<String, String>> data; // Change the type to Map<String, Object>
+    private long totalData; // Add a field for total data count
+    
     public boolean isSuccess() {
         return success;
     }
@@ -49,21 +26,26 @@ public class ApiResponse {
         this.message = message;
     }
 
-    public Object getToken() {
-        return token;
+    public List<Map<String, String>> getData() {
+        return data;
     }
 
-    public void setToken(Object token) {
-        this.token = token;
+    public void setData(List<Map<String, String>> data) {
+        this.data = data;
     }
 
-    public ApiResponse(boolean success, String message, Object token, String namaKaryawan, String deviceId, String nik) {
+    public long getTotalData() {
+        return totalData;
+    }
+
+    public void setTotalData(long totalData) {
+        this.totalData = totalData;
+    }
+    public ApiResponse(boolean success, String message, Object token, List<Map<String, String>> data,long totalData) {
         this.success = success;
         this.message = message;
-        this.token = token;
-        this.namaKaryawan = namaKaryawan;
-        this.deviceId = deviceId;
-        this.nik = nik;
+        this.data = data;
+        this.totalData = totalData ;
 
     }
 }   

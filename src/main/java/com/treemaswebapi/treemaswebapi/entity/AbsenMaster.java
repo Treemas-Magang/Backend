@@ -1,191 +1,191 @@
-// package com.treemaswebapi.treemaswebapi.entity;
+package com.treemaswebapi.treemaswebapi.entity;
 
-// import java.math.BigDecimal;
-// import java.time.LocalDate;
-// import java.time.LocalTime;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
-// import javax.persistence.Column;
-// import javax.persistence.Entity;
-// import javax.persistence.Id;
-// import javax.persistence.JoinColumn;
-// import javax.persistence.ManyToOne;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-// import jakarta.persistence.GeneratedValue;
-// import jakarta.persistence.GenerationType;
-// import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
 
-// @Entity
-// @Table
-// public class AbsenMaster {
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.AUTO)
-//     @Column(name = "id_absen")
-//     private String idAbsen;
+@Entity
+@Table
+public class AbsenMaster {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_absen")
+    private int idAbsen;
 
-//     @ManyToOne
-//     @JoinColumn(name = "nik", referencedColumnName = "nik")
-//     private UserEntity user;
+    @ManyToOne
+    @JoinColumn(name = "nik", referencedColumnName = "nik")
+    private UserEntity user;
 
-//     @Column(name = "tanggal_absen")
-//     private LocalDate tanggalAbsen;
+    @Column(name = "tanggal_absen")
+    private LocalDate tanggalAbsen;
 
-//     @Column(name = "hari_absen")
-//     private String hariAbsen;
+    @Column(name = "hari_absen")
+    private String hariAbsen;
 
-//     @ManyToOne
-//     @JoinColumn(name = "kode_project", referencedColumnName = "kode_project")
-//     private ProjectMaster project;
+    @ManyToOne
+    @JoinColumn(name = "kode_project", referencedColumnName = "kode_project")
+    private ProjectMaster project;
 
-//     @Column(name = "lokasi_masuk")
-//     private String lokasiMasuk;
+    @Column(name = "lokasi_masuk")
+    private String lokasiMasuk;
 
-//     @Column(name = "jam_masuk")
-//     private LocalTime jamMasuk;
+    @Column(name = "jam_masuk")
+    private LocalTime jamMasuk;
 
-//     @Column(name = "latitude_masuk")
-//     private BigDecimal latitudeMasuk;
+    @Column(name = "latitude_masuk")
+    private BigDecimal latitudeMasuk;
 
-//     @Column(name = "longitude_masuk")
-//     private BigDecimal longitudeMasuk;
+    @Column(name = "longitude_masuk")
+    private BigDecimal longitudeMasuk;
 
-//     @Column(name = "lokasi_pulang")
-//     private String lokasiPulang;
+    @Column(name = "lokasi_pulang")
+    private String lokasiPulang;
 
-//     @Column(name = "latitude_pulang")
-//     private BigDecimal latitudePulang;
+    @Column(name = "latitude_pulang")
+    private BigDecimal latitudePulang;
 
-//     @Column(name = "longitude_pulang")
-//     private BigDecimal longitudePulang;
+    @Column(name = "longitude_pulang")
+    private BigDecimal longitudePulang;
 
-//     @Column(name = "catatan_terlambat")
-//     private String catatanTerlambat;
+    @Column(name = "catatan_terlambat")
+    private String catatanTerlambat;
 
-//     @Column(name = "total_jam_kerja")
-//     private Short totalJamKerja;
+    @Column(name = "total_jam_kerja")
+    private Short totalJamKerja;
 
-//     @Column(name = "lembur")
-//     private boolean lembur;
+    @Column(name = "lembur")
+    private boolean lembur;
 
-//     public String getIdAbsen() {
-//         return idAbsen;
-//     }
+    public int getIdAbsen() {
+        return idAbsen;
+    }
 
-//     public void setIdAbsen(String idAbsen) {
-//         this.idAbsen = idAbsen;
-//     }
+    public void setIdAbsen(int idAbsen) {
+        this.idAbsen = idAbsen;
+    }
 
-//     public UserEntity getUser() {
-//         return user;
-//     }
+    public UserEntity getUser() {
+        return user;
+    }
 
-//     public void setUser(UserEntity user) {
-//         this.user = user;
-//     }
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
 
-//     public LocalDate getTanggalAbsen() {
-//         return tanggalAbsen;
-//     }
+    public LocalDate getTanggalAbsen() {
+        return tanggalAbsen;
+    }
 
-//     public void setTanggalAbsen(LocalDate tanggalAbsen) {
-//         this.tanggalAbsen = tanggalAbsen;
-//     }
+    public void setTanggalAbsen(LocalDate tanggalAbsen) {
+        this.tanggalAbsen = tanggalAbsen;
+    }
 
-//     public String getHariAbsen() {
-//         return hariAbsen;
-//     }
+    public String getHariAbsen() {
+        return hariAbsen;
+    }
 
-//     public void setHariAbsen(String hariAbsen) {
-//         this.hariAbsen = hariAbsen;
-//     }
+    public void setHariAbsen(String hariAbsen) {
+        this.hariAbsen = hariAbsen;
+    }
 
-//     public ProjectMaster getProject() {
-//         return project;
-//     }
+    public ProjectMaster getProject() {
+        return project;
+    }
 
-//     public void setProject(ProjectMaster project) {
-//         this.project = project;
-//     }
+    public void setProject(ProjectMaster project) {
+        this.project = project;
+    }
 
-//     public String getLokasiMasuk() {
-//         return lokasiMasuk;
-//     }
+    public String getLokasiMasuk() {
+        return lokasiMasuk;
+    }
 
-//     public void setLokasiMasuk(String lokasiMasuk) {
-//         this.lokasiMasuk = lokasiMasuk;
-//     }
+    public void setLokasiMasuk(String lokasiMasuk) {
+        this.lokasiMasuk = lokasiMasuk;
+    }
 
-//     public LocalTime getJamMasuk() {
-//         return jamMasuk;
-//     }
+    public LocalTime getJamMasuk() {
+        return jamMasuk;
+    }
 
-//     public void setJamMasuk(LocalTime jamMasuk) {
-//         this.jamMasuk = jamMasuk;
-//     }
+    public void setJamMasuk(LocalTime jamMasuk) {
+        this.jamMasuk = jamMasuk;
+    }
 
-//     public BigDecimal getLatitudeMasuk() {
-//         return latitudeMasuk;
-//     }
+    public BigDecimal getLatitudeMasuk() {
+        return latitudeMasuk;
+    }
 
-//     public void setLatitudeMasuk(BigDecimal latitudeMasuk) {
-//         this.latitudeMasuk = latitudeMasuk;
-//     }
+    public void setLatitudeMasuk(BigDecimal latitudeMasuk) {
+        this.latitudeMasuk = latitudeMasuk;
+    }
 
-//     public BigDecimal getLongitudeMasuk() {
-//         return longitudeMasuk;
-//     }
+    public BigDecimal getLongitudeMasuk() {
+        return longitudeMasuk;
+    }
 
-//     public void setLongitudeMasuk(BigDecimal longitudeMasuk) {
-//         this.longitudeMasuk = longitudeMasuk;
-//     }
+    public void setLongitudeMasuk(BigDecimal longitudeMasuk) {
+        this.longitudeMasuk = longitudeMasuk;
+    }
 
-//     public String getLokasiPulang() {
-//         return lokasiPulang;
-//     }
+    public String getLokasiPulang() {
+        return lokasiPulang;
+    }
 
-//     public void setLokasiPulang(String lokasiPulang) {
-//         this.lokasiPulang = lokasiPulang;
-//     }
+    public void setLokasiPulang(String lokasiPulang) {
+        this.lokasiPulang = lokasiPulang;
+    }
 
-//     public BigDecimal getLatitudePulang() {
-//         return latitudePulang;
-//     }
+    public BigDecimal getLatitudePulang() {
+        return latitudePulang;
+    }
 
-//     public void setLatitudePulang(BigDecimal latitudePulang) {
-//         this.latitudePulang = latitudePulang;
-//     }
+    public void setLatitudePulang(BigDecimal latitudePulang) {
+        this.latitudePulang = latitudePulang;
+    }
 
-//     public BigDecimal getLongitudePulang() {
-//         return longitudePulang;
-//     }
+    public BigDecimal getLongitudePulang() {
+        return longitudePulang;
+    }
 
-//     public void setLongitudePulang(BigDecimal longitudePulang) {
-//         this.longitudePulang = longitudePulang;
-//     }
+    public void setLongitudePulang(BigDecimal longitudePulang) {
+        this.longitudePulang = longitudePulang;
+    }
 
-//     public String getCatatanTerlambat() {
-//         return catatanTerlambat;
-//     }
+    public String getCatatanTerlambat() {
+        return catatanTerlambat;
+    }
 
-//     public void setCatatanTerlambat(String catatanTerlambat) {
-//         this.catatanTerlambat = catatanTerlambat;
-//     }
+    public void setCatatanTerlambat(String catatanTerlambat) {
+        this.catatanTerlambat = catatanTerlambat;
+    }
 
-//     public Short getTotalJamKerja() {
-//         return totalJamKerja;
-//     }
+    public Short getTotalJamKerja() {
+        return totalJamKerja;
+    }
 
-//     public void setTotalJamKerja(Short totalJamKerja) {
-//         this.totalJamKerja = totalJamKerja;
-//     }
+    public void setTotalJamKerja(Short totalJamKerja) {
+        this.totalJamKerja = totalJamKerja;
+    }
 
-//     public boolean isLembur() {
-//         return lembur;
-//     }
+    public boolean isLembur() {
+        return lembur;
+    }
 
-//     public void setLembur(boolean lembur) {
-//         this.lembur = lembur;
-//     }
+    public void setLembur(boolean lembur) {
+        this.lembur = lembur;
+    }
 
-//     // Getters and setters
-// }
+    // Getters and setters
+}
 

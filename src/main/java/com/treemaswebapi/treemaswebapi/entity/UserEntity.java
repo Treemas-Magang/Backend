@@ -95,7 +95,7 @@ public class UserEntity {
     private Boolean leader; // Ganti dengan tipe Boolean untuk kolom boolean
     
     @Column(name = "password", nullable = false)
-    private String password = "123456"; // Set default value here
+    private String password; // Set default value here
 
     
     public UserEntity(String nik, String namaKaryawan, String noKtp, String noNpwp, String noTelepon,
@@ -363,6 +363,7 @@ public class UserEntity {
         return password;
     }
 
-    public void setPassword(String leader) {
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

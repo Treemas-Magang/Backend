@@ -7,9 +7,18 @@ import java.util.Map;
 public class ApiResponse {
     private boolean success;
     private String message;
-    private List<Map<String, String>> data; // Change the type to Map<String, Object>
+    private List<Map<String, String>> data; // to make the data easier to retrieved by the frontend
     private long totalData; // Add a field for total data count
+    private boolean isTokenOk;
     
+    public boolean isTokenOk() {
+        return isTokenOk;
+    }
+
+    public void setTokenOk(boolean isTokenOk) {
+        this.isTokenOk = isTokenOk;
+    }
+
     public boolean isSuccess() {
         return success;
     }
@@ -47,5 +56,10 @@ public class ApiResponse {
         this.data = data;
         this.totalData = totalData ;
 
+    }
+
+    public ApiResponse(boolean isTokenOk, String message, Object object, int i) {
+        this.isTokenOk = isTokenOk;
+        this.message = message;
     }
 }   

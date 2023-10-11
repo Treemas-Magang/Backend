@@ -33,53 +33,63 @@ public class AuthController {
     @Autowired
     UserRepository userRepository;
 
-   @PostMapping("/login")
-public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
-    // Find the user by username
-    UserEntity userEntity = userRepository.findByNik(loginRequest.getNik());
-
-    ApiResponse response; // Declare ApiResponse variable here
-
-    if (userEntity != null && passwordEncoder.matches(loginRequest.getPassword(), userEntity.getPassword())) {
-        String deviceIdDb = userEntity.getDeviceId();
-        String deviceIdInpt = loginRequest.getDeviceId();
-        if (deviceIdDb == null) {
-            // If deviceId is null in the database, store it
-            deviceIdDb = loginRequest.getDeviceId();
-            userEntity.setDeviceId(deviceIdDb);
-            userRepository.save(userEntity);
-        }else if(!deviceIdDb.equals(deviceIdInpt)){
-            response = new ApiResponse(false, "Device ID mismatch", null, null, 0);
-            return ResponseEntity.ok(response);
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
+        // Find the user by username
+        UserEntity userEntity = userRepository.findByNik(loginRequest.getNik());
+    
+        ApiResponse response;
+    
+        if (userEntity != null && passwordEncoder.matches(loginRequest.getPassword(), userEntity.getPassword())) {
+            String deviceIdDb = userEntity.getDeviceId();
+            String deviceIdInpt = loginRequest.getDeviceId();
+            if (deviceIdDb == null) {
+                // If deviceId is null in the database, store it
+                deviceIdDb = loginRequest.getDeviceId();
+                userEntity.setDeviceId(deviceIdDb);
+                userRepository.save(userEntity);
+            } else if (!deviceIdDb.equals(deviceIdInpt)) {
+                response = new ApiResponse(false, "Device ID mismatch", null, null, 0);
+                return ResponseEntity.ok(response);
+            }
+    
+            // Passwords match, generate a JWT token
+            String token = jwtService.generateToken(
+                userEntity.getNik(),
+                userEntity.getNamaKaryawan(),
+                deviceIdDb // Use the deviceId obtained from the database or request
+            );
+    
+            // Validate the token here
+            try {
+                jwtService.validateTokenAndGetClaims(token);
+            } catch (IllegalArgumentException e) {
+                response = new ApiResponse(false, "Token is invalid", null, null, 0);
+                return ResponseEntity.ok(response);
+            }
+    
+            // Create list of Maps
+            List<Map<String, String>> dataList = new ArrayList<>();
+            // Create a Map for the data
+            Map<String, String> userData = new HashMap<>();
+            userData.put("token", token);
+            userData.put("namaKaryawan", userEntity.getNamaKaryawan());
+            userData.put("nik", userEntity.getNik());
+            userData.put("deviceIdDb", deviceIdDb);
+    
+            // Adding user data map to the list
+            dataList.add(userData);
+    
+            // Create the ApiResponse object with the modified format
+            response = new ApiResponse(true, "Login successful", dataList, dataList, userRepository.countByNik(userEntity.getNik()));
+        } else {
+            // User not found or passwords do not match
+            response = new ApiResponse(false, "Invalid username or password", null, null, 0);
         }
-        
-        // Passwords match, generate a JWT token
-        String token = jwtService.generateToken(
-            userEntity.getNik(),
-            userEntity.getNamaKaryawan(),
-            deviceIdDb // Use the deviceId obtained from the database or request
-        );
-        // Create list of Maps
-        List<Map<String, String>> dataList = new ArrayList<>();
-        // Create a Map for the data
-        Map<String, String> userData = new HashMap<>();
-        userData.put("token", token);
-        userData.put("namaKaryawan", userEntity.getNamaKaryawan());
-        userData.put("nik", userEntity.getNik());
-        userData.put("deviceIdDb", deviceIdDb);
-
-        // Adding user data map to the list
-        dataList.add(userData);
-
-        // Create the ApiResponse object with the modified format
-        response = new ApiResponse(true, "Login successful", dataList, dataList, userRepository.countByNik(userEntity.getNik()));
-    } else {
-        // User not found or passwords do not match
-        response = new ApiResponse(false, "Invalid username or password", null, null, 0);
+    
+        return ResponseEntity.ok(response); // Return ResponseEntity with ApiResponse
     }
     
-    return ResponseEntity.ok(response); // Return ResponseEntity with ApiResponse
-}
 
     @PostMapping("/register")
     public String registerUser(@RequestBody UserEntity user) {

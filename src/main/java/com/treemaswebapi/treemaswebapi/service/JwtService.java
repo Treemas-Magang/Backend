@@ -38,7 +38,7 @@ public class JwtService {
                 .signWith(signingKey)
                 .compact();
     }
-    public Claims validateToken(String token) {
+    public Claims validateTokenAndGetClaims(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(secret.getBytes())

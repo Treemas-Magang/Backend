@@ -10,7 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.treemaswebapi.treemaswebapi.entity.UserEntity;
 import com.treemaswebapi.treemaswebapi.repository.UserRepository;
+import com.treemaswebapi.treemaswebapi.service.JwtService;
 import com.treemaswebapi.treemaswebapi.service.UserService;
+
+import io.jsonwebtoken.Claims;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,6 +29,17 @@ public class UserServiceImpl implements UserService {
         System.out.println("User Registered");
     }
     
+    public boolean isTokenValid(String token) {
+    try {
+        JwtService jwtService = new JwtService();
+        Claims claims = jwtService.validateTokenAndGetClaims(token);
+        // If no exception is thrown, the token is valid
+        return true;
+    } catch (IllegalArgumentException e) {
+        // Token validation failed, indicating that the token is invalid
+        return false;
+    }
+    }
 
     public void loginUser(UserEntity user) {
         String nik = user.getNik();

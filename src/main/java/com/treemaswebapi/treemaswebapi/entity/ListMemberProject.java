@@ -21,7 +21,7 @@ public class ListMemberProject {
 
     @ManyToOne
     @JoinColumn(name = "nik", referencedColumnName = "nik")
-    private UserEntity userNik;
+    private UserEntity nik;
 
     @ManyToOne
     @JoinColumn(name = "nama_karyawan", referencedColumnName = "nik", insertable = false, updatable = false)
@@ -43,12 +43,12 @@ public class ListMemberProject {
         this.kodeProject= kodeProject;
     }
 
-    public UserEntity getUserNik() {
-        return userNik;
+    public UserEntity getNik() {
+        return nik;
     }
 
-    public void setUserNik(UserEntity userNik) {
-        this.userNik = userNik;
+    public void setNik(UserEntity nik) {
+        this.nik = nik;
     }
 
     public UserEntity getUserName() {

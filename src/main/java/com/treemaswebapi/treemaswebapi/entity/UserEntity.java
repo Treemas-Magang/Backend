@@ -1,10 +1,10 @@
 package com.treemaswebapi.treemaswebapi.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.Date; // Import java.util.Date untuk mendukung tanggal lahir
 
 @Entity
@@ -95,7 +95,7 @@ public class UserEntity {
     private Boolean leader; // Ganti dengan tipe Boolean untuk kolom boolean
     
     @Column(name = "password", nullable = false)
-    private String password; // Set default value here
+    private String password = "123456"; // Set default value here
 
     
     public UserEntity(String nik, String namaKaryawan, String noKtp, String noNpwp, String noTelepon,
@@ -363,7 +363,6 @@ public class UserEntity {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String leader) {
     }
 }

@@ -26,12 +26,13 @@ import com.treemaswebapi.treemaswebapi.service.JwtService;
 import com.treemaswebapi.treemaswebapi.service.UserService;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/absen")
 public class AbsenController {
     @Autowired
-    private UserService userService;
+    private HttpServletRequest request;
 
     @Autowired
     private JwtService jwtService;

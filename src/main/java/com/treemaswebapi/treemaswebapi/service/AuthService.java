@@ -31,7 +31,7 @@ public class AuthService {
             .nik(request.getNik())
             .namaKaryawan(request.getNamaKaryawan())
             .email(request.getEmail())
-            .password(passwordEncoder.encode(request.getPassword()))
+            .password(passwordEncoder.encode("123456"))
             .role(Role.USER)
             .agama(request.getAgama()) // Chain property assignments like this
             .noKtp(request.getNoKtp()) // Add more property assignments in a similar way

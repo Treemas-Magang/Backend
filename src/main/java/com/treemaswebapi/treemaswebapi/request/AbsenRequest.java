@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.controller;
+package com.treemaswebapi.treemaswebapi.request;
 
 public class AbsenRequest {
     private String nik;

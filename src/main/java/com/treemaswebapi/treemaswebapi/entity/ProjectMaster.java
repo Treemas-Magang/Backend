@@ -2,6 +2,17 @@ package com.treemaswebapi.treemaswebapi.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+
+import com.treemaswebapi.treemaswebapi.repository.ProjectMasterRepo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +21,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "projectmaster", schema = "public")
-public class ProjectMaster {
+public class ProjectMaster{
     @Id
     @Column(name = "kode_project")
     private String kodeProject;
@@ -143,6 +154,4 @@ public class ProjectMaster {
     public void setJamKeluar(LocalTime jamKeluar) {
         this.jamKeluar = jamKeluar;
     }
-
-    // Getters and setters
 }

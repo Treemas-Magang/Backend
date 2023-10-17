@@ -3,6 +3,17 @@ package com.treemaswebapi.treemaswebapi.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+
+import com.treemaswebapi.treemaswebapi.repository.AbsenMasterRepo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,12 +27,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table
-public class AbsenMaster {
+public class AbsenMaster implements AbsenMasterRepo{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "absen_master_id_absen_seq")
     @SequenceGenerator(name = "absen_master_id_absen_seq", sequenceName = "absen_master_id_absen_seq", allocationSize = 1)
     @Column(name = "id_absen")
-    private int idAbsen;
+    public int idAbsen;
 
     @ManyToOne
     @JoinColumn(name = "nik", referencedColumnName = "nik")
@@ -185,6 +196,192 @@ public class AbsenMaster {
 
     public void setLembur(boolean lembur) {
         this.lembur = lembur;
+    }
+
+    @Override
+    public void deleteAllByIdInBatch(Iterable<String> ids) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAllByIdInBatch'");
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAllInBatch'");
+    }
+
+    @Override
+    public void deleteAllInBatch(Iterable<AbsenMaster> entities) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAllInBatch'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> List<S> findAll(Example<S> example) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> List<S> findAll(Example<S> example, Sort sort) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    }
+
+    @Override
+    public void flush() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'flush'");
+    }
+
+    @Override
+    public AbsenMaster getById(String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+    }
+
+    @Override
+    public AbsenMaster getOne(String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getOne'");
+    }
+
+    @Override
+    public AbsenMaster getReferenceById(String id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getReferenceById'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> List<S> saveAllAndFlush(Iterable<S> entities) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveAllAndFlush'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> S saveAndFlush(S entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveAndFlush'");
+    }
+
+    @Override
+    public List<AbsenMaster> findAll() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    }
+
+    @Override
+    public List<AbsenMaster> findAllById(Iterable<String> ids) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAllById'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> List<S> saveAll(Iterable<S> entities) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
+    }
+
+    @Override
+    public long count() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'count'");
+    }
+
+    @Override
+    public void delete(AbsenMaster entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    }
+
+    @Override
+    public void deleteAll() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAll'");
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends AbsenMaster> entities) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAll'");
+    }
+
+    @Override
+    public void deleteAllById(Iterable<? extends String> ids) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAllById'");
+    }
+
+    @Override
+    public void deleteById(String id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'existsById'");
+    }
+
+    @Override
+    public Optional<AbsenMaster> findById(String id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> S save(S entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
+
+    @Override
+    public List<AbsenMaster> findAll(Sort sort) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    }
+
+    @Override
+    public Page<AbsenMaster> findAll(Pageable pageable) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> long count(Example<S> example) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'count'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> boolean exists(Example<S> example) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'exists'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> Page<S> findAll(Example<S> example, Pageable pageable) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    }
+
+    @Override
+    public <S extends AbsenMaster, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findBy'");
+    }
+
+    @Override
+    public <S extends AbsenMaster> Optional<S> findOne(Example<S> example) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findOne'");
+    }
+
+    @Override
+    public AbsenMaster findByIdAbsen(int idAbsen) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findByIdAbsen'");
     }
 
     // Getters and setters

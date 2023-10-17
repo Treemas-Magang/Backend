@@ -2,15 +2,13 @@ package com.treemaswebapi.treemaswebapi.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 @Entity
 @Table(name = "listmember_project", schema="public")
-public class ListMemberProject {
+public class ListMemberProject{
     @Id
     @Column(name = "idlistmember")
     private String idListMember;
@@ -58,4 +56,5 @@ public class ListMemberProject {
     public void setUserName(UserEntity userName) {
         this.userName = userName;
     }
+
 }

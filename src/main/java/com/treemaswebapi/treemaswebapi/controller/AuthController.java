@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.treemaswebapi.treemaswebapi.entity.UserEntity;
 import com.treemaswebapi.treemaswebapi.repository.UserRepository;
+import com.treemaswebapi.treemaswebapi.response.LoginApiResponse;
 import com.treemaswebapi.treemaswebapi.service.JwtService;
 import com.treemaswebapi.treemaswebapi.service.UserService;
 
@@ -34,11 +35,11 @@ public class AuthController {
     UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginApiResponse> login(@RequestBody LoginRequest loginRequest) {
         // Find the user by username
         UserEntity userEntity = userRepository.findByNik(loginRequest.getNik());
     
-        ApiResponse response;
+        LoginApiResponse response;
     
         if (userEntity != null && passwordEncoder.matches(loginRequest.getPassword(), userEntity.getPassword())) {
             String deviceIdDb = userEntity.getDeviceId();
@@ -49,7 +50,7 @@ public class AuthController {
                 userEntity.setDeviceId(deviceIdDb);
                 userRepository.save(userEntity);
             } else if (!deviceIdDb.equals(deviceIdInpt)) {
-                response = new ApiResponse(false, "Device ID mismatch", null, null, 0);
+                response = new LoginApiResponse(false, "Device ID mismatch", null, null, 0);
                 return ResponseEntity.ok(response);
             }
     
@@ -64,7 +65,7 @@ public class AuthController {
             try {
                 jwtService.validateTokenAndGetClaims(token);
             } catch (IllegalArgumentException e) {
-                response = new ApiResponse(false, "Token is invalid", null, null, 0);
+                response = new LoginApiResponse(false, "Token is invalid", null, null, 0);
                 return ResponseEntity.ok(response);
             }
     
@@ -81,10 +82,10 @@ public class AuthController {
             dataList.add(userData);
     
             // Create the ApiResponse object with the modified format
-            response = new ApiResponse(true, "Login successful", dataList, dataList, userRepository.countByNik(userEntity.getNik()));
+            response = new LoginApiResponse(true, "Login successful", dataList, dataList, userRepository.countByNik(userEntity.getNik()));
         } else {
             // User not found or passwords do not match
-            response = new ApiResponse(false, "Invalid username or password", null, null, 0);
+            response = new LoginApiResponse(false, "Invalid username or password", null, null, 0);
         }
     
         return ResponseEntity.ok(response); // Return ResponseEntity with ApiResponse

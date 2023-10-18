@@ -1,6 +1,8 @@
-package com.treemaswebapi.treemaswebapi.controller.AuthController;
+package com.treemaswebapi.treemaswebapi.controller.ProfieController;
 
 import java.util.Date;
+
+import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    
+public class ProfileRequest {
+
     private String nik;
     private String namaKaryawan;
     private String noKtp;
@@ -39,5 +41,10 @@ public class RegisterRequest {
     private Date tanggalGabung;
     private Integer hakCuti;
     private String jenisKaryawan;
-    private String password;
+    private Role role;
+    
+    // Password Change
+    private String oldPassword;
+    private String newPassword;
+    private String confirmPassword; 
 }

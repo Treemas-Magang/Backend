@@ -5,6 +5,7 @@
 // import java.util.Optional;
 // import java.util.function.Function;
 
+// import org.hibernate.annotations.Type;
 // import org.springframework.data.domain.Example;
 // import org.springframework.data.domain.Page;
 // import org.springframework.data.domain.Pageable;
@@ -23,9 +24,17 @@
 // import jakarta.persistence.ManyToOne;
 // import jakarta.persistence.SequenceGenerator;
 // import jakarta.persistence.Table;
+// import lombok.AllArgsConstructor;
+// import lombok.Builder;
+// import lombok.Data;
+// import lombok.NoArgsConstructor;
 
 // @Entity
 // @Table(name = "absen_image")
+// @Data
+// @AllArgsConstructor
+// @NoArgsConstructor
+// @Builder
 // public class AbsenImageEntity {
 //     @Id
 //     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "absen_image_id_absen_image_seq" )
@@ -43,49 +52,8 @@
 
 //     @Lob
 //     @Column(name = "image")
-//     private byte[] image;
+//     private byte[] imageData;
 
 //     @Column(name = "image_timestamp")
 //     private LocalDateTime imageTimestamp;
-
-//     public int getId() {
-//         return idAbsenImg;
-//     }
-
-//     public void setIdAbsenImg(int idAbsenImg) {
-//         this.idAbsenImg = idAbsenImg;
-//     }
-
-//     public AbsenMaster getIdAbsen() {
-//         return idAbsen;
-//     }
-
-//     public void setIdAbsen(AbsenMaster idAbsen) {
-//         this.idAbsen = idAbsen;
-//     }
-
-//     public UserEntity getNik() {
-//         return nik;
-//     }
-
-//     public void setNik(UserEntity nik) {
-//         this.nik = nik;
-//     }
-
-//     public byte[] getImage() {
-//         return image;
-//     }
-
-//     public void setImage(byte[] image) {
-//         this.image = image;
-//     }
-
-//     public LocalDateTime getImageTimestamp() {
-//         return imageTimestamp;
-//     }
-
-//     public void setImageTimestamp(LocalDateTime imageTimestamp) {
-//         this.imageTimestamp = imageTimestamp;
-//     }
-
 // }

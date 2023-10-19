@@ -16,7 +16,6 @@
     import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
     import com.treemaswebapi.treemaswebapi.entity.UserEntity;
     import com.treemaswebapi.treemaswebapi.repository.UserRepository;
-    import com.fasterxml.jackson.databind.ObjectMapper;
 
 
     import lombok.RequiredArgsConstructor;
@@ -24,8 +23,6 @@
     @Service
     @RequiredArgsConstructor
     public class AuthService {
-        
-        ObjectMapper objectMapper = new ObjectMapper();
 
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder;
@@ -72,7 +69,9 @@
             response.put("message", "Registration successful");
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
+
             } catch (Exception e) {
+
             Map<String, String> response = new HashMap<>();
             response.put("status", "error");
             response.put("message", "Registration failed");
@@ -117,6 +116,7 @@
             return ResponseEntity.status(HttpStatus.OK).body(response);
 
             } catch (Exception e) {
+                
             Map<String, Object> response = new HashMap<>();
             response.put("status", "error");
             response.put("message", "Login failed!");

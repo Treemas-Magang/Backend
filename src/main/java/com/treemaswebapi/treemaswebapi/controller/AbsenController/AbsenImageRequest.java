@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.controller.AuthController;
+package com.treemaswebapi.treemaswebapi.controller.AbsenController;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,12 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
-    //yang diminta
+@Builder
+public class AbsenImageRequest {
     private String nik;
-    private String password;
-    private String deviceId;
+    private byte[] image;
+
 }

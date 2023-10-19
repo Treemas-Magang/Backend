@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.controller.AuthController;
+package com.treemaswebapi.treemaswebapi.controller.AbsenController;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,9 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+@Builder
+public class ProjectListRequest {
+    private String nik;
     private String token;
 }

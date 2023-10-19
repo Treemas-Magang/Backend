@@ -89,7 +89,8 @@
             var user = userRepository.findByNik(request.getNik())
                 .orElseThrow();
 
-            // Di login process check device id sesuai request dari nik tertentu dan compare ke database, kalo null kita set deviceId nya.
+            // Di login process check device id sesuai request dari nik tertentu dan compare ke database,
+            // kalo null kita set deviceId nya.
             if(user.getDeviceId() == null) {
                 user.setDeviceId(request.getDeviceId());
                 userRepository.save(user);

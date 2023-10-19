@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.Announcement;
 
 @Repository
-public interface AnnouncementRepo extends JpaRepository<Announcement, String> {
-    Optional<Announcement> findByIdAnn(String idAnn);
+public interface AnnouncementRepo extends JpaRepository<Announcement, Integer> {
+    Optional<Announcement> findByIdAnn(int idAnn);
 }

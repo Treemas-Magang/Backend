@@ -23,6 +23,7 @@
     @Service
     @RequiredArgsConstructor
     public class AuthService {
+        
 
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder;
@@ -69,7 +70,7 @@
             response.put("message", "Registration successful");
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
-
+            
             } catch (Exception e) {
 
             Map<String, String> response = new HashMap<>();

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProjectListRequest {
-    private String nik;
     private String token;
+    private String header;
 }

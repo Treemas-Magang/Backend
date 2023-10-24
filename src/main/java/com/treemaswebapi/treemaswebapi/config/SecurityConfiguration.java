@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import com.treemaswebapi.treemaswebapi.config.JwtAuthenticationFilter;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class SecurityConfiguration {
                 exc.authenticationEntryPoint((request, response, authException) -> {
                     // Penanganan otentikasi entry point untuk token kadaluarsa
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Invalid Token");
+                    response.getWriter().write("Invalid Token lo");
                 })
             )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

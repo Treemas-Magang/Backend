@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AbsenImageRequest {
     private String nik;
+    private int idAbsen;
     private byte[] image;
-
 }

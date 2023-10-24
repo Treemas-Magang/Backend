@@ -43,6 +43,7 @@ public class AnnouncementService {
                 String namaKaryawan = user.getNamaKaryawan();
 
                 Announcement newAnnouncement = Announcement.builder()
+                .idAnn(1)
                 .titleAnn(request.getTitleAnn())
                 .bodyAnn(request.getBodyAnn())
                 .createdBy(namaKaryawan)

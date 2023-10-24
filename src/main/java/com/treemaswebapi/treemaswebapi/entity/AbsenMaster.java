@@ -43,7 +43,7 @@ public class AbsenMaster {
 
     @ManyToOne
     @JoinColumn(name = "kode_project", referencedColumnName = "kode_project")
-    private ProjectMaster project;
+    private ProjectMaster kodeProject;
 
     @Column(name = "lokasi_masuk")
     private String lokasiMasuk;
@@ -75,5 +75,7 @@ public class AbsenMaster {
     @Column(name = "lembur")
     private boolean lembur;
 
+    @Column(name = "jarak")
+    private int jarak;
 }
 

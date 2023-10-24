@@ -25,7 +25,7 @@ public class AnnouncementController {
     }
 
     @GetMapping("/get/{idAnn}")
-    public ResponseEntity<Announcement> getAnnouncement(@PathVariable int request) {
+    public ResponseEntity<Announcement> getAnnouncement(@PathVariable int request, @RequestHeader("Authorization") String token) {
         ResponseEntity<Announcement> response = service.getAnnouncementById(request);
         return response;
     }

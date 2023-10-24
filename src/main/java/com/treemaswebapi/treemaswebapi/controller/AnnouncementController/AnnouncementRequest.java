@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AnnouncementRequest {
+    private int idAnn;
     private String titleAnn;
     private String bodyAnn;
     private String createdBy;

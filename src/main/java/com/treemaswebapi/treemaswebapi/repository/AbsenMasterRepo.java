@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.AbsenMaster;
 
 @Repository
-public interface AbsenMasterRepo extends JpaRepository<AbsenMaster, String> {
-    AbsenMaster findByIdAbsen(int idAbsen);
+public interface AbsenMasterRepo extends JpaRepository<AbsenMaster, Integer> {
+    AbsenMaster findByIdAbsen(AbsenMaster idAbsen);
 }

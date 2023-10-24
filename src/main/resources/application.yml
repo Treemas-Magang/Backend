@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/treemas
+        url: jdbc:postgresql://localhost:5432/treemas_ori
         username: postgres
         password: 123
         driver-class-name: org.postgresql.Driver

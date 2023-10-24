@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.treemaswebapi.treemaswebapi.repository.UserRepository;
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,11 +19,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApplicationConfig {
     
-    private final UserRepository userRepository;
+    private final SysUserRepository sysUserRepository;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByNik(username)
+        return username -> sysUserRepository.findById(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 

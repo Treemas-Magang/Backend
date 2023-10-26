@@ -31,11 +31,22 @@ import lombok.RequiredArgsConstructor;
 
         private final PasswordEncoder passwordEncoder;
 
-        public ResponseEntity<Map<String, String>> karyawanAdd(KaryawanAddRequest request) {
+        public ResponseEntity<Map<String, String>> karyawanAdd(
+            KaryawanAddRequest request,
+            MultipartFile foto,
+            MultipartFile fotoKtp,
+            MultipartFile fotoNpwp,
+            MultipartFile fotoKk,
+            MultipartFile fotoAsuransi
+        ) {
             try {
 
+                KaryawanEntity karyawan = karyawanRepository.findByNik(request.getNik());
+
+                if (karyawan == null) {
+
                 // Mengirim ke table Karyawan
-                var karyawan = KaryawanEntity.builder()
+                 karyawan = KaryawanEntity.builder()
                     .nik(request.getNik())
                     .nama(request.getNama())
                     .tempatLahir(request.getTempatLahir())
@@ -69,28 +80,31 @@ import lombok.RequiredArgsConstructor;
                     .isKaryawan(request.getIsKaryawan())
                 .build();
 
+                // Save each request to each table
+                karyawanRepository.save(karyawan);
+                }
+
                 // Mengirim ke table Karyawan Image
                 var karyawanImage = KaryawanImageEntity.builder()
-                    .nik(request.getNik())
-                    .foto(convertToBase64(request.getFoto()))
-                    .fotoKtp(convertToBase64(request.getFotoKtp()))
-                    .fotoNpwp(convertToBase64(request.getFotoNpwp()))
-                    .fotoKk(convertToBase64(request.getFotoKk()))
-                    .fotoAsuransi(convertToBase64(request.getFotoAsuransi()))
-                    .karyawan(karyawan)
+                    .foto(convertToBase64(foto))
+                    .fotoKtp(convertToBase64(fotoKtp))
+                    .fotoNpwp(convertToBase64(fotoNpwp))
+                    .fotoKk(convertToBase64(fotoKk))
+                    .fotoAsuransi(convertToBase64(fotoAsuransi))
+                    .karyawan(karyawan) // Hubungkan dengan entitas KaryawanEntity yang sesuai
                 .build();
+
+                System.out.println("Image : "+foto.getOriginalFilename()+" "+fotoKtp.getOriginalFilename()+" "+fotoNpwp.getOriginalFilename()+" "+fotoKk.getOriginalFilename()+" "+fotoAsuransi.getOriginalFilename());
+                karyawanImageRepository.save(karyawanImage);
 
             // Mengirim ke table Sys_User
             var sysUser = SysUserEntity.builder()
-                .userid(request.getNik())
                 .role(request.getRole())
                 .sqlPassword(passwordEncoder.encode("123456"))
                 .karyawan(karyawan)
             .build();
             
-            // Save each request to each table
-            karyawanRepository.save(karyawan);
-            karyawanImageRepository.save(karyawanImage);
+            
             sysUserRepository.save(sysUser);
 
 
@@ -103,6 +117,7 @@ import lombok.RequiredArgsConstructor;
             Map<String, String> response = new HashMap();
             response.put("status", "Failed");
             response.put("message", "Registration Failed");
+            response.put("error", e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }

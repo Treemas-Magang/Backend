@@ -7,4 +7,6 @@ import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
 
 @Repository
 public interface KaryawanRepository extends JpaRepository<KaryawanEntity, String> {
+    KaryawanEntity findByNik(String nik);
+
 }

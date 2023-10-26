@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "tbl_karyawan_image", schema = "public")
 public class KaryawanImageEntity {
 
-    
     @Id
     @Column(name = "nik")
     private String nik;
@@ -87,8 +87,8 @@ public class KaryawanImageEntity {
         return null; // or an empty string if needed
     }
 
-    // Join Column 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "nik")
     private KaryawanEntity karyawan;
 }

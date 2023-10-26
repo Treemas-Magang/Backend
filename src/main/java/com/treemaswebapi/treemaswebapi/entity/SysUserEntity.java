@@ -17,6 +17,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -33,6 +34,8 @@ import java.util.List;
 @Table(name = "sys_user", schema = "public")
 @EntityListeners(UserEntityListener.class)
 public class SysUserEntity implements UserDetails {
+
+
     @Id
     @Column(name = "userid")
     @NotBlank(message = "User ID tidak boleh kosong")
@@ -144,8 +147,8 @@ public class SysUserEntity implements UserDetails {
         return true;
     }
 
-    // Join Column
     @OneToOne
+    @MapsId
     @JoinColumn(name = "userid", referencedColumnName = "nik")
     private KaryawanEntity karyawan;
 }

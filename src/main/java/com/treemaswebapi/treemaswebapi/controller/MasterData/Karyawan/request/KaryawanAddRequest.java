@@ -59,14 +59,15 @@ public class KaryawanAddRequest {
     private MultipartFile fotoKk;
     private MultipartFile fotoAsuransi;
 
-    // image path
-    private String fotoPath;
-    private String fotoKtpPath;
-    private String fotoNpwpPath;
-    private String fotoKkPath;
-    private String fotoAsuransiPath;
+    // // image path
+    // private String fotoPath;
+    // private String fotoKtpPath;
+    // private String fotoNpwpPath;
+    // private String fotoKkPath;
+    // private String fotoAsuransiPath;
 
     // different table
     private Role role;
     private String sql_password;
+    private String isLogin;
 }

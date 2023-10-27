@@ -4,12 +4,14 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -35,10 +37,8 @@ import java.util.List;
 @EntityListeners(UserEntityListener.class)
 public class SysUserEntity implements UserDetails {
 
-
     @Id
     @Column(name = "userid")
-    @NotBlank(message = "User ID tidak boleh kosong")
     private String userid;
 
     @Column(name = "branchid")
@@ -65,7 +65,6 @@ public class SysUserEntity implements UserDetails {
     @Column(name = "dtmupd")
     private Timestamp dtmupd;
 
-    @NotBlank(message = "Is Login tidak boleh kosong")
     @Column(name = "is_login")
     private String isLogin;
 
@@ -147,8 +146,8 @@ public class SysUserEntity implements UserDetails {
         return true;
     }
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "userid", referencedColumnName = "nik")
-    private KaryawanEntity karyawan;
+    // @OneToOne(cascade = CascadeType.ALL)
+    // @MapsId
+    // @JoinColumn(name = "userid")
+    // private KaryawanEntity karyawan;
 }

@@ -3,9 +3,7 @@ package com.treemaswebapi.treemaswebapi.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
@@ -32,7 +30,6 @@ public class KaryawanEntity {
 
     @Id
     @Column(name = "nik")
-    @NotBlank(message = "NIK tidak boleh kosong")
     private String nik;
 
     @Column(name = "nama")
@@ -131,11 +128,11 @@ public class KaryawanEntity {
     @Column(name = "is_karyawan")
     private String isKaryawan;
 
-    // Join Table NIK
-    @OneToOne(mappedBy = "karyawan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private KaryawanImageEntity karyawanImage;
+    // @OneToOne(mappedBy = "karyawan", cascade = CascadeType.ALL)
+    // @PrimaryKeyJoinColumn
+    // private SysUserEntity sysUserEntity;
 
-    @OneToOne(mappedBy = "karyawan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private SysUserEntity sysUser;
-
+    // @OneToOne(mappedBy = "karyawan2", cascade = CascadeType.ALL)
+    // @PrimaryKeyJoinColumn
+    // private KaryawanImageEntity karyawanImageEntity;
 }

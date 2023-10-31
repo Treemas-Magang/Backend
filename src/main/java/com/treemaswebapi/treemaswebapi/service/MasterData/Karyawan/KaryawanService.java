@@ -1,7 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Karyawan;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
-import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
-import com.treemaswebapi.treemaswebapi.entity.KaryawanImageEntity;
-import com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
@@ -124,13 +123,13 @@ import lombok.RequiredArgsConstructor;
 
 
 
-            Map<String, String> response = new HashMap();
+            Map<String, String> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Registration Successful");
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            Map<String, String> response = new HashMap();
+            Map<String, String> response = new HashMap<>();
             response.put("status", "Failed");
             response.put("message", "Registration Failed");
             response.put("error", e.getMessage());

@@ -7,14 +7,10 @@
     import org.springframework.http.ResponseEntity;
     import org.springframework.security.authentication.AuthenticationManager;
     import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-    import org.springframework.security.crypto.password.PasswordEncoder;
     import org.springframework.stereotype.Service;
 
     import com.treemaswebapi.treemaswebapi.config.JwtService;
     import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
-    import com.treemaswebapi.treemaswebapi.controller.AuthController.RegisterRequest;
-    import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
-    import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
     import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 

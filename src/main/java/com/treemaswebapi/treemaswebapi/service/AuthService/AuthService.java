@@ -11,7 +11,8 @@
 
     import com.treemaswebapi.treemaswebapi.config.JwtService;
     import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
-    import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+
+import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import lombok.RequiredArgsConstructor;

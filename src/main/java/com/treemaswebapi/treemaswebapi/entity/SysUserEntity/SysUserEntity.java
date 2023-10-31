@@ -23,6 +23,8 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
+// butuh join column dengan sys_user_branch
+
 @Data
 @Builder
 @NoArgsConstructor

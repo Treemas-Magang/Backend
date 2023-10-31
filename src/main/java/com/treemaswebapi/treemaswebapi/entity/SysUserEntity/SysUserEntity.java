@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity;
+package com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
@@ -22,6 +22,8 @@ import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
+
+// butuh join column dengan sys_user_branch
 
 @Data
 @Builder

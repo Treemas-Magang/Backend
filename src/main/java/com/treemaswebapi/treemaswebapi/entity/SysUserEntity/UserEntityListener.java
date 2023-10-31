@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity;
+package com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
 
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;

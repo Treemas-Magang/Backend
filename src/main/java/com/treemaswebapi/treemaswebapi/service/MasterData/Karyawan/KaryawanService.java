@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanImageEntity;
-import com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;

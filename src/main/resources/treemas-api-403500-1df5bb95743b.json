@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "treemas-api-403500",
+  "private_key_id": "1df5bb95743b8c2c14a270dc0f7e946e35bc6ab7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDcfcNqsGOPS/ef\n/i0Nc9P8iet737Z4qw7rq4js1M7ukszcig/kSYbL1cfVIZAgr9YbudHpriBuDM7E\nYVrD5ZgcYVtWRFsOr2Xg/LiFepfc40y468jQh/uuJmIEwldGirGPim5SD1PKGLPv\nPfW1dwyYfVKiX1fBmvTJtJo0xcCuGdjQ1F/ClYmQ1Zk0908qVJKSY7eksYIf+9Rw\n4rm/inWhNXImzWRgs76jHr956YEM5zCpTzlo7YIFc3OcySEZGCZJsWoGrpse5OGN\ncuqf344x8sTzIYLYTc2AqfTXBQOM8WSsQ59C4u4Gh4sqAiNJ5yg0+QsKkeuFF0u4\nrOk4dmNJAgMBAAECggEAJg2EYNDRVeU/9rpIrzYqwz5QSEArPzcSa6TejDUMA4uN\nVJB1Pqpb26jpBIT22VVPZ9iRfDljemq2cpj0r7NbpaY9u60vY+DsfcBP3iVyuRn3\nX0C+FxMo4fzY1MZvhoqgK0wyTvI7PTk3MJZqZeeGYnjafpBi1lR2Y6tKI8pvPvx/\n9HtG0Ee9I+2ldLvR8JZ3nVD1lWIOlyO5zu/eizaZRhqwChAfl4qrskUSyJJdALAZ\nXish8/qYryaWiduDHKRispXOG1RCEilqS22RbDJTDd4J9gQIC/YEN1+0NB9trGVx\nSFEQ2joaKOhbgkLBCQZD7I7SC5Sz8gyli+S7IP3zYwKBgQDxvqZKo9yzMmqKx/V6\n/LeACZTxxaqZtbQOvszQau5ma67TCB5vsOK0yHVT2r8CgqXpFbjiB0UMSv3FbCkJ\n0IHbgPIsp31Pju//JyBESNE/y8tGb0fx3zqgSjLcskssEdp0UMk64pVraF4CLpZi\n4LiT3B0jS8rKzEc1OmOeUD51VwKBgQDpfkYitdjSHwaQkrV4OvVUFj6wLiPvtcp+\nwezdjDe8N7AyWOfAfUq5UwW+G4NRsKDcbAAspXH85Fwt23nIrDil9DQ1AW9ZHElj\nh37vrdQTNQxNtDUNBJJLqGITuPOyy5taprpLfrZdMUsI+UmRXDHUHzdmc6C9gDQa\nyBD6p17oXwKBgGaRO0Dj8VnehDHJ0S+TVc/vQNCry0xYOcMf1QqAtBGkkpJbGX7O\nEAIgIxem8fAAuqAAZWcRKoyirLU8xNSzMMWPGjE0BwjgXpdlZF1Uf+OPdfm2cVIA\nIoGruZTF2PsjwAol1Js1U6w0pd5LIedl7Spe88Xr/Gi672N4GJgs97MVAoGAGbLB\nK17ST0YE5fKPsHzktW2BVsitQdvDPrI/TJ77H2cNqGzqjN/9UmpVzneeu2XyPnBQ\nkJlg81F6570pKTHzRiibel3/EFKxrRejm+OI3NhQ01iLIjSnmVYd/Ue04q/QGGkT\nRe3bSmR7erBdLXd1MICDC26ceV7b3Tq5y6ySIIcCgYEAn/gvjJBdwoYsuV0T6uY1\n+IZZpjF8RXnT8kZioRHLDXUR0UFwqi0wrFErIxAKjmQU9VjQkQD5cy9jYDcY2UqZ\nT4Pbc37P/CRmDi1/FX9NmBBpjIfnZn+EGSfj7UsZ2qVjD9Ut5hX6x+QIBzY9k2QB\n0jvCb7Zlv3A5WAhOZHSn7GA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "instance-service@treemas-api-403500.iam.gserviceaccount.com",
+  "client_id": "113159715675856681473",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/instance-service%40treemas-api-403500.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

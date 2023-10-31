@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.controller.AuthController;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +26,10 @@ public class AuthController {
     ) {
         ResponseEntity<Map<String, Object>> response = service.login(request);
         return response;
+    }
+
+    @GetMapping("/")
+    public String sayHello() {
+        return "Treemas Api";
     }
 }

@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity;
+package com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

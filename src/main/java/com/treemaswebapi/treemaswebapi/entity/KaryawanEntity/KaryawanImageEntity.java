@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity;
+package com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
 
 import java.io.IOException;
 import java.util.Base64;

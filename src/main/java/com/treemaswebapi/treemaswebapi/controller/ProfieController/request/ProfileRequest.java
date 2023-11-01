@@ -70,9 +70,4 @@ public class ProfileRequest {
     private Role role;
     private String sql_password;
     private String isLogin;
-
-    // Password Change
-    private String oldPassword;
-    private String newPassword;
-    private String confirmPassword; 
 }

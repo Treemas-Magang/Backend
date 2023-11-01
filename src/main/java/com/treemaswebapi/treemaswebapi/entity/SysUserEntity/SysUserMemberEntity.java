@@ -1,4 +1,6 @@
-package com.treemaswebapi.treemaswebapi.entity.MasterEntity;
+package com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
+
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,24 +16,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_master_service ", schema = "public")
-public class MasterService {
+@Table(name = "sys_user_member", schema = "public")
+public class SysUserMemberEntity {
     @Id
-    @Column(name = "name")
-    private String name;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "nik_leader")
+    private String nikLeader;
 
-    @Column(name = "type")
-    private String type;
-
-    @Column(name = "run")
-    private String run;
+    @Column(name = "nik_user")
+    private String nikUser;
 
     @Column(name = "usrupd")
     private String usrUpd;
 
     @Column(name = "dtmupd")
-    private java.sql.Timestamp dtmUpd;
+    private Instant dtmUpd;
 }

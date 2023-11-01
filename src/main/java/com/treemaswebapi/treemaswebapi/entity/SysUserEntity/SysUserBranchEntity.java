@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
 
-import java.time.Instant;
+
+import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,26 +12,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// butuh join column dengan sys_user
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "sys_user_member", schema = "public")
-public class SysUserMember {
+@Table(name = "sys_userbranch", schema = "public")
+public class SysUserBranchEntity {
     @Id
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "branchid")
+    private String branchid;
 
-    @Column(name = "nik_leader")
-    private String nikLeader;
-
-    @Column(name = "nik_user")
-    private String nikUser;
+    @Id
+    @Column(name = "userid")
+    private String userId;
 
     @Column(name = "usrupd")
-    private String usrUpd;
+    private String userUpd;
 
     @Column(name = "dtmupd")
-    private Instant dtmUpd;
+    private Timestamp dtmUpd;
 }

@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Builder
 @Data
 @Entity
-@Table(name = "tbl_tipe_claim", schema = "public")
+@Table(name = "tempqueries", schema = "public")
 public class TempQueriesEntity implements Serializable {
 
     @Id

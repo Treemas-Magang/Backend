@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
@@ -39,9 +40,14 @@ import lombok.RequiredArgsConstructor;
             MultipartFile fotoKtp,
             MultipartFile fotoNpwp,
             MultipartFile fotoKk,
-            MultipartFile fotoAsuransi
+            MultipartFile fotoAsuransi,
+            @RequestHeader("Authorization") String jwtToken
         ) {
             try {            
+
+                // Real Token terpisah dari Bearer 
+                String token = jwtToken.substring(7);
+                System.out.println("TOKEN : "+token);
 
                 // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
@@ -86,7 +92,7 @@ import lombok.RequiredArgsConstructor;
                 if("1".equals(isLeader)) {
                     System.out.println("MASUK DIA LEADER");
                     var sysUser = SysUserEntity.builder()
-                        .userid(request.getNik())
+                        .userId(request.getNik())
                         .fullName(request.getNama())
                         .role(Role.LEADER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
@@ -96,7 +102,7 @@ import lombok.RequiredArgsConstructor;
                 } else {
                     System.out.println("MASUK DIA MEMBER");
                     var sysUser = SysUserEntity.builder()
-                        .userid(request.getNik())
+                        .userId(request.getNik())
                         .fullName(request.getNama())
                         .role(Role.USER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null

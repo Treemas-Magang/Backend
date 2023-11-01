@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -17,13 +16,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor 
 @Entity
 @Table(name = "tbl_cuti", schema = "public")
-public class CutiEntity implements Serializable {
+public class CutiEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nik", length = 15)
+    @Column(name = "nik")
     private String nik;
 
     @Column(name = "nama")
@@ -47,28 +46,28 @@ public class CutiEntity implements Serializable {
     @Column(name = "alamat_cuti")
     private String alamatCuti;
 
-    @Column(name = "flg_ket", length = 50)
+    @Column(name = "flg_ket")
     private String flgKet;
 
     @Column(name = "usrcrt")
-    private String usrcrt;
+    private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private Timestamp dtmcrt;
+    private Timestamp dtmCrt;
 
     @Column(name = "usrapp")
-    private String usrapp;
+    private String usrApp;
 
     @Column(name = "dtmapp")
-    private Timestamp dtmapp;
+    private Timestamp dtmApp;
 
-    @Column(name = "flag_app", length = 50)
+    @Column(name = "flag_app")
     private String flagApp;
 
     @Column(name = "note_app")
     private String noteApp;
 
-    @Column(name = "is_approved", length = 1)
+    @Column(name = "is_approved")
     private String isApproved;
 
     @Column(name = "jml_cuti_bersama")

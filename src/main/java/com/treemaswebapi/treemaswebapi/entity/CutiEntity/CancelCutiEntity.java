@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity.CancelCutiEntity;
+package com.treemaswebapi.treemaswebapi.entity.CutiEntity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,11 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+
+// project_id FK dari tbl_project
 
 @Data
 @Builder
@@ -18,22 +19,22 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_cancel_cuti", schema = "public")
-public class CancelCutiEntity implements Serializable {
+public class CancelCutiEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "project_id", length = 20)
+    @Column(name = "project_id")
     private String projectId;
 
-    @Column(name = "nik", length = 15)
+    @Column(name = "nik")
     private String nik;
 
-    @Column(name = "nama", length = 150)
+    @Column(name = "nama")
     private String nama;
 
-    @Column(name = "hari", length = 50)
+    @Column(name = "hari")
     private String hari;
 
     @Column(name = "tgl_absen")
@@ -45,10 +46,10 @@ public class CancelCutiEntity implements Serializable {
     @Column(name = "gps_longitude_msk")
     private Double gpsLongitudeMsk;
 
-    @Column(name = "lokasi_msk", length = 255)
+    @Column(name = "lokasi_msk")
     private String lokasiMsk;
 
-    @Column(name = "jarak_msk", length = 53)
+    @Column(name = "jarak_msk")
     private String jarakMsk;
 
     @Column(name = "jam_msk")
@@ -60,63 +61,63 @@ public class CancelCutiEntity implements Serializable {
     @Column(name = "gps_longitude_plg")
     private Double gpsLongitudePlg;
 
-    @Column(name = "lokasi_plg", length = 255)
+    @Column(name = "lokasi_plg")
     private String lokasiPlg;
 
-    @Column(name = "jarak_plg", length = 53)
+    @Column(name = "jarak_plg")
     private String jarakPlg;
 
     @Column(name = "jam_plg")
     private Time jamPlg;
 
-    @Column(name = "note_pekerjaan", length = 255)
+    @Column(name = "note_pekerjaan")
     private String notePekerjaan;
 
-    @Column(name = "note_telat_msk", length = 255)
+    @Column(name = "note_telat_msk")
     private String noteTelatMsk;
 
-    @Column(name = "note_plg_cepat", length = 255)
+    @Column(name = "note_plg_cepat")
     private String notePlgCepat;
 
-    @Column(name = "note_other", length = 255)
+    @Column(name = "note_other")
     private String noteOther;
 
-    @Column(name = "total_jam_kerja", precision = 18, scale = 0)
+    @Column(name = "total_jam_kerja")
     private BigDecimal totalJamKerja;
 
-    @Column(name = "is_lembur", length = 1)
+    @Column(name = "is_lembur")
     private String isLembur;
 
-    @Column(name = "is_absen", length = 1)
+    @Column(name = "is_absen")
     private String isAbsen;
 
-    @Column(name = "is_sakit", length = 1)
+    @Column(name = "is_sakit")
     private String isSakit;
 
-    @Column(name = "is_cuti", length = 1)
+    @Column(name = "is_cuti")
     private String isCuti;
 
-    @Column(name = "is_libur", length = 1)
+    @Column(name = "is_libur")
     private String isLibur;
 
-    @Column(name = "is_other", length = 1)
+    @Column(name = "is_other")
     private String isOther;
 
-    @Column(name = "is_wfh", length = 1)
-    private String isWFH;
+    @Column(name = "is_wfh")
+    private String isWfh;
 
-    @Column(name = "usrcrt", length = 50)
-    private String usrcrt;
+    @Column(name = "usrcrt")
+    private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private Timestamp dtmcrt;
+    private Timestamp dtmCrt;
 
-    @Column(name = "usrapp", length = 50)
-    private String usrapp;
+    @Column(name = "usrapp")
+    private String usrApp;
 
     @Column(name = "dtmapp")
-    private Timestamp dtmapp;
+    private Timestamp dtmApp;
 
-    @Column(name = "note_app", length = 255)
+    @Column(name = "note_app")
     private String noteApp;
 }

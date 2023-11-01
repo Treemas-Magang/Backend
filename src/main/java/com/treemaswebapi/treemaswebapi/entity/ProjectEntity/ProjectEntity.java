@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -17,19 +16,19 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_project", schema = "public")
-public class ProjectEntity implements Serializable {
+public class ProjectEntity {
 
     @Id
-    @Column(name = "project_id", length = 20, nullable = false)
+    @Column(name = "project_id")
     private String projectId;
 
-    @Column(name = "nama_project", length = 50)
+    @Column(name = "nama_project")
     private String namaProject;
 
-    @Column(name = "lokasi", length = 255)
+    @Column(name = "lokasi")
     private String lokasi;
 
-    @Column(name = "jam_kerja", precision = 18, scale = 0)
+    @Column(name = "jam_kerja")
     private BigDecimal jamKerja;
 
     @Column(name = "jam_masuk")
@@ -38,11 +37,11 @@ public class ProjectEntity implements Serializable {
     @Column(name = "jam_keluar")
     private Time jamKeluar;
 
-    @Column(name = "no_tlpn", length = 64)
+    @Column(name = "no_tlpn")
     private String noTlpn;
 
     @Column(name = "biaya_reimburse")
-    private Double biayaReimburse;
+    private BigDecimal biayaReimburse;
 
     @Column(name = "gps_latitude")
     private Double gpsLatitude;
@@ -50,10 +49,10 @@ public class ProjectEntity implements Serializable {
     @Column(name = "gps_longitude")
     private Double gpsLongitude;
 
-    @Column(name = "kota", length = 150)
+    @Column(name = "kota")
     private String kota;
 
-    @Column(name = "jrk_max", length = 10)
+    @Column(name = "jrk_max")
     private String jrkMax;
 
     @Column(name = "usrupd")

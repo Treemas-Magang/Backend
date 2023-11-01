@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity.ReimburseEntity; // Replace with your actual package name
+package com.treemaswebapi.treemaswebapi.entity.CutiEntity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,18 +8,15 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
-
-// project_id FK dari tbl_project
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_reimburse", schema = "public")
-public class ReimburseEntity {
+@Table(name = "tbl_cuti_app_upload", schema = "public")
+public class CutiAppUploadEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,29 +28,20 @@ public class ReimburseEntity {
     @Column(name = "nama")
     private String nama;
 
-    @Column(name = "hari")
-    private String hari;
+    @Column(name = "tgl_mulai")
+    private Date tglMulai;
 
-    @Column(name = "tanggal")
-    private Date tanggal;
+    @Column(name = "tgl_selesai")
+    private Date tglSelesai;
 
-    @Column(name = "project_id")
-    private String projectId;
+    @Column(name = "tgl_kembali_kerja")
+    private Date tglKembaliKerja;
 
-    @Column(name = "jam_masuk")
-    private Time jamMasuk;
+    @Column(name = "keperluan_cuti")
+    private String keperluanCuti;
 
-    @Column(name = "jam_keluar")
-    private Time jamKeluar;
-
-    @Column(name = "total_jam_kerja")
-    private BigDecimal totalJamKerja;
-
-    @Column(name = "transport")
-    private BigDecimal transport;
-
-    @Column(name = "uang_makan")
-    private BigDecimal uangMakan;
+    @Column(name = "alamat_cuti")
+    private String alamatCuti;
 
     @Column(name = "flg_ket")
     private String flgKet;
@@ -70,9 +58,18 @@ public class ReimburseEntity {
     @Column(name = "dtmapp")
     private Timestamp dtmApp;
 
-    @Column(name = "status")
-    private String status;
+    @Column(name = "flag_app")
+    private String flagApp;
 
     @Column(name = "note_app")
     private String noteApp;
+
+    @Column(name = "is_approved")
+    private String isApproved;
+
+    @Column(name = "jml_cuti_bersama")
+    private BigDecimal jmlCutiBersama;
+
+    @Column(name = "jml_cuti_khusus")
+    private BigDecimal jmlCutiKhusus;
 }

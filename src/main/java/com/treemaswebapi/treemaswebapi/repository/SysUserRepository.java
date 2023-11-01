@@ -9,5 +9,5 @@ import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 
 @Repository
 public interface SysUserRepository extends JpaRepository<SysUserEntity, String> {
-    Optional<SysUserEntity> findByUserid(String userid);
+    Optional<SysUserEntity> findByUserId(String userid);
 }

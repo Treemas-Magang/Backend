@@ -31,9 +31,9 @@ public class MenuEntity implements Serializable {
     private String jabatan;
 
     @Column(name = "usrupd")
-    private String usrupd;
+    private String usrUpd;
 
     @Column(name = "dtmupd")
-    private Timestamp dtmupd;
+    private Timestamp dtmUpd;
 
 }

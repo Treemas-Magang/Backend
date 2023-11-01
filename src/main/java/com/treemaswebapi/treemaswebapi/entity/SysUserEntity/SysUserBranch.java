@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class SysUserBranch {
     @Id
     @Column(name = "branchid")
-    private String branchid;
+    private String branchId;
 
     @Id
     @Column(name = "userid")

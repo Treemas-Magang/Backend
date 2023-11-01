@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity.CutiPenggantiEntity;
+package com.treemaswebapi.treemaswebapi.entity.CutiEntity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -17,13 +16,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor 
 @Entity
 @Table(name = "tbl_cuti_pengganti", schema = "public")
-public class CutiPenggantiEntity implements Serializable {
+public class CutiPenggantiEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nik", length = 15)
+    @Column(name = "nik")
     private String nik;
 
     @Column(name = "tgl_dapat")
@@ -35,12 +34,12 @@ public class CutiPenggantiEntity implements Serializable {
     @Column(name = "note_cuti_pengganti")
     private String noteCutiPengganti;
 
-    @Column(name = "usrcrt", length = 50)
-    private String usrcrt;
+    @Column(name = "usrcrt")
+    private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private Timestamp dtmcrt;
+    private Timestamp dtmCrt;
 
-    @Column(name = "is_exp", length = 1)
+    @Column(name = "is_exp")
     private String isExp;
 }

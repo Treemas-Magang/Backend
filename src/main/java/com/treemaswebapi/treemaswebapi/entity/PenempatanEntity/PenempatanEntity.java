@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+// project_id FK dari tbl_project
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -28,10 +30,10 @@ public class PenempatanEntity implements Serializable {
     private String nik;
 
     @Column(name = "usrupd")
-    private String usrupd;
+    private String ustUpd;
 
     @Column(name = "dtmupd")
-    private Timestamp dtmupd;
+    private Timestamp dtmUpd;
 
     @Column(name = "active")
     private String active;

@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity.ClaimImageEntity;
+package com.treemaswebapi.treemaswebapi.entity.ClaimEntity;
 
 
 import jakarta.persistence.*;
@@ -7,9 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+
+// id_claim FK dari tbl_tipe_claim
 
 @Data
 @Builder
@@ -17,27 +18,27 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_claim_image", schema = "public")
-public class ClaimImageEntity implements Serializable {
+public class ClaimImageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nik", length = 15)
+    @Column(name = "nik")
     private String nik;
 
     @Column(name = "tanggal")
     private Date tanggal;
 
-    @Column(name = "id_claim", length = 50)
+    @Column(name = "id_claim")
     private String idClaim;
 
     @Column(name = "image_64")
     private String image64;
 
-    @Column(name = "usrcrt", length = 50)
-    private String usrcrt;
+    @Column(name = "usrcrt")
+    private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private Timestamp dtmcrt;
+    private Timestamp dtmCrt;
 }

@@ -9,8 +9,8 @@
 // import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.stereotype.Service;
 
-// import com.treemaswebapi.treemaswebapi.controller.ProfieController.ProfileRequest;
-// import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
+// import com.treemaswebapi.treemaswebapi.controller.ProfieController.request.ProfileRequest;
+// import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 // import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 
 // import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@
 // @RequiredArgsConstructor
 // public class ProfileService {
     
-//     private final KaryawanRepository userRepository;
+//     private final KaryawanRepository karyawanRepository;
 //     private final PasswordEncoder passwordEncoder;
     
 //     public ResponseEntity<Map<String, Object>> updateProfile(ProfileRequest request) {
 //         try {
 //             // User hasil compare nik dari request dengan database
-//             Optional<KaryawanEntity> optionalUser = userRepository.findByNik(request.getNik());
+//             Optional<KaryawanEntity> optionalUser = karyawanRepository.findByNik(request.getNik());
 
 //             // Kalau Usernya ditemukan di database
 //             if (optionalUser.isPresent()) {
@@ -78,7 +78,7 @@
 //                             .jenisKaryawan(request.getJenisKaryawan())
 //                             .build();
 
-//                             userRepository.save(updatedUser);
+//                             karyawanRepository.save(updatedUser);
 
 //                             Map<String, Object> data = new HashMap<>();
 //                             data.put("user", updatedUser);
@@ -127,7 +127,7 @@
 //                         .jenisKaryawan(request.getJenisKaryawan())
 //                         .build();
 
-//                         userRepository.save(updatedUser);
+//                         karyawanRepository.save(updatedUser);
 
 //                         Map<String, Object> data = new HashMap<>();
 //                         data.put("user", updatedUser);

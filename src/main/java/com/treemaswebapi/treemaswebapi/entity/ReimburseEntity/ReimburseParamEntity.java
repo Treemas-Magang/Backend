@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.entity.ReimburseParamEntity;
+package com.treemaswebapi.treemaswebapi.entity.ReimburseEntity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
@@ -15,21 +14,21 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "tbl_reimburse_param", schema = "public")
-public class ReimburseParamEntity implements Serializable {
+public class ReimburseParamEntity {
 
     @Id
-    @Column(name = "reimburse_id", length = 10, nullable = false)
+    @Column(name = "reimburse_id")
     private String reimburseId;
 
-    @Column(name = "nama", length = 50)
+    @Column(name = "nama")
     private String nama;
 
     @Column(name = "nominal")
     private BigDecimal nominal;
 
-    @Column(name = "note", length = 255)
+    @Column(name = "note")
     private String note;
 
-    @Column(name = "is_leader", length = 1)
+    @Column(name = "is_leader")
     private String isLeader;
 }

@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getNik(), request.getPassword())
             );
-            var user = sysUserRepository.findByUserid(request.getNik())
+            var user = sysUserRepository.findByUserId(request.getNik())
                 .orElseThrow();
 
             var isHandsetImei = karyawanRepository.findByNik(request.getNik());
@@ -47,7 +47,7 @@ import lombok.RequiredArgsConstructor;
             var jwtToken = jwtService.generateToken(user);
             
             Map<String, Object> userData = new HashMap<>();
-            userData.put("nik", user.getUserid()); 
+            userData.put("nik", user.getUserId()); 
             userData.put("namaKaryawan", user.getFullName());
             userData.put("email", user.getEmail());
             userData.put("role", user.getRole().toString());

@@ -1,32 +1,35 @@
-package com.treemaswebapi.treemaswebapi.entity.CutiAppUploadEntity;
+package com.treemaswebapi.treemaswebapi.entity.CutiEntity;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Timestamp;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_cuti_app_upload", schema = "public")
-public class CutiAppUploadEntity implements Serializable {
-
+@Table(name = "tbl_cuti_app", schema = "public")
+public class CutiAppEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nik", length = 15)
+    @Column(name = "nik")
     private String nik;
 
-    @Column(name = "nama", length = 150)
+    @Column(name = "nama")
     private String nama;
 
     @Column(name = "tgl_mulai")
@@ -38,37 +41,34 @@ public class CutiAppUploadEntity implements Serializable {
     @Column(name = "tgl_kembali_kerja")
     private Date tglKembaliKerja;
 
-    @Column(name = "jml_cuti")
-    private BigDecimal jmlCuti;
-
     @Column(name = "keperluan_cuti")
     private String keperluanCuti;
 
     @Column(name = "alamat_cuti")
     private String alamatCuti;
 
-    @Column(name = "flg_ket", length = 50)
+    @Column(name = "flg_ket")
     private String flgKet;
 
-    @Column(name = "usrcrt", length = 50)
-    private String usrcrt;
+    @Column(name = "usrcrt")
+    private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private Timestamp dtmcrt;
+    private Timestamp dtmCrt;
 
-    @Column(name = "usrapp", length = 50)
-    private String usrapp;
+    @Column(name = "usrapp")
+    private String usrApp;
 
     @Column(name = "dtmapp")
-    private Timestamp dtmapp;
+    private Timestamp dtmApp;
 
-    @Column(name = "flag_app", length = 50)
+    @Column(name = "flag_app")
     private String flagApp;
 
     @Column(name = "note_app")
     private String noteApp;
 
-    @Column(name = "is_approved", length = 1)
+    @Column(name = "is_approved")
     private String isApproved;
 
     @Column(name = "jml_cuti_bersama")
@@ -76,4 +76,7 @@ public class CutiAppUploadEntity implements Serializable {
 
     @Column(name = "jml_cuti_khusus")
     private BigDecimal jmlCutiKhusus;
+
+    @Column(name = "sisa_cuti")
+    private BigDecimal sisaCuti;
 }

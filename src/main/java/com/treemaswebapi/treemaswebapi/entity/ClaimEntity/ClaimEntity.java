@@ -6,9 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Timestamp;
+
+// id_claim FK dari tbl_tipe_claim
 
 @Data
 @Builder
@@ -16,19 +18,19 @@ import java.sql.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_claim", schema = "public")
-public class ClaimEntity implements Serializable {
+public class ClaimEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nik", length = 15)
+    @Column(name = "nik")
     private String nik;
 
-    @Column(name = "nama", length = 150)
+    @Column(name = "nama")
     private String nama;
 
-    @Column(name = "hari", length = 50)
+    @Column(name = "hari")
     private String hari;
 
     @Column(name = "tanggal")
@@ -37,12 +39,15 @@ public class ClaimEntity implements Serializable {
     @Column(name = "nominal")
     private BigDecimal nominal;
 
-    @Column(name = "id_claim", length = 50)
+    @Column(name = "id_claim")
     private String idClaim;
 
     @Column(name = "keterangan")
     private String keterangan;
 
-    @Column(name = "usrcrt", length = 50)
-    private String usrcrt;
+    @Column(name = "usrcrt")
+    private String usrCrt;
+    
+    @Column(name = "dtmcrt")
+    private Timestamp dtmCrt;
 }

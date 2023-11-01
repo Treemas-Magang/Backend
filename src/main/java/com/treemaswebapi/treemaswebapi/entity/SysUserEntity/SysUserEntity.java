@@ -36,10 +36,10 @@ public class SysUserEntity implements UserDetails {
 
     @Id
     @Column(name = "userid")
-    private String userid;
+    private String userId;
 
     @Column(name = "branchid")
-    private String branchid;
+    private String branchId;
 
     @Column(name = "full_name")
     private String fullName;
@@ -51,16 +51,16 @@ public class SysUserEntity implements UserDetails {
     private String sqlPassword;
 
     @Column(name = "usrcrt")
-    private String usrcrt;
+    private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private Timestamp dtmcrt;
+    private Timestamp dtmCrt;
 
     @Column(name = "usrupd")
-    private String usrupd;
+    private String usrUpd;
 
     @Column(name = "dtmupd")
-    private Timestamp dtmupd;
+    private Timestamp dtmUpd;
 
     @Column(name = "is_login")
     private String isLogin;
@@ -120,7 +120,7 @@ public class SysUserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userid;
+        return userId;
     }
 
     @Override

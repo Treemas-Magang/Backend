@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Data
@@ -15,15 +14,15 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @Table(name = "user_location_history", schema = "public")
-public class UserLocationHistoryEntity implements Serializable {
+public class UserLocationHistoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "loc_history_seqno")
     private Long locHistorySeqno;
 
-    @Column(name = "userid", length = 40)
-    private String userid;
+    @Column(name = "userid")
+    private String userId;
 
     @Column(name = "latitude")
     private Double latitude;

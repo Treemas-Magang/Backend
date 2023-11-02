@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.controller.MasterData.Announcement;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,13 @@ public class AnnouncementController {
         @RequestHeader("Authorization") String jwtToken
     ) {
         ResponseEntity<Map<String, Object>> response = service.announcementAdd(image, request, jwtToken);
+        return response;
+    }
+
+    @GetMapping("/announcement-view")
+    public ResponseEntity<Map<String, Object>> announcementGet(
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.announcementGet();
         return response;
     }
 }

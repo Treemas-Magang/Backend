@@ -10,5 +10,5 @@ import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectEntity, String> {
 
-    String findByProjectId(String projectId);
+    ProjectEntity findByProjectId(String projectId);
 }

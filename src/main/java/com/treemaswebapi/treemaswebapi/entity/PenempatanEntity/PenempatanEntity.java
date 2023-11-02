@@ -16,6 +16,7 @@ import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Entity
 @Table(name = "tbl_penempatan", schema = "public")
 public class PenempatanEntity implements Serializable {
@@ -35,6 +36,11 @@ public class PenempatanEntity implements Serializable {
 
     @Column(name = "dtmupd")
     private Timestamp dtmUpd;
+    @PrePersist
+    protected void onCreate(){
+     Long currentTimeMillis = System.currentTimeMillis();
+     dtmUpd = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));   
+    }
 
     @Column(name = "active")
     private String active;

@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 
+import java.security.Timestamp;
 import java.util.Date;
 
 import jakarta.persistence.Column;

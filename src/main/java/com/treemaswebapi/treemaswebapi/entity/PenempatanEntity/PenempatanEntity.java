@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+
 // project_id FK dari tbl_project
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,5 +38,9 @@ public class PenempatanEntity implements Serializable {
 
     @Column(name = "active")
     private String active;
+
+    public String getProjectId(String projectId) {
+        return projectId;
+    }
 
 }

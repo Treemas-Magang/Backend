@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
 
 @Repository
-public interface AbsenTrackingRepository extends JpaRepository<AbsenTrackingEntity, String> {
+public interface AbsenTrackingRepository extends JpaRepository<AbsenTrackingEntity, Long> {
 }

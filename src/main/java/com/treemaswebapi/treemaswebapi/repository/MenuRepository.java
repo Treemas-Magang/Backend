@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.MenuEntity.MenuEntity;
 
 @Repository
-public interface MenuRepository extends JpaRepository<MenuEntity, String> {
+public interface MenuRepository extends JpaRepository<MenuEntity, Long> {
 }

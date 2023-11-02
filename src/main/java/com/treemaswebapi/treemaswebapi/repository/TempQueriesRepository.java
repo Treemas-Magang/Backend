@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.TempQueriesEntity.TempQueriesEntity;
 
 @Repository
-public interface TempQueriesRepository extends JpaRepository<TempQueriesEntity, String> {
+public interface TempQueriesRepository extends JpaRepository<TempQueriesEntity, Long> {
 }

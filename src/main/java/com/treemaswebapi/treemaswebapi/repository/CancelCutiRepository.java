@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CancelCutiEntity;
 
 @Repository
-public interface CancelCutiRepository extends JpaRepository<CancelCutiEntity, String> {
+public interface CancelCutiRepository extends JpaRepository<CancelCutiEntity, Long> {
 }
 
 

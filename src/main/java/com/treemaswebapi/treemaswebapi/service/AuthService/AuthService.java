@@ -52,11 +52,12 @@ import lombok.RequiredArgsConstructor;
             
             Map<String, Object> userData = new HashMap<>();
             userData.put("nik", user.getUserId()); 
-            userData.put("namaKaryawan", user.getFullName());
+            userData.put("full_name", user.getFullName());
             userData.put("email", user.getEmail());
             userData.put("role", user.getRole().toString());
+            userData.put("is_pass_chg", user.getIsPassChg());
             isHandsetImei.ifPresent(karyawanEntity -> {
-                userData.put("handset imei", karyawanEntity.getHandsetImei());
+                userData.put("handset_imei", karyawanEntity.getHandsetImei());
             });
 
             Map<String, Object> data = new HashMap<>();

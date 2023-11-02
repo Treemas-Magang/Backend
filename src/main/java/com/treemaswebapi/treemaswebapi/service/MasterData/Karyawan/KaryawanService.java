@@ -62,7 +62,6 @@ import lombok.RequiredArgsConstructor;
                     .kodePos(request.getKodePos())
                     .alamatKtp(request.getAlamatKtp())
                     .noHp(request.getNoHp())
-                    .email(request.getEmail())
                     .noRek(request.getNoRek())
                     .noNpwp(request.getNoNpwp())
                     .jenjangPendidikan(request.getJenjangPendidikan())
@@ -94,6 +93,7 @@ import lombok.RequiredArgsConstructor;
                     System.out.println("MASUK DIA LEADER");
                     var sysUser = SysUserEntity.builder()
                         .userId(request.getNik())
+                        .email(request.getEmail())
                         .fullName(request.getNama())
                         .role(Role.LEADER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
@@ -104,6 +104,7 @@ import lombok.RequiredArgsConstructor;
                     System.out.println("MASUK DIA MEMBER");
                     var sysUser = SysUserEntity.builder()
                         .userId(request.getNik())
+                        .email(request.getEmail())
                         .fullName(request.getNama())
                         .role(Role.USER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null

@@ -1,12 +1,15 @@
 package com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity;
 
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +38,14 @@ public class AnnouncementEntity {
     private String note;
 
     @Column(name = "tgl_upload")
-    private Instant tglUpload;
+    private Timestamp tglUpload;
+
+    @PrePersist
+    protected void onCreate() {
+        long currentTimeMillis = System.currentTimeMillis();
+        // Mengatur tglUpload ke waktu saat ini tanpa fraksi detik
+        tglUpload = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+    }
 
     @Column(name = "image")
     private String image;

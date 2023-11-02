@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.UserActivityLogEntity.UserActivityLogEntity;
 
 @Repository
-public interface UserActivityLogRepository extends JpaRepository<UserActivityLogEntity, String> {
+public interface UserActivityLogRepository extends JpaRepository<UserActivityLogEntity, Long> {
 }

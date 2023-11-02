@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 
 @Repository
-public interface AbsenImgRepository extends JpaRepository<AbsenImgEntity, String> {
+public interface AbsenImgRepository extends JpaRepository<AbsenImgEntity, Long> {
 }

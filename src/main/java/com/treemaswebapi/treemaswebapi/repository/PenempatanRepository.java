@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 
 @Repository
-public interface PenempatanRepository extends JpaRepository<String, String> {
+public interface PenempatanRepository extends JpaRepository<String, Long> {
 
     List<String> findIdByNik(String nik);
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 
 @Repository
-public interface TimesheetRepository extends JpaRepository<TimesheetEntity, String> {
+public interface TimesheetRepository extends JpaRepository<TimesheetEntity, Long> {
 }

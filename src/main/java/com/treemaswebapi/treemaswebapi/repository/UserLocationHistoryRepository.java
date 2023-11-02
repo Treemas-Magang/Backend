@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.UserLocationHistoryEntity.UserLocationHistoryEntity;
 
 @Repository
-public interface UserLocationHistoryRepository extends JpaRepository<UserLocationHistoryEntity, String> {
+public interface UserLocationHistoryRepository extends JpaRepository<UserLocationHistoryEntity, Long> {
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppUploadEntity;
 
 @Repository
-public interface CutiAppUploadRepository extends JpaRepository<CutiAppUploadEntity, String> {
+public interface CutiAppUploadRepository extends JpaRepository<CutiAppUploadEntity, Long> {
 }
 
 

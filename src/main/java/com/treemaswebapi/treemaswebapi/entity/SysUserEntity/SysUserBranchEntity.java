@@ -15,7 +15,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// butuh join column dengan sys_user
+// userId FK dari sys_user
+
 @Data
 @Builder
 @NoArgsConstructor

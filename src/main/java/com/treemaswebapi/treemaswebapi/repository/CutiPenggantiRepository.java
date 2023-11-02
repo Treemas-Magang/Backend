@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiPenggantiEntity;
 
 @Repository
-public interface CutiPenggantiRepository extends JpaRepository<CutiPenggantiEntity, String> {
+public interface CutiPenggantiRepository extends JpaRepository<CutiPenggantiEntity, Long> {
 }

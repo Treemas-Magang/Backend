@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
 
 @Repository
-public interface TipeClaimRepository extends JpaRepository<TipeClaimEntity, String> {
+public interface TipeClaimRepository extends JpaRepository<TipeClaimEntity, Long> {
 }

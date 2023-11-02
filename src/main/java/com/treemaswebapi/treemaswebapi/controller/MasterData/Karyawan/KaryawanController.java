@@ -24,11 +24,11 @@ public class KaryawanController {
 
     @PostMapping("/karyawan-form/add")
     public ResponseEntity<Map<String, String>> karyawanAdd(
-        @RequestPart("foto") MultipartFile foto,
-        @RequestPart("fotoKtp") MultipartFile fotoKtp,
-        @RequestPart("fotoNpwp") MultipartFile fotoNpwp,
-        @RequestPart("fotoKk") MultipartFile fotoKk,
-        @RequestPart("fotoAsuransi") MultipartFile fotoAsuransi,
+        @RequestPart(value = "foto", required = false) MultipartFile foto,
+        @RequestPart(value = "fotoKtp", required = false) MultipartFile fotoKtp,
+        @RequestPart(value = "fotoNpwp", required = false) MultipartFile fotoNpwp,
+        @RequestPart(value = "fotoKk", required = false) MultipartFile fotoKk,
+        @RequestPart(value = "fotoAsuransi", required = false) MultipartFile fotoAsuransi,
         @RequestPart("request") KaryawanAddRequest request,
         @RequestHeader("Authorization") String jwtToken
     ) {

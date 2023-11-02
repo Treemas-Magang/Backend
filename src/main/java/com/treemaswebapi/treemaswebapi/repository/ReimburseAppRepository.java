@@ -7,5 +7,5 @@ import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity
 
 
 @Repository
-public interface ReimburseAppRepository extends JpaRepository<ReimburseAppEntity, String> {
+public interface ReimburseAppRepository extends JpaRepository<ReimburseAppEntity, Long> {
 }

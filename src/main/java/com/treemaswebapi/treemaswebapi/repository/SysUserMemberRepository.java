@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserMemberEntity;
 
 @Repository
-public interface SysUserMemberRepository extends JpaRepository<SysUserMemberEntity, String> {
+public interface SysUserMemberRepository extends JpaRepository<SysUserMemberEntity, Long> {
 }

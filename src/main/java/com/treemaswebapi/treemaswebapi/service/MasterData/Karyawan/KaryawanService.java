@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
@@ -36,11 +37,11 @@ import lombok.RequiredArgsConstructor;
 
         public ResponseEntity<Map<String, String>> karyawanAdd(
             KaryawanAddRequest request,
-            MultipartFile foto,
-            MultipartFile fotoKtp,
-            MultipartFile fotoNpwp,
-            MultipartFile fotoKk,
-            MultipartFile fotoAsuransi,
+            @RequestPart(value = "foto", required = false) MultipartFile foto,
+            @RequestPart(value = "fotoKtp", required = false) MultipartFile fotoKtp,
+            @RequestPart(value = "fotoNpwp", required = false) MultipartFile fotoNpwp,
+            @RequestPart(value = "fotoKk", required = false) MultipartFile fotoKk,
+            @RequestPart(value = "fotoAsuransi", required = false) MultipartFile fotoAsuransi,
             @RequestHeader("Authorization") String jwtToken
         ) {
             try {            
@@ -114,16 +115,16 @@ import lombok.RequiredArgsConstructor;
                 // Mengirim ke table Karyawan Image
                 var karyawanImage = KaryawanImageEntity.builder()
                     .nik(request.getNik())
-                    .foto(convertToBase64(foto))
-                    .fotoKtp(convertToBase64(fotoKtp))
-                    .fotoNpwp(convertToBase64(fotoNpwp))
-                    .fotoKk(convertToBase64(fotoKk))
-                    .fotoAsuransi(convertToBase64(fotoAsuransi))
-                    .fotoPath(foto.getOriginalFilename())
-                    .fotoKtpPath(fotoKtp.getOriginalFilename())
-                    .fotoNpwpPath(fotoNpwp.getOriginalFilename())
-                    .fotoKkPath(fotoKk.getOriginalFilename())
-                    .fotoAsuransiPath(fotoAsuransi.getOriginalFilename())
+                    .foto(foto != null ? convertToBase64(foto) : null)
+                    .fotoKtp(fotoKtp != null ? convertToBase64(fotoKtp) : null)
+                    .fotoNpwp(fotoNpwp != null ? convertToBase64(fotoNpwp) : null)
+                    .fotoKk(fotoKk != null ? convertToBase64(fotoKk) : null)
+                    .fotoAsuransi(fotoAsuransi != null ? convertToBase64(fotoAsuransi) : null)
+                    .fotoPath(foto != null ? foto.getOriginalFilename() : null)
+                    .fotoKtpPath(fotoKtp != null ? fotoKtp.getOriginalFilename() : null)
+                    .fotoNpwpPath(fotoNpwp != null ? fotoNpwp.getOriginalFilename() : null)
+                    .fotoKkPath(fotoKk != null ? fotoKk.getOriginalFilename() : null)
+                    .fotoAsuransiPath(fotoAsuransi != null ? fotoAsuransi.getOriginalFilename() : null)
                 .build();
                 karyawanImageRepository.save(karyawanImage);
 

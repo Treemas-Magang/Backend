@@ -7,5 +7,5 @@ import com.treemaswebapi.treemaswebapi.entity.BeritaEntity.BeritaEntity;
 
 
 @Repository
-public interface BeritaRepository extends JpaRepository<BeritaEntity, String> {
+public interface BeritaRepository extends JpaRepository<BeritaEntity, Integer> {
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
 
 @Repository
-public interface ReimburseRepository extends JpaRepository<ReimburseEntity, String> {
+public interface ReimburseRepository extends JpaRepository<ReimburseEntity, Long> {
 }

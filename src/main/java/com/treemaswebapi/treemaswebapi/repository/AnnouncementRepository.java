@@ -8,4 +8,5 @@ import com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity.AnnouncementEnt
 
 @Repository
 public interface AnnouncementRepository extends JpaRepository<AnnouncementEntity, Long> {
+    
 }

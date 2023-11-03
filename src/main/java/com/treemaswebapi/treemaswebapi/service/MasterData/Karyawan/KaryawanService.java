@@ -1,7 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Karyawan;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,12 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
-import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
-import com.treemaswebapi.treemaswebapi.entity.KaryawanImageEntity;
-import com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
@@ -36,13 +37,18 @@ import lombok.RequiredArgsConstructor;
 
         public ResponseEntity<Map<String, String>> karyawanAdd(
             KaryawanAddRequest request,
-            MultipartFile foto,
-            MultipartFile fotoKtp,
-            MultipartFile fotoNpwp,
-            MultipartFile fotoKk,
-            MultipartFile fotoAsuransi
+            @RequestPart(value = "foto", required = false) MultipartFile foto,
+            @RequestPart(value = "fotoKtp", required = false) MultipartFile fotoKtp,
+            @RequestPart(value = "fotoNpwp", required = false) MultipartFile fotoNpwp,
+            @RequestPart(value = "fotoKk", required = false) MultipartFile fotoKk,
+            @RequestPart(value = "fotoAsuransi", required = false) MultipartFile fotoAsuransi,
+            @RequestHeader("Authorization") String jwtToken
         ) {
             try {            
+
+                // Real Token terpisah dari Bearer 
+                String token = jwtToken.substring(7);
+                System.out.println("TOKEN : "+token);
 
                 // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
@@ -56,7 +62,6 @@ import lombok.RequiredArgsConstructor;
                     .kodePos(request.getKodePos())
                     .alamatKtp(request.getAlamatKtp())
                     .noHp(request.getNoHp())
-                    .email(request.getEmail())
                     .noRek(request.getNoRek())
                     .noNpwp(request.getNoNpwp())
                     .jenjangPendidikan(request.getJenjangPendidikan())
@@ -87,7 +92,8 @@ import lombok.RequiredArgsConstructor;
                 if("1".equals(isLeader)) {
                     System.out.println("MASUK DIA LEADER");
                     var sysUser = SysUserEntity.builder()
-                        .userid(request.getNik())
+                        .userId(request.getNik())
+                        .email(request.getEmail())
                         .fullName(request.getNama())
                         .role(Role.LEADER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
@@ -97,7 +103,8 @@ import lombok.RequiredArgsConstructor;
                 } else {
                     System.out.println("MASUK DIA MEMBER");
                     var sysUser = SysUserEntity.builder()
-                        .userid(request.getNik())
+                        .userId(request.getNik())
+                        .email(request.getEmail())
                         .fullName(request.getNama())
                         .role(Role.USER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
@@ -109,28 +116,28 @@ import lombok.RequiredArgsConstructor;
                 // Mengirim ke table Karyawan Image
                 var karyawanImage = KaryawanImageEntity.builder()
                     .nik(request.getNik())
-                    .foto(convertToBase64(foto))
-                    .fotoKtp(convertToBase64(fotoKtp))
-                    .fotoNpwp(convertToBase64(fotoNpwp))
-                    .fotoKk(convertToBase64(fotoKk))
-                    .fotoAsuransi(convertToBase64(fotoAsuransi))
-                    .fotoPath(foto.getOriginalFilename())
-                    .fotoKtpPath(fotoKtp.getOriginalFilename())
-                    .fotoNpwpPath(fotoNpwp.getOriginalFilename())
-                    .fotoKkPath(fotoKk.getOriginalFilename())
-                    .fotoAsuransiPath(fotoAsuransi.getOriginalFilename())
+                    .foto(foto != null ? convertToBase64(foto) : null)
+                    .fotoKtp(fotoKtp != null ? convertToBase64(fotoKtp) : null)
+                    .fotoNpwp(fotoNpwp != null ? convertToBase64(fotoNpwp) : null)
+                    .fotoKk(fotoKk != null ? convertToBase64(fotoKk) : null)
+                    .fotoAsuransi(fotoAsuransi != null ? convertToBase64(fotoAsuransi) : null)
+                    .fotoPath(foto != null ? foto.getOriginalFilename() : null)
+                    .fotoKtpPath(fotoKtp != null ? fotoKtp.getOriginalFilename() : null)
+                    .fotoNpwpPath(fotoNpwp != null ? fotoNpwp.getOriginalFilename() : null)
+                    .fotoKkPath(fotoKk != null ? fotoKk.getOriginalFilename() : null)
+                    .fotoAsuransiPath(fotoAsuransi != null ? fotoAsuransi.getOriginalFilename() : null)
                 .build();
                 karyawanImageRepository.save(karyawanImage);
 
 
 
-            Map<String, String> response = new HashMap();
+            Map<String, String> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Registration Successful");
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            Map<String, String> response = new HashMap();
+            Map<String, String> response = new HashMap<>();
             response.put("status", "Failed");
             response.put("message", "Registration Failed");
             response.put("error", e.getMessage());

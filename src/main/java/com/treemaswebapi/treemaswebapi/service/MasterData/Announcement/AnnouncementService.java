@@ -81,9 +81,12 @@ public class AnnouncementService {
     public ResponseEntity<Map<String, Object>> announcementGet(){
         try {
             List<AnnouncementEntity> announcements = announcementRepository.findAll(); // Fetch all records from the AnnouncementEntity table
+            int totalAnnouncements = announcements.size();
+
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Announcements Retrieved");
+            response.put("jumlah_announcement", totalAnnouncements);
             response.put("data", announcements);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);

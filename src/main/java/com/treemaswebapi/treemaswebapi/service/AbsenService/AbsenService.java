@@ -14,10 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.AbsenController.request.AbsenRequest;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
@@ -39,7 +41,7 @@ public class AbsenService {
     private final AbsenRepository absenRepository;
     private final AbsenImgRepository absenImgRepository;
 
-    public ResponseEntity<?> getProjectDetails(String tokenWithBearer) {
+    public ResponseEntity<Map<String,Object>> getProjectDetails(String tokenWithBearer) {
         List<ProjectDetails> projectDetails = new ArrayList<>(); // Declare projectDetails outside the if block
 
         try {
@@ -48,10 +50,10 @@ public class AbsenService {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
                 // Look for the projectId(s) that the user has based on their 'nik'.
-                List<String> projectIds = penempatanRepository.findProjectIdByNik(nik);
-
+                List<PenempatanEntity> penempatanEntities = penempatanRepository.findAllByNik(nik);
                 // Iterate through each projectId and fetch project details.
-                for (String projectId : projectIds) {
+                for (PenempatanEntity penempatanEntity : penempatanEntities) {
+                    String projectId = penempatanEntity.getProjectId();
                     ProjectEntity project = projectRepository.findByProjectId(projectId);
                     if (project != null){
                         ProjectDetails projectDetail = new ProjectDetails();
@@ -82,7 +84,7 @@ public class AbsenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    public ResponseEntity<?> updateProject(String tokenWithBearer, @RequestBody String projectId) {
+    public ResponseEntity<Map<String, Object>> updateProject(String tokenWithBearer, @RequestBody String projectId) {
         try {
             String nik = null; // Initialize nik
     
@@ -136,7 +138,7 @@ public class AbsenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    public ResponseEntity<?> inputAbsen(String tokenWithBearer, @RequestBody Map<String, Object> requestBody, @RequestParam("photoAbsen") MultipartFile photoAbsen) {
+    public ResponseEntity<Map<String, Object>> inputAbsen(@RequestHeader("Authorization") String tokenWithBearer, AbsenRequest request, @RequestParam("photoAbsen") MultipartFile photoAbsen) {
     try {
         // 1. Extract the user's nik from the provided token.
         String nik = null;
@@ -151,7 +153,7 @@ public class AbsenService {
 
         if (nik != null) {
             // 2. Retrieve the projectId from penempatanEntity based on the user's nik.
-            String projectId = requestBody.get("projectId").toString();
+            String projectId = request.getProjectId();
 
             List<String> registeredProjects = penempatanRepository.findProjectIdByNik(nik);
             if (registeredProjects.contains(projectId)) {
@@ -159,12 +161,14 @@ public class AbsenService {
                     AbsenEntity absenEntity = new AbsenEntity();
                     absenEntity.setProjectId(projectId);
                     absenEntity.setNik(nik);
-                    absenEntity.setNama(requestBody.get("namaProject").toString());
-                    absenEntity.setLokasiMsk(requestBody.get("lokasi").toString());
+                    absenEntity.setNama(request.getNama());
+                    absenEntity.setLokasiMsk(request.getLokasiMsk());
                     absenEntity.setJamMsk(null);
-                    absenEntity.setJarakMsk(requestBody.get("jarak").toString());
+                    absenEntity.setJarakMsk(request.getJarakMsk());
                     absenEntity.setTglAbsen(LocalDate.now());
-                    absenEntity.setNoteTelatMsk(requestBody.get("noteTelatMsk").toString());
+                    absenEntity.setNoteTelatMsk(request.getNoteTelatMsk());
+                    absenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
+                    absenEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
 
                     // Save AbsenEntity to the database
                     absenEntity = absenRepository.save(absenEntity);

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
 // project_id FK dari tbl_project
 

@@ -27,7 +27,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/checkBase64Size").permitAll()
+                        .requestMatchers("/api/master-data/karyawan-form/add").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -36,7 +36,7 @@ public class SecurityConfiguration {
                 exc.authenticationEntryPoint((request, response, authException) -> {
                     // Penanganan otentikasi entry point untuk token kadaluarsa
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Invalid Token");
+                    response.getWriter().write(authException.getMessage());
                 })
             )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

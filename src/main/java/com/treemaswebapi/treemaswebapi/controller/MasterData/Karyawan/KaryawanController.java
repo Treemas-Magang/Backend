@@ -29,10 +29,9 @@ public class KaryawanController {
         @RequestPart(value = "fotoNpwp", required = false) MultipartFile fotoNpwp,
         @RequestPart(value = "fotoKk", required = false) MultipartFile fotoKk,
         @RequestPart(value = "fotoAsuransi", required = false) MultipartFile fotoAsuransi,
-        @RequestPart("request") KaryawanAddRequest request,
-        @RequestHeader("Authorization") String jwtToken
+        @RequestPart("request") KaryawanAddRequest request
     ) {
-        ResponseEntity<Map<String, String>> response = service.karyawanAdd(request, foto, fotoKtp, fotoNpwp, fotoKk, fotoAsuransi, jwtToken);
+        ResponseEntity<Map<String, String>> response = service.karyawanAdd(request, foto, fotoKtp, fotoNpwp, fotoKk, fotoAsuransi);
         return response;
     }
 }

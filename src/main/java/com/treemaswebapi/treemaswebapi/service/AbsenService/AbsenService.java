@@ -1,11 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
-import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,9 +98,8 @@ public class AbsenService {
                 PenempatanEntity penempatanEntity = new PenempatanEntity();
                 penempatanEntity.setNik(nik);
                 penempatanEntity.setProjectId(projectId);
-                // Set other fields as needed, such as id, dtmupd, and active.
     
-                // You can obtain the current timestamp for dtmupd, for example:
+                // Yobtain the current timestamp for dtmupd from PostgreSQL automatically:
                 penempatanEntity.setDtmUpd(null);
     
                 // Set the active status
@@ -115,16 +110,16 @@ public class AbsenService {
     
                 // Create a response object with a success message
                 Map<String, Object> response = new HashMap<>();
-                response.put("success", true);
-                response.put("message", "Project updated successfully");
-                response.put("data", penempatanEntity);
+                response.put("success: ", true);
+                response.put("message: ", "Project updated successfully");
+                response.put("data: ", penempatanEntity);
     
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 // Handle the case where nik is null (e.g., token validation failed)
                 Map<String, Object> response = new HashMap<>();
-                response.put("success", false);
-                response.put("message", "Unable to update project");
+                response.put("success: ", false);
+                response.put("message: ", "NIK anda bermasalah. silakan kontak administrator");
     
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }

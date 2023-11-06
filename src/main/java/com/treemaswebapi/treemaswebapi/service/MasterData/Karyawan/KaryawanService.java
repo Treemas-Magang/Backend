@@ -44,8 +44,6 @@ import lombok.RequiredArgsConstructor;
             @RequestPart(value = "fotoAsuransi", required = false) MultipartFile fotoAsuransi
         ) {
             try {            
-
-
                 // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
                     .nik(request.getNik())

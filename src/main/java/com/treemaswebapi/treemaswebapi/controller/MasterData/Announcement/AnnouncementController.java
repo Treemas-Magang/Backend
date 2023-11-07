@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.controller.MasterData.Announcement;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,15 +43,21 @@ public class AnnouncementController {
         return response;
     }
 
-    @PutMapping("/announcement-form/update/{id}")
+    @PutMapping("/announcement-form/edit/{id}")
     public ResponseEntity<Map<String, Object>> announcementUpdate(
         @PathVariable Long id, 
-        @RequestPart(value = "image", required = false) MultipartFile image,
-        @RequestPart("request") AnnouncementRequest request,
+        @RequestBody AnnouncementRequest request,
         @RequestHeader("Authorization") String jwtToken
         ) {
-        ResponseEntity<Map<String, Object>> response = service.announcementUpdate(id,image,request,jwtToken);
+        ResponseEntity<Map<String, Object>> response = service.announcementUpdate(id,request,jwtToken);
         return response;
     }
 
+    @DeleteMapping("/announcement-form/delete/{id}")
+    public ResponseEntity<Map<String, String>> announcementDelete(
+        @PathVariable Long id
+    ) {
+        ResponseEntity<Map<String, String>> response = service.announcementDelete(id);
+        return response;
+    }
 }

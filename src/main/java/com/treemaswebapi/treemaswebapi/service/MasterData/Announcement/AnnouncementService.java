@@ -36,7 +36,7 @@ public class AnnouncementService {
     private final JwtService jwtService;
 
     public ResponseEntity<Map<String, Object>> announcementAdd(
-        @RequestPart(value = "image", required = false) MultipartFile image,
+        // @RequestPart(value = "image", required = false) MultipartFile image,
         AnnouncementRequest request,
         @RequestHeader("Authorization") String jwtToken
     )  {
@@ -56,8 +56,8 @@ public class AnnouncementService {
                 .title(request.getTitle())
                 .header(request.getHeader())
                 .note(request.getNote())
-                .image64(image != null ? convertToBase64(image) : null)
-                .image(image.getOriginalFilename())
+                .image64(request.getImage64())
+                .image(request.getImage())
                 .footer(request.getFooter())
                 .usrCrt(nama)
             .build();
@@ -104,6 +104,7 @@ public class AnnouncementService {
                 formattedAnnouncement.put("note", announcement.getNote());
                 formattedAnnouncement.put("footer", announcement.getFooter());
                 formattedAnnouncement.put("image64", announcement.getImage64());
+                formattedAnnouncement.put("image", announcement.getImage());
                 
                 // Tambahan properti lain yang ingin Anda tampilkan
                 formattedAnnouncement.put("usrCrt", announcement.getUsrCrt());
@@ -153,8 +154,8 @@ public class AnnouncementService {
 
             if (image != null) {
                 // Jika ada gambar yang diunggah, Anda dapat mengelola gambar di sini
-                announcement.setImage64(convertToBase64(image)); // Ubah sesuai dengan cara Anda mengelola gambar
-                announcement.setImage(image.getOriginalFilename()); // Ubah sesuai dengan cara Anda mengelola gambar
+                announcement.setImage64(request.getImage64()); // Ubah sesuai dengan cara Anda mengelola gambar
+                announcement.setImage(request.getImage()); // Ubah sesuai dengan cara Anda mengelola gambar
             }
 
             announcementRepository.save(announcement);

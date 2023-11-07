@@ -17,4 +17,5 @@ public class AnnouncementRequest {
     private String note;
     private String footer;
     private String image64;
+    private String image;
 }

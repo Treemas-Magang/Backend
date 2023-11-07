@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +20,7 @@ import java.math.BigDecimal;
 public class TipeClaimEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_claim")
     private Long idClaim;
 

@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Announcement.request.AnnouncementRequest;
 import com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity.AnnouncementEntity;
+import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.repository.AnnouncementRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
@@ -36,7 +37,7 @@ public class AnnouncementService {
     private final JwtService jwtService;
 
     public ResponseEntity<Map<String, Object>> announcementAdd(
-        @RequestPart(value = "image", required = false) MultipartFile image,
+        // @RequestPart(value = "image", required = false) MultipartFile image,
         AnnouncementRequest request,
         @RequestHeader("Authorization") String jwtToken
     )  {
@@ -56,8 +57,8 @@ public class AnnouncementService {
                 .title(request.getTitle())
                 .header(request.getHeader())
                 .note(request.getNote())
-                .image64(image != null ? convertToBase64(image) : null)
-                .image(image.getOriginalFilename())
+                .image64(request.getImage64())
+                .image(request.getImage())
                 .footer(request.getFooter())
                 .usrCrt(nama)
             .build();
@@ -104,6 +105,7 @@ public class AnnouncementService {
                 formattedAnnouncement.put("note", announcement.getNote());
                 formattedAnnouncement.put("footer", announcement.getFooter());
                 formattedAnnouncement.put("image64", announcement.getImage64());
+                formattedAnnouncement.put("image", announcement.getImage());
                 
                 // Tambahan properti lain yang ingin Anda tampilkan
                 formattedAnnouncement.put("usrCrt", announcement.getUsrCrt());
@@ -130,7 +132,6 @@ public class AnnouncementService {
 
     public ResponseEntity<Map<String, Object>> announcementUpdate(
         Long id,  
-        @RequestPart(value = "image", required = false) MultipartFile image,
         AnnouncementRequest request,
         @RequestHeader("Authorization") String jwtToken
 ){
@@ -150,12 +151,9 @@ public class AnnouncementService {
                 announcement.setNote(request.getNote());
                 announcement.setFooter(request.getFooter());
                 announcement.setUsrCrt(nama);
-
-            if (image != null) {
                 // Jika ada gambar yang diunggah, Anda dapat mengelola gambar di sini
-                announcement.setImage64(convertToBase64(image)); // Ubah sesuai dengan cara Anda mengelola gambar
-                announcement.setImage(image.getOriginalFilename()); // Ubah sesuai dengan cara Anda mengelola gambar
-            }
+                announcement.setImage64(request.getImage64());
+                announcement.setImage(request.getImage()); 
 
             announcementRepository.save(announcement);
 
@@ -183,17 +181,31 @@ public class AnnouncementService {
         }
     }
 
-    // Helper method to convert MultipartFile to Base64
-    private String convertToBase64(MultipartFile file) {
+    public ResponseEntity<Map<String, String>> announcementDelete(
+        Long id
+    ) {
         try {
-            if (file != null) {
-                byte[] bytes = file.getBytes();
-                return Base64.getEncoder().encodeToString(bytes);
+            // Cari Announcement berdasarkan ID
+            Optional<AnnouncementEntity> announcementOptional = announcementRepository.findById(id);
+            if (announcementOptional.isPresent()) {
+                announcementRepository.deleteById(id);
+
+                Map<String, String> response = new HashMap<>();
+                response.put("status", "Success");
+                response.put("message", "Announcement deleted");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                Map<String, String> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Announcement not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-        } catch (IOException e) {
-            // Handle the exception, for example, log it
-            e.printStackTrace();
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Delete Announcement");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        return null; // or an empty string if needed
     }
 }

@@ -39,14 +39,27 @@ import lombok.RequiredArgsConstructor;
             // set Login true
             user.setIsLogin("1");
 
-            Optional<KaryawanEntity> isHandsetImei = karyawanRepository.findByNik(request.getNik());
+            Optional<KaryawanEntity> isHandsetImeiOptional  = karyawanRepository.findByNik(request.getNik());
 
             // Di login process check device id sesuai request dari nik tertentu dan compare ke database,
             // kalo null kita set deviceId nya.
-            isHandsetImei.ifPresent(karyawanEntity -> {
-                karyawanEntity.setHandsetImei(request.getHandsetImei());
-                karyawanRepository.save(karyawanEntity);
-            });
+            if (isHandsetImeiOptional.isPresent()) {
+                KaryawanEntity karyawanEntity = isHandsetImeiOptional.get();
+                String existingHandsetImei = karyawanEntity.getHandsetImei();
+                String requestedHandsetImei = request.getHandsetImei();
+    
+                if (existingHandsetImei == null) {
+                    // If handsetImei in the database is null, set it from the request
+                    karyawanEntity.setHandsetImei(requestedHandsetImei);
+                    karyawanRepository.save(karyawanEntity);
+                } else if (!existingHandsetImei.equals(requestedHandsetImei)) {
+                    // If handsetImei is already set and different from the request, send an unauthorized response
+                    Map<String, Object> unauthorizedResponse = new HashMap<>();
+                    unauthorizedResponse.put("success", false);
+                    unauthorizedResponse.put("message", "Unauthorized: Handset Imei mismatch");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(unauthorizedResponse);
+                }
+            }
 
             var jwtToken = jwtService.generateToken(user);
             
@@ -56,7 +69,7 @@ import lombok.RequiredArgsConstructor;
             userData.put("email", user.getEmail());
             userData.put("role", user.getRole().toString());
             userData.put("is_pass_chg", user.getIsPassChg());
-            isHandsetImei.ifPresent(karyawanEntity -> {
+            isHandsetImeiOptional.ifPresent(karyawanEntity -> {
                 userData.put("handset_imei", karyawanEntity.getHandsetImei());
             });
 

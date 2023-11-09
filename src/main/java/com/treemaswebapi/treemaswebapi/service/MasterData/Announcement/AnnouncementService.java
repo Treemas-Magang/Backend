@@ -49,15 +49,25 @@ public class AnnouncementService {
             Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
             String nama = user.get().getNama();
 
-            System.out.println("INI TOKEN : "+token);
-            System.out.println("INI USER DARI TOKEN : "+userToken);
+            // Pisahkan data gambar dari string request.getImage64()
+            String imageData = null;
+
+            // Periksa apakah string request.getImage64() dimulai dengan "data:image/"
+            if (request.getImage64().startsWith("data:image/")) {
+                // Temukan posisi tanda koma pertama
+                int commaIndex = request.getImage64().indexOf(",");
+                if (commaIndex != -1) {
+                    // Pisahkan data setelah koma
+                    imageData = request.getImage64().substring(commaIndex + 1);
+                }
+            }
 
             // Kirim ke tbl_announcement
             var announcement = AnnouncementEntity.builder()
                 .title(request.getTitle())
                 .header(request.getHeader())
                 .note(request.getNote())
-                .image64(request.getImage64())
+                .image64(imageData)
                 .image(request.getImage())
                 .footer(request.getFooter())
                 .usrCrt(nama)
@@ -151,8 +161,25 @@ public class AnnouncementService {
                 announcement.setNote(request.getNote());
                 announcement.setFooter(request.getFooter());
                 announcement.setUsrCrt(nama);
-                // Jika ada gambar yang diunggah, Anda dapat mengelola gambar di sini
-                announcement.setImage64(request.getImage64());
+                
+                String imageData = null;
+
+                // Periksa apakah string request.getImage64() dimulai dengan "data:image/"
+                if (request.getImage64().startsWith("data:image/")) {
+                    // Temukan posisi tanda koma pertama
+                    int commaIndex = request.getImage64().indexOf(",");
+                    if (commaIndex != -1) {
+                        // Pisahkan data setelah koma
+                        imageData = request.getImage64().substring(commaIndex + 1);
+                    }
+                }
+
+                if (imageData != null) {
+                    // Sekarang, 'imageData' berisi data gambar dalam format base64
+                    // Anda dapat menggunakannya untuk menyimpan atau memproses gambar.
+
+                    announcement.setImage64(imageData);
+                }
                 announcement.setImage(request.getImage()); 
 
             announcementRepository.save(announcement);

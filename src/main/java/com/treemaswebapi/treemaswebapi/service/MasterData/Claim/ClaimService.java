@@ -62,7 +62,7 @@ public class ClaimService {
             response.put("message", "Tipe Claim Created");
             response.put("data", data);
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Failed");

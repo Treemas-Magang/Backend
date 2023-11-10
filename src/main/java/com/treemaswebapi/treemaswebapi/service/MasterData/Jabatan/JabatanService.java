@@ -50,18 +50,16 @@ public class JabatanService {
     public ResponseEntity<Map<String, Object>> jabatanGet() {
         try {
             List<JabatanEntity> jabatan = jabatanRepository.findAll();
-            Map<String, Object> data = new HashMap<>();
-            data.put("user", jabatan);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Retrieved");
-            response.put("data", data);
+            response.put("data", jabatan);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Failed");
-            response.put("message", "Failed to retrieve tipe claims");
+            response.put("message", "Failed to retrieve jabatan");
             response.put("error", e.getMessage());
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

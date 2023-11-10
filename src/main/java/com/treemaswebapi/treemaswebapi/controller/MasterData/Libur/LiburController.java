@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.controller.MasterData.Libur;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,5 +29,11 @@ public class LiburController {
     ) {
         ResponseEntity<Map<String, Object>> response = service.liburAdd(request, jwtToken);
         return response;  
+    }
+
+    @GetMapping("/libur-view")
+    public ResponseEntity<Map<String, Object>> liburGet() {
+        ResponseEntity<Map<String,Object>> response = service.liburGet();
+        return response;
     }
 }

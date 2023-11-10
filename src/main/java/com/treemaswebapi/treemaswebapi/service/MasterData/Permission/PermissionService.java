@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Permission;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -48,4 +49,22 @@ public class PermissionService {
         }
     }
 
+    public ResponseEntity<Map<String, Object>> permissionGet() {
+        try {
+            List<PermissionEntity> permission = permissionRepository.findAll();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", permission);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve tipe claims");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 }

@@ -53,14 +53,11 @@ public class ClaimService {
                 .dtmCrt(formattedDtmCrt)
             .build();
             tipeClaimRepository.save(tipeClaim);
-                
-            Map<String, Object> data = new HashMap<>();
-            data.put("user", tipeClaim);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Tipe Claim Created");
-            response.put("data", data);
+            response.put("data", tipeClaim);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {

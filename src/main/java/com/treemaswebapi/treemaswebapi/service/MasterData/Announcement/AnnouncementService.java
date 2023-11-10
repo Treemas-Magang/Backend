@@ -1,27 +1,21 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Announcement;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Announcement.request.AnnouncementRequest;
 import com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity.AnnouncementEntity;
-import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.repository.AnnouncementRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;

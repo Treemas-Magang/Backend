@@ -1,8 +1,6 @@
 package com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity;
 
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

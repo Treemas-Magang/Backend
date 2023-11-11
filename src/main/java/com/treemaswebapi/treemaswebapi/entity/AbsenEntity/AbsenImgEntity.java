@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -47,5 +48,5 @@ public class AbsenImgEntity {
     private String usrUpd;
 
     @Column(name = "dtmupd")
-    private java.sql.Timestamp dtmUpd;
+    private LocalTime dtmUpd;
 }

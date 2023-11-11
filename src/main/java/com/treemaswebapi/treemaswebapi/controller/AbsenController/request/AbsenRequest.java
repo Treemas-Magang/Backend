@@ -5,8 +5,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
-import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 
-import java.security.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -35,7 +35,7 @@ public class AbsenImgEntity {
 
     @Column(name = "tgl_absen")
     @Temporal(TemporalType.DATE)
-    private Date tglAbsen;
+    private LocalDate tglAbsen;
 
     @Column(name = "image")
     private String image;

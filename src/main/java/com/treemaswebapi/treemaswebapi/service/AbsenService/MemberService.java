@@ -12,8 +12,11 @@ import org.springframework.stereotype.Service;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
+import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +26,10 @@ public class MemberService {
     private final PenempatanRepository penempatanRepository;
     private final AbsenRepository absenRepository;
     private final JwtService jwtService;
+    private final ProjectRepository projectRepository;
 
+
+    // fungsi untuk narik data project mana aja yang dipegang si leader
     public ResponseEntity<Map<String, Object>> leaderProjectDetails(String projectId, String tokenWithBearer){
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
@@ -31,7 +37,7 @@ public class MemberService {
                 String nik = jwtService.extractUsername(token);
     
                 // Retrieve project IDs associated with the 'nik'
-                List<String> projectIds = retrieveProjectIdsForNik(nik);
+                List<ProjectDetails> projectIds = retrieveProjectDetailsForNik(nik);
     
                 if (!projectIds.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
@@ -61,28 +67,42 @@ public class MemberService {
         }
     }
 
-    private List<String> retrieveProjectIdsForNik(String nik) {
-        try {
+    private List<ProjectDetails> retrieveProjectDetailsForNik(String nik) {
+    try {
         List<PenempatanEntity> penempatanEntities = penempatanRepository.findAllByNik(nik);
 
-        List<String> projectIds = new ArrayList<>();
+        List<ProjectDetails> projectDetails = new ArrayList<>();
 
         for (PenempatanEntity penempatanEntity : penempatanEntities) {
-            projectIds.add(penempatanEntity.getProjectId());
+            String projectId = penempatanEntity.getProjectId().toString();
+            ProjectEntity project = projectRepository.findByProjectId(projectId);
+
+            if (project != null) {
+                ProjectDetails details = new ProjectDetails();
+                details.setProjectId(project.getProjectId());
+                details.setProjectName(project.getNamaProject());
+                projectDetails.add(details);
+            }
         }
 
-        return projectIds;
+        return projectDetails;
     } catch (Exception e) {
-        // Handle any exceptions that may occur during the retrieval
-        // You can log the exception or return an empty list if needed
         return new ArrayList<>();
     }
-    }
+}
 
-    public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(String projectId, String tokenWithBearer) {
+
+
+
+
+
+
+
+    // fungsi untuk narik data absen secara keseluruhan dengan projectId yang udah dipilih dari front-end
+    public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(ProjectEntity projectId, String tokenWithBearer) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
-                List<AbsenEntity> absenEntities = absenRepository.findByProjectId(projectId);
+                List<AbsenEntity> absenEntities = absenRepository.findAllByProjectId(projectId);
 
                 if (!absenEntities.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();

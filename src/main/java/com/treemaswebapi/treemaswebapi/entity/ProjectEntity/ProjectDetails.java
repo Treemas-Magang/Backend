@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
     public class ProjectDetails {
         private String projectName;
         private String projectAddress;
+        private String projectId;
 
         // Getters and setters
     }

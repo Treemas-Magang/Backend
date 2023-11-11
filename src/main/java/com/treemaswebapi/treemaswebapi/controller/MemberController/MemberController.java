@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.controller.MemberController;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.service.AbsenService.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class MemberController {
 
     @GetMapping("/get-absen-from-project")
     public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(
-            @RequestParam String projectId,
+            @RequestParam ProjectEntity projectId,
             @RequestHeader("Authorization") String tokenWithBearer) {
         return memberService.getAbsenFromProjectId(projectId, tokenWithBearer);
     }

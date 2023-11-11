@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+
 
 // project_id FK dari tbl_project
 
@@ -24,8 +26,9 @@ public class PenempatanEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "project_id")
-    private String projectId;
+    @JoinColumn(name = "project_id")
+    @ManyToOne
+    private ProjectEntity projectId;
 
     @Column(name = "nik")
     private String nik;

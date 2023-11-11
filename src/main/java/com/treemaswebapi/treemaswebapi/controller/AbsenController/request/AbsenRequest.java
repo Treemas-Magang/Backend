@@ -5,6 +5,8 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,6 +50,7 @@ public class AbsenRequest {
     private String usrApp;
     private Timestamp dtmApp;
     private String noteApp;
+    private String photoAbsen;
 }
 
 

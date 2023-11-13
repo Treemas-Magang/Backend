@@ -167,7 +167,7 @@ public class AbsenService {
                 String nik = jwtService.extractUsername(token);
                 if (nik != null) {
                     String projectId = request.getProjectId();
-                    List<KaryawanEntity> karyawanEntities = karyawanRepository.findNamaByNik(nik);
+                    List<KaryawanEntity> karyawanEntities = karyawanRepository.findNamaByNiks(nik);
     
                     if (karyawanEntities.isEmpty()) {
                         // NIK not found in KaryawanEntity
@@ -363,7 +363,7 @@ public class AbsenService {
                 // Check if NIK is valid
                 if (nik != null) {
                     // Retrieve KaryawanEntity by NIK
-                    List<KaryawanEntity> karyawanEntities = karyawanRepository.findNamaByNik(nik);
+                    List<KaryawanEntity> karyawanEntities = karyawanRepository.findNamaByNiks(nik);
                     
                     if (karyawanEntities.isEmpty()) {
                         // NIK not found in KaryawanEntity

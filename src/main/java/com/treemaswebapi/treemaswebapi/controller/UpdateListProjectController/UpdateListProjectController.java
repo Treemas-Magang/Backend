@@ -21,8 +21,7 @@ public class UpdateListProjectController {
 
     @GetMapping("/update-list-projects")
     public ResponseEntity<Map<String, Object>> updateListProjects(@RequestHeader String tokenWithBearer, @RequestBody String projectId) {
-        Map<String, Object> response = projectService.updateListProject(tokenWithBearer, projectId);
-        HttpStatus status = (boolean) response.get("success") ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity response = projectService.listProject(tokenWithBearer, projectId);
+        return response;
     }
 }

@@ -53,14 +53,11 @@ public class ClaimService {
                 .dtmCrt(formattedDtmCrt)
             .build();
             tipeClaimRepository.save(tipeClaim);
-                
-            Map<String, Object> data = new HashMap<>();
-            data.put("user", tipeClaim);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Tipe Claim Created");
-            response.put("data", data);
+            response.put("data", tipeClaim);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
@@ -98,14 +95,11 @@ public class ClaimService {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 tipeClaim.setDtmUpd(LocalDateTime.now().format(formatter));
                 tipeClaimRepository.save(tipeClaim);
-                
-            Map<String, Object> data = new HashMap<>();
-            data.put("user", tipeClaim);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Tipe claim created");
-            response.put("data", data);
+            response.put("data", tipeClaim);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
@@ -156,13 +150,11 @@ public class ClaimService {
     public ResponseEntity<Map<String, Object>> tipeClaimGet() {
         try {
             List<TipeClaimEntity> tipeClaims = tipeClaimRepository.findAll();
-            Map<String, Object> data = new HashMap<>();
-            data.put("user", tipeClaims);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Retrieved");
-            response.put("data", data);
+            response.put("data", tipeClaims);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();

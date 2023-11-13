@@ -54,6 +54,8 @@ public class AnnouncementService {
                     // Pisahkan data setelah koma
                     imageData = request.getImage64().substring(commaIndex + 1);
                 }
+            } else {
+                imageData = "";
             }
 
             // Kirim ke tbl_announcement

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Claim.request.TipeClaimRequest;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Cuti.request.MasterCutiRequest;
+import com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity.AnnouncementEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
@@ -61,11 +62,15 @@ public class CutiService {
                 System.out.println("Masuk Id Baru Pertama Kali");
             }
 
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+
             System.out.println(nama);
             var masterCutiEntity = MasterCutiEntity.builder()
                 .id(id)
                 .cutiDesc(request.getCutiDesc())
                 .value(request.getValue())
+                .dtmCrt(dtmCrt)
                 .usrCrt(nama)
             .build();
             
@@ -135,6 +140,8 @@ public class CutiService {
                 String foundUsrCrt = masterCutiEntity.getUsrCrt();
                 Timestamp foundDtmCrt = masterCutiEntity.getDtmCrt();
 
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp dtmUpd = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
                 // Delete the existing entity
                 masterCutiRepository.deleteById(id);
                 // Create a new entity with the updated ID
@@ -143,17 +150,16 @@ public class CutiService {
                 newMasterCutiEntity.setValue(request.getValue());
                 newMasterCutiEntity.setCutiDesc(request.getCutiDesc());
                 newMasterCutiEntity.setUsrUpd(nama);
-                newMasterCutiEntity.setDtmUpd(new Timestamp(System.currentTimeMillis()));
+                newMasterCutiEntity.setDtmUpd(dtmUpd);
                 newMasterCutiEntity.setUsrCrt(foundUsrCrt);
                 newMasterCutiEntity.setDtmCrt(foundDtmCrt);
                 // Save the new entity
                 masterCutiRepository.save(newMasterCutiEntity);
 
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("status", "Success");
-            response.put("message", "Master Cuti Updated");
-            response.put("data", newMasterCutiEntity);
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Success");
+                response.put("message", "Master Cuti Updated");
+                response.put("data", newMasterCutiEntity);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
@@ -169,6 +175,34 @@ public class CutiService {
             response.put("message", "Failed To Update Master Cuti");
             response.put("error", e.getMessage());
             System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, String>> cutiDelete(
+        String id
+    ) {
+        try {
+            // Cari Announcement berdasarkan ID
+            Optional<MasterCutiEntity> masterCutiOptional = masterCutiRepository.findById(id);
+            if (masterCutiOptional.isPresent()) {
+                masterCutiRepository.deleteById(id);
+
+                Map<String, String> response = new HashMap<>();
+                response.put("status", "Success");
+                response.put("message", "Cuti deleted");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                Map<String, String> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Cuti not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Delete Cuti");
+            response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }

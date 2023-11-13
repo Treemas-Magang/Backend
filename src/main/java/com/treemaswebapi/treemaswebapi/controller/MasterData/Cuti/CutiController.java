@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.controller.MasterData.Cuti;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,5 +50,13 @@ public class CutiController {
     ) {
         ResponseEntity<Map<String, Object>> response = service.cutiUpdate(jwtToken, request, id);
         return response;    
+    }
+
+    @DeleteMapping("/cuti-form/delete/{id}")
+    public ResponseEntity<Map<String, String>> cutiDelete(
+        @PathVariable String id
+    ) {
+        ResponseEntity<Map<String, String>> response = service.cutiDelete(id);
+        return response;
     }
 }

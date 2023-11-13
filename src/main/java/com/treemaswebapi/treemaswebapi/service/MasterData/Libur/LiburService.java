@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Libur.request.LiburRequest;
-import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.LiburEntity.LiburEntity;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
@@ -33,7 +32,7 @@ public class LiburService {
         @RequestHeader("Authorization") String jwtToken
     ){
         try {
-             // Cari siapa yang akses api ini
+            // Cari siapa yang akses api ini
             String token = jwtToken.substring(7);
             String userToken = jwtService.extractUsername(token);
             

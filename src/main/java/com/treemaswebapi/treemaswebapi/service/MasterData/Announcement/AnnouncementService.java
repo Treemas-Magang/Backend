@@ -178,13 +178,10 @@ public class AnnouncementService {
 
             announcementRepository.save(announcement);
 
-            Map<String, Object> data = new HashMap<>();
-            data.put("user", announcement);
-
                 Map<String, Object> response = new HashMap<>();
                 response.put("status", "Success");
                 response.put("message", "Announcement updated successfully");
-                response.put("data", data);
+                response.put("data", announcement);
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 Map<String, Object> response = new HashMap<>();

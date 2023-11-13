@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
@@ -30,7 +33,8 @@ public class MemberService {
 
 
     // fungsi untuk narik data project mana aja yang dipegang si leader
-    public ResponseEntity<Map<String, Object>> leaderProjectDetails(String projectId, String tokenWithBearer){
+    // fungsi ini difilter bukan dari backend, tapi dari front-end
+    public ResponseEntity<Map<String, Object>> leaderProjectDetails(@RequestParam String projectId, @RequestHeader String tokenWithBearer){
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
@@ -99,10 +103,10 @@ public class MemberService {
 
 
     // fungsi untuk narik data absen secara keseluruhan dengan projectId yang udah dipilih dari front-end
-    public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(ProjectEntity projectId, String tokenWithBearer) {
+    public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(ProjectEntity projectId, String tokenWithBearer, LocalDate targetDate) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
-                List<AbsenEntity> absenEntities = absenRepository.findAllByProjectId(projectId);
+                List<AbsenEntity> absenEntities = absenRepository.findAllByProjectIdAndTglAbsen(projectId, targetDate);
 
                 if (!absenEntities.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();

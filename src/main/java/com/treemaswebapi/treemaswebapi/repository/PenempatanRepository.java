@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,6 @@ public interface PenempatanRepository extends JpaRepository<PenempatanEntity, Lo
 
     @Query("SELECT p FROM PenempatanEntity p WHERE p.nik = :nik")
     List<PenempatanEntity> findAllByNik(@Param("nik") String nik);
+
+    Optional<PenempatanEntity> findByNikAndActive(String nik, String string);
 }

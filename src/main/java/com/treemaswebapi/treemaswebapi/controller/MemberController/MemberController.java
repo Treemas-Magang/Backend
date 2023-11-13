@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @RestController
@@ -32,6 +33,7 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(
             @RequestParam ProjectEntity projectId,
             @RequestHeader("Authorization") String tokenWithBearer) {
-        return memberService.getAbsenFromProjectId(projectId, tokenWithBearer);
+                LocalDate targetDate = LocalDate.now();
+        return memberService.getAbsenFromProjectId(projectId, tokenWithBearer, targetDate);
     }
 }

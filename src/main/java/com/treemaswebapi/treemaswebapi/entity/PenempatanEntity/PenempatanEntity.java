@@ -34,7 +34,7 @@ public class PenempatanEntity implements Serializable {
     private String nik;
 
     @Column(name = "usrupd")
-    private String ustUpd;
+    private String usrUpd;
 
     @Column(name = "dtmupd")
     private Timestamp dtmUpd;

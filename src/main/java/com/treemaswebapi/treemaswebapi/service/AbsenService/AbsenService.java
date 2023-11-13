@@ -1,7 +1,10 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
+import java.math.BigDecimal;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -75,6 +78,7 @@ public class AbsenService {
                     ProjectEntity project = projectRepository.findByProjectId(projectId);
                     if (project != null){
                         ProjectDetails projectDetail = new ProjectDetails();
+                        projectDetail.setProjectId(projectId);
                         projectDetail.setProjectName(project.getNamaProject());
                         projectDetail.setProjectAddress(project.getLokasi());
                         projectDetails.add(projectDetail);
@@ -188,13 +192,15 @@ public class AbsenService {
                     System.out.println(projectFound);
                     if (projectFound) {
                         ProjectEntity projectIdEntity = projectRepository.findByProjectId(projectId);
-    
+                        long currentTimeMillis = System.currentTimeMillis();
+                        Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
                         if (projectIdEntity != null) {
                             // Save to absen Entity
                             AbsenEntity absenEntity = new AbsenEntity();
                             absenEntity.setProjectId(projectIdEntity);
                             absenEntity.setNik(nik);
                             absenEntity.setNama(nama);
+                            absenEntity.setDtmCrt(dtmCrt);
                             absenEntity.setHari(getIndonesianDayOfWeek(LocalDate.now().getDayOfWeek()));
                             absenEntity.setLokasiMsk(request.getLokasiMsk());
                             absenEntity.setJamMsk(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
@@ -283,17 +289,29 @@ public class AbsenService {
 
                 if (!existingAbsenRecords.isEmpty()) {
                     // User has already done the input-absen for the day
-                    AbsenEntity absenPlgEntity = new AbsenEntity();
+                    AbsenEntity existingAbsenEntity = existingAbsenRecords.get(0);
                     // save ke absenEntity
-                    absenPlgEntity.setNotePekerjaan(request.getNotePekerjaan());
-                    absenPlgEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
-                    absenPlgEntity.setGpsLongitudePlg(request.getGpsLatitudePlg());
-                    absenPlgEntity.setLokasiPlg(request.getLokasiPlg());
-                    absenPlgEntity.setJarakPlg(request.getJarakPlg());
-                    absenPlgEntity.setJamPlg(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
-                    absenPlgEntity.setNotePlgCepat(request.getNotePlgCepat());
-
-                    absenPlgEntity = absenRepository.save(absenPlgEntity);
+                    existingAbsenEntity.setNotePekerjaan(request.getNotePekerjaan());
+                    existingAbsenEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
+                    existingAbsenEntity.setGpsLongitudePlg(request.getGpsLatitudePlg());
+                    existingAbsenEntity.setLokasiPlg(request.getLokasiPlg());
+                    existingAbsenEntity.setJarakPlg(request.getJarakPlg());
+                    existingAbsenEntity.setJamPlg(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+                    existingAbsenEntity.setNotePlgCepat(request.getNotePlgCepat());
+                    LocalTime jamMsk = existingAbsenEntity.getJamMsk();
+                    LocalTime jamPlg = existingAbsenEntity.getJamPlg();
+                    if (jamMsk != null && jamPlg != null) {
+                        BigDecimal hoursPart = new BigDecimal(Duration.between(jamMsk, jamPlg).toHoursPart());
+                        existingAbsenEntity.setTotalJamKerja(hoursPart);
+                        if (hoursPart.compareTo(new BigDecimal(9))>0) {
+                            existingAbsenEntity.setIsAbsen("1");
+                            existingAbsenEntity.setIsLembur("1");
+                        } else {
+                            existingAbsenEntity.setIsAbsen("1");
+                            existingAbsenEntity.setIsLembur("0");
+                        }
+                    }
+                    existingAbsenEntity = absenRepository.save(existingAbsenEntity);
 
                     // save ke absenTrackingEntity
                     AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();
@@ -311,7 +329,7 @@ public class AbsenService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Absen data inserted successfully");
-                    response.put("data", absenPlgEntity);
+                    response.put("data", existingAbsenEntity);
     
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }else{

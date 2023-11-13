@@ -21,9 +21,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> authenticate(
-        @RequestBody LoginRequest request
+        @RequestBody LoginRequest request, boolean isWebAccess
     ) {
-        ResponseEntity<Map<String, Object>> response = service.login(request);
+        ResponseEntity<Map<String, Object>> response = service.login(request, isWebAccess);
         return response;
     }
 }

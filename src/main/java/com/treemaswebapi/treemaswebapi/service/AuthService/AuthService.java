@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
 
-        public ResponseEntity<Map<String, Object>> login(LoginRequest request) {
+        public ResponseEntity<Map<String, Object>> login(LoginRequest request, boolean isWebAccess) {
             try {
                 authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getNik(), request.getPassword())

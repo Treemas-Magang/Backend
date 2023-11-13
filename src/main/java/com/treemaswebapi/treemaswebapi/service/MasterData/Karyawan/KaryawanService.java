@@ -3,7 +3,9 @@ package com.treemaswebapi.treemaswebapi.service.MasterData.Karyawan;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
+import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.LiburEntity.LiburEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
@@ -129,8 +133,6 @@ import lombok.RequiredArgsConstructor;
                 .build();
                 karyawanImageRepository.save(karyawanImage);
 
-
-
             Map<String, String> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Registration Successful");
@@ -145,6 +147,53 @@ import lombok.RequiredArgsConstructor;
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+    public ResponseEntity<Map<String, Object>> karyawanGet() {
+        try {
+            List<KaryawanEntity> karyawan = karyawanRepository.findAll();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", karyawan);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve karyawan");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }   
+
+    public ResponseEntity<Map<String, String>> karyawanDelete(
+        String id
+    ) {
+        try {
+            // Cari Announcement berdasarkan ID
+            Optional<KaryawanEntity> karyawanOptional = karyawanRepository.findByNik(id);
+            if (karyawanOptional.isPresent()) {
+                karyawanRepository.deleteById(id);
+
+                Map<String, String> response = new HashMap<>();
+                response.put("status", "Success");
+                response.put("message", "Jabatan deleted");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                Map<String, String> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Jabatan not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Delete Jabatan");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
     // Helper method to convert MultipartFile to Base64
     private String convertToBase64(MultipartFile file) {
         try {

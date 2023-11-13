@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Libur;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class LiburService {
         @RequestHeader("Authorization") String jwtToken
     ){
         try {
-             // Cari siapa yang akses api ini
+            // Cari siapa yang akses api ini
             String token = jwtToken.substring(7);
             String userToken = jwtService.extractUsername(token);
             
@@ -58,6 +59,25 @@ public class LiburService {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Failed");
             response.put("message", "Failed to Create Libur!");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> liburGet() {
+        try {
+            List<LiburEntity> libur = liburRepository.findAll();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", libur);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve tipe Libur");
             response.put("error", e.getMessage());
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

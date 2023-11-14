@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.treemaswebapi.treemaswebapi.controller.MasterData.Claim.request.TipeClaimRequest;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Cuti.request.MasterCutiRequest;
 import com.treemaswebapi.treemaswebapi.service.MasterData.Cuti.CutiService;
 

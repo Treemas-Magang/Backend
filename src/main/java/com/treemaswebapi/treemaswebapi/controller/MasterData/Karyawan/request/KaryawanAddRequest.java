@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 
 import lombok.AllArgsConstructor;
@@ -54,11 +52,11 @@ public class KaryawanAddRequest {
     private String fullName;
 
     // image file
-    private MultipartFile foto;
-    private MultipartFile fotoKtp;
-    private MultipartFile fotoNpwp;
-    private MultipartFile fotoKk;
-    private MultipartFile fotoAsuransi;
+    private String foto;
+    private String fotoKtp;
+    private String fotoNpwp;
+    private String fotoKk;
+    private String fotoAsuransi;
 
     // image path
     private String fotoPath;

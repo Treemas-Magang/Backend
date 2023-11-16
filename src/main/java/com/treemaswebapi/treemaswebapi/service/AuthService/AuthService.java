@@ -1,17 +1,17 @@
-    package com.treemaswebapi.treemaswebapi.service.AuthService;
+package com.treemaswebapi.treemaswebapi.service.AuthService;
 
-    import java.util.HashMap;
-    import java.util.Map;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
-    import org.springframework.http.ResponseEntity;
-    import org.springframework.security.authentication.AuthenticationManager;
-    import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-    import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Service;
 
-    import com.treemaswebapi.treemaswebapi.config.JwtService;
-    import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
+import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
@@ -30,36 +30,39 @@ import lombok.RequiredArgsConstructor;
 
         public ResponseEntity<Map<String, Object>> login(LoginRequest request) {
             try {
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getNik(), request.getPassword())
-            );
-            var user = sysUserRepository.findByUserId(request.getNik())
-                .orElseThrow();
+                authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getNik(), request.getPassword())
+                );
+                var user = sysUserRepository.findByUserId(request.getNik())
+                    .orElseThrow();
+                
+                // set Login true
+                user.setIsLogin("1");
+                String isWebAccess = request.getIsWebAccess();
 
-            // set Login true
-            user.setIsLogin("1");
+                if ("0".equals(isWebAccess)) { // Check if it's not a web access
 
-            Optional<KaryawanEntity> isHandsetImeiOptional  = karyawanRepository.findByNik(request.getNik());
-
-            // Di login process check device id sesuai request dari nik tertentu dan compare ke database,
-            // kalo null kita set deviceId nya.
-            if (isHandsetImeiOptional.isPresent()) {
-                KaryawanEntity karyawanEntity = isHandsetImeiOptional.get();
-                String existingHandsetImei = karyawanEntity.getHandsetImei();
-                String requestedHandsetImei = request.getHandsetImei();
-    
-                if (existingHandsetImei == null) {
-                    // If handsetImei in the database is null, set it from the request
-                    karyawanEntity.setHandsetImei(requestedHandsetImei);
-                    karyawanRepository.save(karyawanEntity);
-                } else if (!existingHandsetImei.equals(requestedHandsetImei)) {
-                    // If handsetImei is already set and different from the request, send an unauthorized response
-                    Map<String, Object> unauthorizedResponse = new HashMap<>();
-                    unauthorizedResponse.put("success", false);
-                    unauthorizedResponse.put("message", "Unauthorized: Handset Imei mismatch");
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(unauthorizedResponse);
+                    Optional<KaryawanEntity> isHandsetImeiOptional = karyawanRepository.findByNik(request.getNik());
+        
+                    if (isHandsetImeiOptional.isPresent()) {
+                        KaryawanEntity karyawanEntity = isHandsetImeiOptional.get();
+                        String existingHandsetImei = karyawanEntity.getHandsetImei();
+                        String requestedHandsetImei = request.getHandsetImei();
+        
+                        if (existingHandsetImei == null) {
+                            // If handsetImei in the database is null, set it from the request
+                            karyawanEntity.setHandsetImei(requestedHandsetImei);
+                            karyawanRepository.save(karyawanEntity);
+                        } else if (!existingHandsetImei.equals(requestedHandsetImei)) {
+                            // If handsetImei is already set and different from the request, send an unauthorized response
+                            String message = "HANDSET IMEI MISMATCH!";
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("success", false);
+                            response.put("data", message);
+                            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+                        }
+                    }
                 }
-            }
 
             var jwtToken = jwtService.generateToken(user);
             
@@ -69,9 +72,6 @@ import lombok.RequiredArgsConstructor;
             userData.put("email", user.getEmail());
             userData.put("role", user.getRole().toString());
             userData.put("is_pass_chg", user.getIsPassChg());
-            isHandsetImeiOptional.ifPresent(karyawanEntity -> {
-                userData.put("handset_imei", karyawanEntity.getHandsetImei());
-            });
 
             Map<String, Object> data = new HashMap<>();
             data.put("user", userData);

@@ -12,14 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
-import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
-import com.treemaswebapi.treemaswebapi.entity.LiburEntity.LiburEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
@@ -41,11 +38,6 @@ import lombok.RequiredArgsConstructor;
 
         public ResponseEntity<Map<String, String>> karyawanAdd(
             KaryawanAddRequest request,
-            @RequestPart(value = "foto", required = false) MultipartFile foto,
-            @RequestPart(value = "fotoKtp", required = false) MultipartFile fotoKtp,
-            @RequestPart(value = "fotoNpwp", required = false) MultipartFile fotoNpwp,
-            @RequestPart(value = "fotoKk", required = false) MultipartFile fotoKk,
-            @RequestPart(value = "fotoAsuransi", required = false) MultipartFile fotoAsuransi,
             @RequestHeader("Authorization") String jwtToken
         ) {
             try {            
@@ -120,16 +112,16 @@ import lombok.RequiredArgsConstructor;
                 // Mengirim ke table Karyawan Image
                 var karyawanImage = KaryawanImageEntity.builder()
                     .nik(request.getNik())
-                    .foto(foto != null ? convertToBase64(foto) : null)
-                    .fotoKtp(fotoKtp != null ? convertToBase64(fotoKtp) : null)
-                    .fotoNpwp(fotoNpwp != null ? convertToBase64(fotoNpwp) : null)
-                    .fotoKk(fotoKk != null ? convertToBase64(fotoKk) : null)
-                    .fotoAsuransi(fotoAsuransi != null ? convertToBase64(fotoAsuransi) : null)
-                    .fotoPath(foto != null ? foto.getOriginalFilename() : null)
-                    .fotoKtpPath(fotoKtp != null ? fotoKtp.getOriginalFilename() : null)
-                    .fotoNpwpPath(fotoNpwp != null ? fotoNpwp.getOriginalFilename() : null)
-                    .fotoKkPath(fotoKk != null ? fotoKk.getOriginalFilename() : null)
-                    .fotoAsuransiPath(fotoAsuransi != null ? fotoAsuransi.getOriginalFilename() : null)
+                    .foto(request.getFoto() != null ? request.getFoto() : null)
+                    .fotoKtp(request.getFotoKtp() != null ? request.getFotoKtp() : null)
+                    .fotoNpwp(request.getFotoNpwp() != null ? request.getFotoNpwp() : null)
+                    .fotoKk(request.getFotoKk() != null ? request.getFotoKk() : null)
+                    .fotoAsuransi(request.getFotoAsuransi() != null ? request.getFotoAsuransi() : null)
+                    .fotoPath(request.getFotoPath() != null ? request.getFotoPath() : null)
+                    .fotoKtpPath(request.getFotoKtpPath() != null ? request.getFotoKtpPath() : null)
+                    .fotoNpwpPath(request.getFotoNpwpPath() != null ? request.getFotoNpwpPath() : null)
+                    .fotoKkPath(request.getFotoKkPath() != null ? request.getFotoKkPath() : null)
+                    .fotoAsuransiPath(request.getFotoAsuransiPath() != null ? request.getFotoAsuransiPath() : null)
                 .build();
                 karyawanImageRepository.save(karyawanImage);
 
@@ -170,67 +162,32 @@ import lombok.RequiredArgsConstructor;
         String id
     ) {
         try {
-            // Cari Announcement berdasarkan ID
+            // Cari Karyawan di tbl_karyawan berdasarkan ID
             Optional<KaryawanEntity> karyawanOptional = karyawanRepository.findByNik(id);
+            Optional<SysUserEntity> sysUserOptional = sysUserRepository.findByUserId(id);
+            Optional<KaryawanImageEntity> karyawanImageOptional = karyawanImageRepository.findByNik(id);
             if (karyawanOptional.isPresent()) {
                 karyawanRepository.deleteById(id);
-
+                sysUserRepository.deleteById(id);
+                karyawanImageRepository.deleteById(id);
                 Map<String, String> response = new HashMap<>();
                 response.put("status", "Success");
-                response.put("message", "Jabatan deleted");
+                response.put("message", "User deleted");
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 Map<String, String> response = new HashMap<>();
                 response.put("status", "Failed");
-                response.put("message", "Jabatan not found");
+                response.put("message", "User not found");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("status", "Failed");
-            response.put("message", "Failed To Delete Jabatan");
+            response.put("message", "Failed To Delete User");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-
-    // Helper method to convert MultipartFile to Base64
-    private String convertToBase64(MultipartFile file) {
-        try {
-            if (file != null) {
-                byte[] bytes = file.getBytes();
-                return Base64.getEncoder().encodeToString(bytes);
-            }
-        } catch (IOException e) {
-            // Handle the exception, for example, log it
-            e.printStackTrace();
-        }
-        return null; // or an empty string if needed
-    }
-
-    // Helper method to getFile path
-    // public String saveFile(MultipartFile file) {
-    // try {
-    //     // Tentukan lokasi penyimpanan file
-    //     String uploadDirectory = "lokasi/penyimpanan/file";
-        
-    //     // Mendapatkan nama file asli
-    //     String originalFilename = file.getOriginalFilename();
-        
-    //     // Menggabungkan lokasi penyimpanan dengan nama file
-    //     Path filePath = Paths.get(uploadDirectory, originalFilename);
-        
-    //     // Simpan file ke path yang ditentukan
-    //     file.transferTo(filePath.toFile());
-        
-    //     // Mengembalikan path file
-    //     return filePath.toString();
-    // } catch (IOException e) {
-    //     // Tangani kesalahan jika gagal menyimpan file
-    //     e.printStackTrace();
-    //     return null;
-    // }
-//}
 
 
 

@@ -14,4 +14,5 @@ public class  LoginRequest {
     private String nik;
     private String password;
     private String handsetImei;
+    private String isWebAccess;
 }

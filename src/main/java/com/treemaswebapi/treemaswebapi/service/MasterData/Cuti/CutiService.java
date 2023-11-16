@@ -1,8 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Cuti;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
-import com.treemaswebapi.treemaswebapi.controller.MasterData.Claim.request.TipeClaimRequest;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Cuti.request.MasterCutiRequest;
-import com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity.AnnouncementEntity;
-import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;

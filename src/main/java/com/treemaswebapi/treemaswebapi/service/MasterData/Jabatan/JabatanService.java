@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Jabatan.request.JabatanRequest;
-import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.repository.JabatanRepository;
@@ -37,13 +36,11 @@ public class JabatanService {
             .namaJabatan(request.getNamaJabatan())
         .build();
         jabatanRepository.save(jabatanEntity);
-        Map<String, Object> data = new HashMap<>();
-        data.put("user", jabatanEntity);
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", "Success");
         response.put("message", "Jabatan Created");
-        response.put("data", data);
+        response.put("data", jabatanEntity);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {

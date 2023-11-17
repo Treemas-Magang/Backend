@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
+import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +10,14 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.MemberController.request.MemberRequest;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
@@ -34,7 +38,7 @@ public class MemberService {
 
     // fungsi untuk narik data project mana aja yang dipegang si leader
     // fungsi ini difilter bukan dari backend, tapi dari front-end
-    public ResponseEntity<Map<String, Object>> leaderProjectDetails(@RequestParam String projectId, @RequestHeader String tokenWithBearer){
+    public ResponseEntity<Map<String, Object>> leaderProjectDetails(@RequestHeader String tokenWithBearer, @RequestBody MemberRequest request){
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
@@ -73,7 +77,7 @@ public class MemberService {
 
     private List<ProjectDetails> retrieveProjectDetailsForNik(String nik) {
     try {
-        List<PenempatanEntity> penempatanEntities = penempatanRepository.findAllByNik(nik);
+        List<PenempatanEntity> penempatanEntities = penempatanRepository.findByNik(nik);
 
         List<ProjectDetails> projectDetails = new ArrayList<>();
 
@@ -83,7 +87,7 @@ public class MemberService {
 
             if (project != null) {
                 ProjectDetails details = new ProjectDetails();
-                details.setProjectId(project.getProjectId());
+                details.setProjectId(project.getProjectId().toString());
                 details.setProjectName(project.getNamaProject());
                 projectDetails.add(details);
             }
@@ -97,16 +101,11 @@ public class MemberService {
 
 
 
-
-
-
-
-
     // fungsi untuk narik data absen secara keseluruhan dengan projectId yang udah dipilih dari front-end
-    public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(ProjectEntity projectId, String tokenWithBearer, LocalDate targetDate) {
+    public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(@RequestHeader("Authorization") String tokenWithBearer, @RequestBody MemberRequest request) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
-                List<AbsenEntity> absenEntities = absenRepository.findAllByProjectIdAndTglAbsen(projectId, targetDate);
+                List<AbsenEntity> absenEntities = absenRepository.findAllByProjectIdAndTglAbsen(request.getProjectId(), request.getTargetDate());
 
                 if (!absenEntities.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
@@ -138,4 +137,86 @@ public class MemberService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+            public ResponseEntity<Map<String, Object>> headProjectDetails(@RequestHeader String tokenWithBearer, @RequestBody MemberRequest request){
+                try {
+                    if (tokenWithBearer.startsWith("Bearer ")) {
+                        String token = tokenWithBearer.substring("Bearer ".length());
+                        String nik = jwtService.extractUsername(token);
+            
+                        // Retrieve project IDs associated with the 'nik'
+                        List<ProjectDetails> projectIds = retrieveProjectDetailsForHead(nik);
+            
+                        if (!projectIds.isEmpty()) {
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("success", true);
+                            response.put("message", "Project IDs retrieved successfully");
+                            response.put("data", projectIds);
+                            return ResponseEntity.status(HttpStatus.OK).body(response);
+                        } else {
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("success", false);
+                            response.put("message", "No project IDs found for the 'nik'");
+                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                        }
+                    } else {
+                        // Handle the case where the token format is invalid
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", false);
+                        response.put("message", "Invalid token format");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                    }
+                } catch (Exception e) {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Failed to retrieve project IDs");
+                    response.put("error", e.getMessage());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                }
+            }
+
+            private List<ProjectDetails> retrieveProjectDetailsForHead(String nik) {
+            try {
+                List<ProjectEntity> allProject = projectRepository.findAll();
+
+                List<ProjectDetails> projectDetails = new ArrayList<>();
+
+                for (ProjectEntity project : allProject) {
+
+                    if (project != null) {
+                        ProjectDetails details = new ProjectDetails();
+                        details.setProjectId(project.getProjectId().toString());
+                        details.setProjectName(project.getNamaProject());
+                        details.setProjectAddress(project.getLokasi());
+                        projectDetails.add(details);
+                    }
+                }
+
+                return projectDetails;
+            } catch (Exception e) {
+                return new ArrayList<>();
+            }
+        }
+        // public ResponseEntity<Map<String, Object>> getAllAbsen(@RequestHeader("Authorization") String tokenWithBearer, @RequestBody MemberRequest request) {
+        //         try {
+        //             if (tokenWithBearer.startsWith("Bearer ")) {
+        //                 List<AbsenEntity> absenEntities = absenRepository.findAll();
+        //                 AbsenResponse absenResponse = 
+        //             } else {
+        //                 // Handle the case where the token is not valid
+        //                 Map<String, Object> response = new HashMap<>();
+        //                 response.put("success", false);
+        //                 response.put("message", "Invalid token format");
+                        
+        //                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        //             }
+        //         } catch (Exception e) {
+        //             Map<String, Object> response = new HashMap<>();
+        //             response.put("success", false);
+        //             response.put("message", "Failed to retrieve Absen data");
+        //             response.put("error", e.getMessage());
+
+        //             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        //         }
+        //     }
 }

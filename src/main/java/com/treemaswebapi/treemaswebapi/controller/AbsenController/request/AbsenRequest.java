@@ -5,6 +5,8 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AbsenRequest {
 
-    private String projectId;
+    private ProjectEntity projectId;
     private String nik;
     private String nama;
     private String hari;

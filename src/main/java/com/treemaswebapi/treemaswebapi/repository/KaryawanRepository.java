@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
@@ -12,9 +14,7 @@ import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 public interface KaryawanRepository extends JpaRepository<KaryawanEntity, String> {
     Optional<KaryawanEntity> findByNik(String nik);
 
-    List<KaryawanEntity> findNamaByNiks(String nik);
-
-    String findNamaByNik(String nik);
-
+    @Query("SELECT k.nama FROM KaryawanEntity k WHERE k.nik = :nik")
+    String findNamaByNik(@Param("nik") String nik);
 
 }

@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,6 +35,10 @@ import com.treemaswebapi.treemaswebapi.repository.AbsenTrackingRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -61,55 +66,66 @@ public class AbsenService {
         return indonesianDayMap.get(dayOfWeek.toString());
     }
 
-    public ResponseEntity<Map<String,Object>> getProjectDetails(String tokenWithBearer) {
-        List<ProjectDetails> projectDetails = new ArrayList<>(); // Declare projectDetails outside the if block
-
+    public ResponseEntity<Map<String, Object>> getProjectDetails(String tokenWithBearer) {
+        List<ProjectDetails> projectDetails = new ArrayList<>();
+    
         try {
-            // Check if the token is valid, and extract 'nik' from the token.
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
-                
-                // Look for the projectId(s) that the user has based on their 'nik'.
-                List<PenempatanEntity> penempatanEntities = penempatanRepository.findAllByNik(nik);
-                // Iterate through each projectId and fetch project details.
+    
+                List<PenempatanEntity> penempatanEntities = penempatanRepository.findByNik(nik);
+    
                 for (PenempatanEntity penempatanEntity : penempatanEntities) {
                     String projectId = penempatanEntity.getProjectId().toString();
                     ProjectEntity project = projectRepository.findByProjectId(projectId);
-                    if (project != null){
+                    if (project != null) {
                         ProjectDetails projectDetail = new ProjectDetails();
-                        projectDetail.setProjectId(projectId);
+                        projectDetail.setProjectId(projectId.toString());
                         projectDetail.setProjectName(project.getNamaProject());
                         projectDetail.setProjectAddress(project.getLokasi());
                         projectDetails.add(projectDetail);
                     }
                 }
+    
+                Map<String, Object> response = new HashMap<>();
+                if (!projectDetails.isEmpty()) {
+                    response.put("success", true);
+                    response.put("message", "Project details retrieved successfully");
+                    response.put("data", projectDetails);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    response.put("success", false);
+                    response.put("message", "No projects found for the user");
+                    response.put("data", null);
+                    response.put("nik", nik);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                }
             } else {
                 // Handle the case where "Bearer " is not present
                 System.out.println("Invalid token format");
             }
-
-            // Create a response object with project details.
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Project details retrieved successfully");
-            response.put("data", projectDetails);
-
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "error");
             response.put("message", "Failed to retrieve project details");
             response.put("error", e.getMessage());
-
+    
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    
+        // In case of any exception or invalid token format, return an appropriate response
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "Failed to retrieve project details");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+    
+    
     public ResponseEntity<Map<String, Object>> updateProject(@RequestHeader String tokenWithBearer, @RequestBody ProjectEntity projectId) {
         try {
             String nik = null; // Initialize nik
-            
+            String nama = karyawanRepository.findNamaByNik(nik);
             // Check if the token is valid, and extract 'nik' (assuming it's the user ID) from the token.
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
@@ -124,10 +140,9 @@ public class AbsenService {
                 PenempatanEntity penempatanEntity = new PenempatanEntity();
                 penempatanEntity.setNik(nik);
                 penempatanEntity.setProjectId(projectId);
-    
                 // obtain the current timestamp for dtmupd from PostgreSQL automatically:
-                penempatanEntity.setDtmUpd(null);
-    
+                penempatanEntity.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
+                penempatanEntity.setUsrUpd(nama);
                 // Set the active status
                 penempatanEntity.setActive("1");
     
@@ -159,17 +174,19 @@ public class AbsenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    // ini masih salah, karena ngga berhasil kebaca niknya. padahal udah masuk ke dalem kodingan, tapi secara fungsional masi gagal.
+    
+    // masih error, ga ngeluarin PenempatanEntity / ProjectEntity
     public ResponseEntity<Map<String, Object>> inputAbsen(@RequestHeader("Authorization") String tokenWithBearer, AbsenRequest request) {
         try {
+            
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
+                System.out.println(nik);
                 if (nik != null) {
-                    String projectId = request.getProjectId();
-                    List<KaryawanEntity> karyawanEntities = karyawanRepository.findNamaByNiks(nik);
-    
-                    if (karyawanEntities.isEmpty()) {
+                    String nama = karyawanRepository.findNamaByNik(nik);
+                    System.out.println(nama);
+                    if (nama.isEmpty()) {
                         // NIK not found in KaryawanEntity
                         Map<String, Object> response = new HashMap<>();
                         response.put("success", false);
@@ -177,27 +194,27 @@ public class AbsenService {
                         response.put("niknya", nik);
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                     }
-    
-                    String nama = karyawanEntities.get(0).getNama();
-    
-                    List<ProjectEntity> registeredProjects = penempatanRepository.findProjectIdByNik(nik);
+                    List<PenempatanEntity> registeredProjects = penempatanRepository.findAllByNik(nik);
+                    // ini buat ngecek penempatan entitinya, ada apa engga dia
+                    System.out.println("Kesini  " + registeredProjects);
                     boolean projectFound = false;
-    
-                    for (ProjectEntity penempatanEntity : registeredProjects) {
-                        if (penempatanEntity.getProjectId().toString().equals(projectId)) {
+                    String projectRequest = request.getProjectId().getProjectId().toString();
+                    System.out.println("kesini 2  " + projectRequest);
+                    for (PenempatanEntity projReq : registeredProjects) {
+                        if (projReq.getProjectId().getProjectId().equals(projectRequest)) {
                             projectFound = true;
-                            break;
+                            // break;
                         }
                     }
                     System.out.println(projectFound);
                     if (projectFound) {
-                        ProjectEntity projectIdEntity = projectRepository.findByProjectId(projectId);
+                        ProjectEntity project = projectRepository.findByProjectId(projectRequest);
                         long currentTimeMillis = System.currentTimeMillis();
                         Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
-                        if (projectIdEntity != null) {
+                        if (project != null) {
                             // Save to absen Entity
                             AbsenEntity absenEntity = new AbsenEntity();
-                            absenEntity.setProjectId(projectIdEntity);
+                            absenEntity.setProjectId(project);
                             absenEntity.setNik(nik);
                             absenEntity.setNama(nama);
                             absenEntity.setDtmCrt(dtmCrt);
@@ -214,7 +231,7 @@ public class AbsenService {
 
                             // Save to absentrackingentity
                             AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();
-                            absenTrackingEntity.setProjectId(projectIdEntity);
+                            absenTrackingEntity.setProjectId(project);
                             absenTrackingEntity.setNik(nik);
                             absenTrackingEntity.setNama(nama);
                             absenTrackingEntity.setHari(getIndonesianDayOfWeek(LocalDate.now().getDayOfWeek()));
@@ -237,7 +254,7 @@ public class AbsenService {
                             Map<String, Object> response = new HashMap<>();
                             response.put("success", true);
                             response.put("message", "Absen data inserted successfully");
-                            response.put("data", absenEntity);
+                            response.put("data", absenEntity.get);
     
                             return ResponseEntity.status(HttpStatus.OK).body(response);
                         } else {
@@ -293,7 +310,7 @@ public class AbsenService {
                     // save ke absenEntity
                     existingAbsenEntity.setNotePekerjaan(request.getNotePekerjaan());
                     existingAbsenEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
-                    existingAbsenEntity.setGpsLongitudePlg(request.getGpsLatitudePlg());
+                    existingAbsenEntity.setGpsLongitudePlg(request.getGpsLongitudePlg());
                     existingAbsenEntity.setLokasiPlg(request.getLokasiPlg());
                     existingAbsenEntity.setJarakPlg(request.getJarakPlg());
                     existingAbsenEntity.setJamPlg(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
@@ -363,7 +380,7 @@ public class AbsenService {
                 // Check if NIK is valid
                 if (nik != null) {
                     // Retrieve KaryawanEntity by NIK
-                    List<KaryawanEntity> karyawanEntities = karyawanRepository.findNamaByNiks(nik);
+                    String karyawanEntities = karyawanRepository.findNamaByNik(nik);
                     
                     if (karyawanEntities.isEmpty()) {
                         // NIK not found in KaryawanEntity
@@ -375,17 +392,17 @@ public class AbsenService {
                     }
                     
                     // Extracting the user's name from KaryawanEntity (just in case)
-                    String nama = karyawanEntities.get(0).getNama();
+                    String nama = karyawanEntities;
                     
                     // Retrieve registered projects for the user
-                    List<ProjectEntity> registeredProjects = penempatanRepository.findProjectIdByNik(nik);
+                    List<PenempatanEntity> registeredProjects = penempatanRepository.findAllByNik(nik);
                     boolean projectFound = false;
                     
                     // Check if the requested project is among the registered projects
-                    for (ProjectEntity penempatanEntity : registeredProjects) {
-                        if (penempatanEntity.getProjectId().toString().equals(request.getProjectId())) {
+                    for (PenempatanEntity penempatanEntity : registeredProjects) {
+                        if (penempatanEntity.getProjectId().getProjectId().equals(request.getProjectId().getProjectId().toString())) {
                             projectFound = true;
-                            break;
+                            // break;
                         }
                     }
                     
@@ -462,5 +479,35 @@ public class AbsenService {
         response.put("success", false);
         response.put("message", "Unexpected error occurred");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+    public ResponseEntity<Map<String, Object>> getUnprocessedAbsen(String tokenWithBearer) {
+        try {
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                String token = tokenWithBearer.substring("Bearer ".length());
+                String nik = jwtService.extractUsername(token);
+
+                // Search for idAbsen that has no Plg data
+                List<AbsenEntity> unprocessedAbsenList = absenRepository.findIdAbsenByNikAndIsAbsenIsNull(nik);
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("message", "Unprocessed Absen data retrieved successfully");
+                response.put("data", unprocessedAbsenList);
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to retrieve unprocessed Absen data");
+            response.put("error", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 }

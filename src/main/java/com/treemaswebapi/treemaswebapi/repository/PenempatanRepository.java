@@ -17,11 +17,11 @@ public interface PenempatanRepository extends JpaRepository<PenempatanEntity, Lo
 
     List<Long> findIdByNik(String nik);
 
-    @Query("SELECT p.projectId FROM PenempatanEntity p WHERE p.nik = :nik")
-    List<ProjectEntity> findProjectIdByNik(String nik);
+    List<PenempatanEntity> findAllByNik(String nik);
 
-    @Query("SELECT p FROM PenempatanEntity p WHERE p.nik = :nik")
-    List<PenempatanEntity> findAllByNik(@Param("nik") String nik);
+     @Query("SELECT p FROM PenempatanEntity p WHERE p.nik = :nik")
+    List<PenempatanEntity> findByNik(@Param("nik") String nik);
 
     Optional<PenempatanEntity> findByNikAndActive(String nik, String string);
+
 }

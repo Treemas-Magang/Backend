@@ -1,5 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.UpdateListProjectService;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
@@ -31,7 +35,6 @@ public class UpdateListProjectService {
     private final ProjectRepository projectRepository;
     private final PenempatanRepository penempatanRepository;
     private final KaryawanRepository karyawanRepository;
-    private final PenempatanEntity penempatanEntity;
 public ResponseEntity<Map<String, Object>> listProject(@RequestHeader String tokenWithBearer, @RequestBody String projectId){
     Map<String, Object> response = new HashMap<>();
     try{
@@ -67,6 +70,8 @@ public ResponseEntity<Map<String, Object>> listProject(@RequestHeader String tok
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
     }
 }
+
+//updateProject ini fungsinya untuk masukin project yang udah dipilih sama user, dan save ke penempatanEntity
 public ResponseEntity<Map<String, Object>> updateProject(@RequestHeader String tokenWithBearer, @RequestBody List<ProjectEntity> selectedProjects){
     try{
         if(tokenWithBearer.startsWith("Bearer ")){
@@ -75,14 +80,15 @@ public ResponseEntity<Map<String, Object>> updateProject(@RequestHeader String t
             String nama = karyawanRepository.findNamaByNik(nik);
 
             for (ProjectEntity projectId : selectedProjects){
-                Optional<ProjectEntity> projectOptional = projectRepository.findByProjectIds(projectId);
+                Optional<ProjectEntity> projectOptional = projectRepository.findByProjectIdIn(selectedProjects);
                 if (projectOptional.isPresent()){
+                    PenempatanEntity penempatanEntity = new PenempatanEntity();
                     // masukin ke penempatanEntity
                     penempatanEntity.setNik(nik);
                     penempatanEntity.setActive("1");
                     penempatanEntity.setProjectId(projectId);
                     penempatanEntity.setUsrUpd(nama);
-                    penempatanEntity.setDtmUpd(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+                    penempatanEntity.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
 
                     //save ke penempatanEntity
                     penempatanRepository.save(penempatanEntity);

@@ -23,7 +23,7 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> authenticate(
         @RequestBody LoginRequest request, boolean isWebAccess
     ) {
-        ResponseEntity<Map<String, Object>> response = service.login(request, isWebAccess);
+        ResponseEntity<Map<String, Object>> response = service.login(request);
         return response;
     }
 }

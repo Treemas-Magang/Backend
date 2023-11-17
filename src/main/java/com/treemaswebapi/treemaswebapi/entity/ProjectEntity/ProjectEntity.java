@@ -60,4 +60,8 @@ public class ProjectEntity {
 
     @Column(name = "dtmupd")
     private Timestamp dtmupd;
+
+    public ProjectEntity(String projectId) {
+        this.projectId = projectId;
+    }
 }

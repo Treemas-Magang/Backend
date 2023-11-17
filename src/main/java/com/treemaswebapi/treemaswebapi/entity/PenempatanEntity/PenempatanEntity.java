@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalTime;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
@@ -38,13 +37,11 @@ public class PenempatanEntity implements Serializable {
     private String usrUpd;
 
     @Column(name = "dtmupd")
-    private LocalTime dtmUpd;
+    private Timestamp dtmUpd;
 
     @Column(name = "active")
     private String active;
 
-    public String getProjectId(String projectId) {
-        return projectId;
-    }
+    
 
 }

@@ -1,5 +1,5 @@
-package com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request;
+// package com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request;
 
-public class SakitRequest {
+// public class SakitRequest {
     
-}
+// }

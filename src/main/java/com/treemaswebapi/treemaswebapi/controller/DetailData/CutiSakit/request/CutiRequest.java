@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import lombok.AllArgsConstructor;
@@ -17,5 +18,8 @@ public class CutiRequest {
     private Date tglKembaliKerja;
     private String keperluanCuti;
     private String alamatCuti;
-
+    private BigDecimal jmlCutiBersama;
+    private BigDecimal jmlCutiKhusus;
+    private String selectedMasterCutiId;
+    private BigDecimal jmlCuti;
 }

@@ -4,20 +4,26 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.CutiApprove;
 import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.CutiRequest;
 import com.treemaswebapi.treemaswebapi.service.DetailData.CutiSakit.CutiSakitService;
 
+import lombok.RequiredArgsConstructor;
+
 
 @RestController
-@RequestMapping("/api/detail-data")
+@RequestMapping("api/detail-data")
+@RequiredArgsConstructor
 public class CutiSakitController {
-    private CutiSakitService service;
+    private final CutiSakitService service;
 
     @GetMapping("/cuti-view")
     public ResponseEntity<Map<String, Object>> cutiGet() {
@@ -31,12 +37,22 @@ public class CutiSakitController {
         return response;
     }
 
-    // @PostMapping("/cuti-form/add")
-    // public ResponseEntity<Map<String, Object>> cutiAdd(
-    //     @RequestHeader("Authorization") String jwtToken,
-    //     @RequestBody CutiRequest request
-    // ) {
-    //     ResponseEntity<Map<String, Object>> response = service.cutiAdd(jwtToken, request);
-    //     return response;
-    // }
+    @PostMapping("/cuti-form/add")
+    public ResponseEntity<Map<String, Object>> userCutiAdd(
+        @RequestHeader("Authorization") String jwtToken,
+        @RequestBody CutiRequest request
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.userCutiAdd(jwtToken, request);
+        return response;
+    }
+
+    @PutMapping("/cuti-form/approve/{id}")
+    public ResponseEntity<Map<String, Object>> cutiApprove(
+        @RequestHeader("Authorization") String jwtToken,
+        @RequestBody CutiApprove request,
+        @PathVariable Long id
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.cutiApprove(jwtToken, request, id);
+        return response;
+    }
 }

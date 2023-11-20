@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.DetailData.CutiSakit;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,6 +41,7 @@ public class CutiSakitService {
 
     public ResponseEntity<Map<String, Object>> cutiGet() {
         try {
+            // Disetujui atau ditolak
             List<CutiEntity> cutiList  = cutiRepository.findByFlagApp("cuti");
             List<Map<String, Object>> responseData = new ArrayList<>();
 
@@ -58,12 +60,38 @@ public class CutiSakitService {
         
                 responseData.add(cutiData);
             }
+
+            // Menunggu
+            List<CutiAppEntity> cutiAppList  = cutiAppRepository.findByFlgKet("cuti");
+            List<Map<String, Object>> responseDataApp = new ArrayList<>();
+
+            for (CutiAppEntity cutiApp : cutiAppList) {
+                Map<String, Object> cutiDataApp = new HashMap<>();
+                cutiDataApp.put("nik", cutiApp.getNik());
+                cutiDataApp.put("namaKaryawan", cutiApp.getNama());
+                cutiDataApp.put("tglMulai", cutiApp.getTglMulai());
+                cutiDataApp.put("tglSelesai", cutiApp.getTglSelesai());
+                cutiDataApp.put("tglMasuk", cutiApp.getTglKembaliKerja());
+                cutiDataApp.put("jmlCuti", cutiApp.getJmlCuti());
+                cutiDataApp.put("keperluanCuti", cutiApp.getKeperluanCuti());
+                cutiDataApp.put("status", cutiApp.getIsApproved());
+                cutiDataApp.put("usrapp", cutiApp.getUsrApp());
+                cutiDataApp.put("dtmapp", cutiApp.getDtmApp());
+        
+                responseDataApp.add(cutiDataApp);
+            }
+
+            Map<String, Object> dataApporveOrNoOrWait = new HashMap<>();
+            dataApporveOrNoOrWait.put("setujuAtauTolak", responseData);
+            dataApporveOrNoOrWait.put("menunggu", responseDataApp);
         
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Retrieved");
-            response.put("data", responseData);
-        
+            response.put("data", dataApporveOrNoOrWait);
+
+           
+            
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
@@ -129,6 +157,11 @@ public class CutiSakitService {
             MasterCutiEntity masterCutiEntity = masterCutiRepository.findById(request.getSelectedMasterCutiId())
                 .orElseThrow(() -> new RuntimeException("MasterCuti not found for id: " + request.getSelectedMasterCutiId()));
 
+            // Cari hakcuti dari table karyawan dan tempatkan ke tbl cuti di sisa cuti
+            BigDecimal hakCuti = karyawanRepository.findByNik(userToken)
+                .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                .getHakCuti();
+
             // Ke tbl_cuti_app
             var cutiApp = CutiAppEntity.builder()
                 .nik(userToken)
@@ -145,6 +178,7 @@ public class CutiSakitService {
                 .usrCrt(nama)
                 .jmlCuti(request.getJmlCuti())
                 .masterCutiEntity(masterCutiEntity)
+                .sisaCuti(hakCuti)
             .build();
 
             cutiAppRepository.save(cutiApp);
@@ -174,24 +208,55 @@ public class CutiSakitService {
             // Cari siapa yang akses api ini
             String token = jwtToken.substring(7);
             String userToken = jwtService.extractUsername(token);
-            
+
             Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
             String nama = user.get().getNama();
-
             Optional<CutiAppEntity> cutiApp = cutiAppRepository.findById(id);
-            
+
             if(cutiApp.isPresent()) {
+                var cutiAppList = cutiApp.get();
+                // Orang Lain
+                String nikCutiUser = cutiApp.get().getNik();
+                Optional<KaryawanEntity> nikOther = karyawanRepository.findByNik(nikCutiUser);
+
+                BigDecimal hakCuti = karyawanRepository.findByNik(nikCutiUser)
+                .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                .getHakCuti();
 
                 long currentTimeMillis = System.currentTimeMillis();
                 Timestamp dtmApp = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+
+                MasterCutiEntity masterCutiEntity = cutiAppList.getMasterCutiEntity(); // Retrieve from CutiAppEntity
 
                 CutiEntity cutiApproved = new CutiEntity();
                 cutiApproved.setUsrApp(nama);
                 cutiApproved.setDtmApp(dtmApp);
                 cutiApproved.setNoteApp(request.getNoteApp());
-                cutiApproved.setIsApproved(nama);
+                cutiApproved.setIsApproved(request.getIsApproved());
+                cutiApproved.setNik(cutiAppList.getNik());
+                cutiApproved.setNama(cutiAppList.getNama());
+                cutiApproved.setTglMulai(cutiAppList.getTglMulai());
+                cutiApproved.setTglSelesai(cutiAppList.getTglSelesai());
+                cutiApproved.setTglKembaliKerja(cutiAppList.getTglKembaliKerja());
+                cutiApproved.setJmlCuti(cutiAppList.getJmlCuti());
+                cutiApproved.setKeperluanCuti(cutiAppList.getKeperluanCuti());
+                cutiApproved.setAlamatCuti(cutiAppList.getAlamatCuti());
+                cutiApproved.setFlgKet(cutiAppList.getFlgKet());
+                cutiApproved.setDtmCrt(cutiAppList.getDtmCrt());
+                cutiApproved.setUsrCrt(cutiAppList.getUsrCrt());
+                cutiApproved.setMasterCutiEntity(masterCutiEntity);
+                cutiApproved.setSisaCuti(cutiAppList.getSisaCuti());
+                // If isApproved is "1", decrement hakCuti by 1
+                String isApproved = request.getIsApproved();
+                if ("1".equals(isApproved)) {
+                    BigDecimal updatedHakCuti = hakCuti.subtract(BigDecimal.ONE);
+                    nikOther.get().setHakCuti(updatedHakCuti);
+                    karyawanRepository.save(nikOther.get());
+                    cutiApproved.setSisaCuti(updatedHakCuti);
+                }
 
                 cutiRepository.save(cutiApproved);
+                cutiAppRepository.delete(cutiAppList);
                 Map<String, Object> response = new HashMap<>();
                 response.put("status", "Success");
                 response.put("message", "Cuti Approved");
@@ -215,4 +280,5 @@ public class CutiSakitService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
 }

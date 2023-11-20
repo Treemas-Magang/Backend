@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("api/detail-data")
+@RequestMapping("/api/detail-data")
 @RequiredArgsConstructor
 public class CutiSakitController {
     private final CutiSakitService service;

@@ -78,4 +78,8 @@ public class CutiEntity {
 
     @Column(name = "sisa_cuti")
     private BigDecimal sisaCuti;
+
+    @OneToOne
+    @JoinColumn(name = "jenis_cuti", referencedColumnName = "id")
+    private MasterCutiEntity masterCutiEntity;
 }

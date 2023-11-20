@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class CutiApprove {
     private String noteApp;
     private String isApproved;
-    private String usrApp;
 }

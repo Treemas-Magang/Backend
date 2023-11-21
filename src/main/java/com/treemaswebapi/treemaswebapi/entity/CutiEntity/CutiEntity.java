@@ -82,4 +82,5 @@ public class CutiEntity {
     @OneToOne
     @JoinColumn(name = "jenis_cuti", referencedColumnName = "id")
     private MasterCutiEntity masterCutiEntity;
+
 }

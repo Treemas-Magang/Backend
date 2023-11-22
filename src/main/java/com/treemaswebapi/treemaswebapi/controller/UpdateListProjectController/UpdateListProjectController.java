@@ -21,7 +21,7 @@ public class UpdateListProjectController {
 
     @GetMapping("/update-list-projects")
     public ResponseEntity<Map<String, Object>> updateListProjects(@RequestHeader String tokenWithBearer, @RequestBody String projectId) {
-        ResponseEntity response = projectService.listProject(tokenWithBearer, projectId);
+        ResponseEntity<Map<String, Object>> response = projectService.listProject(tokenWithBearer, projectId);
         return response;
     }
 }

@@ -15,16 +15,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.request.AbsenRequest;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
@@ -122,57 +125,48 @@ public class AbsenService {
     }
     
     
-    public ResponseEntity<Map<String, Object>> updateProject(@RequestHeader String tokenWithBearer, @RequestBody ProjectEntity projectId) {
+    public ResponseEntity<Map<String, Object>> updateAbsen(@RequestHeader String tokenWithBearer, @RequestParam("date") LocalDate currentDate, @RequestBody AbsenRequest updateReq) {
         try {
-            String nik = null; // Initialize nik
-            String nama = karyawanRepository.findNamaByNik(nik);
-            // Check if the token is valid, and extract 'nik' (assuming it's the user ID) from the token.
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
-                nik = jwtService.extractUsername(token);
-            } else {
-                // Handle the case where "Bearer " is not present
-                System.out.println("Invalid token format");
-            }
-    
-            if (nik != null) {
-                // Create a new PenempatanEntity
-                PenempatanEntity penempatanEntity = new PenempatanEntity();
-                penempatanEntity.setNik(nik);
-                penempatanEntity.setProjectId(projectId);
-                // obtain the current timestamp for dtmupd from PostgreSQL automatically:
-                penempatanEntity.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
-                penempatanEntity.setUsrUpd(nama);
-                // Set the active status
-                penempatanEntity.setActive("1");
-    
-                // Save the entity to the database using the repository
-                penempatanEntity = penempatanRepository.save(penempatanEntity);
-    
-                // Create a response object with a success message
+                String nik = jwtService.extractUsername(token);
+                String nama = karyawanRepository.findNamaByNik(nik);
                 Map<String, Object> response = new HashMap<>();
-                response.put("success: ", true);
-                response.put("message: ", "Project updated successfully");
-                response.put("data: ", penempatanEntity);
-    
-                return ResponseEntity.status(HttpStatus.OK).body(response);
-            } else {
-                // Handle the case where nik is null (e.g., token validation failed)
+                List<AbsenEntity> absenEntities = absenRepository.findByNikAndTglAbsen(nik, currentDate);
+                // jam masuk jangan di rubah di tbl_absen, pokonya tbl_absen di-overwrite tapi tbl_absen_tracking di create 
+                // yang dirubah di long/latMsk, alamatMsk, namaProject, projectId, jarakMsk, jarakMax dari tbl_project
+                if (!absenEntities.isEmpty()) {
+                    for (AbsenEntity absenEntity : absenEntities) {
+                        absenEntity.setJarakMsk(updateReq.getJarakMsk());
+                        absenEntity.setGpsLongitudeMsk(updateReq.getGpsLongitudeMsk());
+                        absenEntity.setGpsLatitudeMsk(updateReq.getGpsLatitudeMsk());
+                        absenEntity.setLokasiMsk(updateReq.getLokasiMsk());
+                        absenEntity.setUsrCrt(nama);
+                        // save ke absenEntity
+                        absenRepository.save(absenEntity);
+                        absenEntities.add(absenEntity);
+                    }   
+                    response.put("success", true);
+                    response.put("message", "berhasil mengupdate absen");
+                    response.put("data", absenEntities);
+                }
+            }else{
                 Map<String, Object> response = new HashMap<>();
-                response.put("success: ", false);
-                response.put("message: ", "NIK anda bermasalah. silakan kontak administrator");
-    
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                response.put("success", false);
+                response.put("message", "TOKEN ANDA TIDAK VALID");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
         } catch (Exception e) {
-            // Handle any exceptions that may occur during the process
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Failed to update project");
+            response.put("message", "Terjadi masalah");
             response.put("error", e.getMessage());
-    
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+        Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Terjadi masalah");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
     
     // masih error, ga ngeluarin PenempatanEntity / ProjectEntity
@@ -200,6 +194,7 @@ public class AbsenService {
                     boolean projectFound = false;
                     String projectRequest = request.getProjectId().getProjectId().toString();
                     System.out.println("kesini 2  " + projectRequest);
+                    System.out.println("kesini 3  " + registeredProjects.get(0).getProjectId());
                     for (PenempatanEntity projReq : registeredProjects) {
                         if (projReq.getProjectId().getProjectId().equals(projectRequest)) {
                             projectFound = true;
@@ -254,7 +249,7 @@ public class AbsenService {
                             Map<String, Object> response = new HashMap<>();
                             response.put("success", true);
                             response.put("message", "Absen data inserted successfully");
-                            response.put("data", absenEntity.get);
+                            response.put("data", absenEntity);
     
                             return ResponseEntity.status(HttpStatus.OK).body(response);
                         } else {
@@ -307,6 +302,7 @@ public class AbsenService {
                 if (!existingAbsenRecords.isEmpty()) {
                     // User has already done the input-absen for the day
                     AbsenEntity existingAbsenEntity = existingAbsenRecords.get(0);
+                    // Make separate response
                     // save ke absenEntity
                     existingAbsenEntity.setNotePekerjaan(request.getNotePekerjaan());
                     existingAbsenEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
@@ -329,10 +325,9 @@ public class AbsenService {
                         }
                     }
                     existingAbsenEntity = absenRepository.save(existingAbsenEntity);
-
                     // save ke absenTrackingEntity
                     AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();
-
+                    
                     absenTrackingEntity.setNotePekerjaan(request.getNotePekerjaan());
                     absenTrackingEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
                     absenTrackingEntity.setGpsLongitudePlg(request.getGpsLatitudePlg());
@@ -342,6 +337,7 @@ public class AbsenService {
                     absenTrackingEntity.setNotePlgCepat(request.getNotePlgCepat());
 
                     absenTrackingEntity = absenTrackingRepository.save(absenTrackingEntity);
+
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);

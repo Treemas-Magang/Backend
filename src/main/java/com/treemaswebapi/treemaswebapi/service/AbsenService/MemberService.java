@@ -1,7 +1,5 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
-import java.lang.reflect.Member;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MemberController.request.MemberRequest;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
-import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
@@ -38,7 +35,7 @@ public class MemberService {
 
     // fungsi untuk narik data project mana aja yang dipegang si leader
     // fungsi ini difilter bukan dari backend, tapi dari front-end
-    public ResponseEntity<Map<String, Object>> leaderProjectDetails(@RequestHeader String tokenWithBearer, @RequestBody MemberRequest request){
+    public ResponseEntity<Map<String, Object>> leaderProjectDetails(@RequestHeader String tokenWithBearer, @RequestParam("projectId") String projectIdReq) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
@@ -138,65 +135,68 @@ public class MemberService {
         }
     }
 
-            public ResponseEntity<Map<String, Object>> headProjectDetails(@RequestHeader String tokenWithBearer, @RequestBody MemberRequest request){
-                try {
-                    if (tokenWithBearer.startsWith("Bearer ")) {
-                        String token = tokenWithBearer.substring("Bearer ".length());
-                        String nik = jwtService.extractUsername(token);
-            
-                        // Retrieve project IDs associated with the 'nik'
-                        List<ProjectDetails> projectIds = retrieveProjectDetailsForHead(nik);
-            
-                        if (!projectIds.isEmpty()) {
-                            Map<String, Object> response = new HashMap<>();
-                            response.put("success", true);
-                            response.put("message", "Project IDs retrieved successfully");
-                            response.put("data", projectIds);
-                            return ResponseEntity.status(HttpStatus.OK).body(response);
-                        } else {
-                            Map<String, Object> response = new HashMap<>();
-                            response.put("success", false);
-                            response.put("message", "No project IDs found for the 'nik'");
-                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    // this function serve as a method to get all the projects that we have. and it could be accessed by everyone in the company
+        public ResponseEntity<Map<String, Object>> projectDetails(@RequestHeader String tokenWithBearer) {
+            try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+                    System.out.println("kesini " + nik);
+        
+                    List<ProjectEntity> allProjects = projectRepository.findAll();
+                    List<ProjectDetails> projectDetailsList = new ArrayList<>();
+        
+                    for (ProjectEntity project : allProjects) {
+                        if (project != null) {
+                            ProjectDetails details = new ProjectDetails();
+                            PenempatanEntity penempatan = penempatanRepository.findActiveByProjectIdAndNik(project, nik);
+                            System.out.println("INI PENEMPATANNYA: "+ penempatan);
+                            details.setProjectId(project.getProjectId().toString());
+                            details.setProjectName(project.getNamaProject());
+                            details.setProjectAddress(project.getLokasi());
+                            details.setJrkMax(project.getJrkMax());
+                            details.setGpsLongitude(project.getGpsLongitude());
+                            details.setGpsLatitude(project.getGpsLatitude());
+                            details.setJamMasuk(project.getJamMasuk());
+                            details.setJamKeluar(project.getJamKeluar());
+                            if (penempatan != null) {
+                                details.setActive(penempatan.getActive());
+                            } else {
+                                details.setActive(null); // or any default value you want to set
+                            }                    
+                            projectDetailsList.add(details);
                         }
+                    }
+        
+                    if (!projectDetailsList.isEmpty()) {
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", true);
+                        response.put("message", "Project details retrieved successfully");
+                        response.put("data", projectDetailsList);
+                        return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
-                        // Handle the case where the token format is invalid
                         Map<String, Object> response = new HashMap<>();
                         response.put("success", false);
-                        response.put("message", "Invalid token format");
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                        response.put("message", "No project details found for the 'nik'");
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                     }
-                } catch (Exception e) {
+                } else {
+                    // Handle the case where the token format is invalid
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
-                    response.put("message", "Failed to retrieve project IDs");
-                    response.put("error", e.getMessage());
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                 }
-            }
-
-            private List<ProjectDetails> retrieveProjectDetailsForHead(String nik) {
-            try {
-                List<ProjectEntity> allProject = projectRepository.findAll();
-
-                List<ProjectDetails> projectDetails = new ArrayList<>();
-
-                for (ProjectEntity project : allProject) {
-
-                    if (project != null) {
-                        ProjectDetails details = new ProjectDetails();
-                        details.setProjectId(project.getProjectId().toString());
-                        details.setProjectName(project.getNamaProject());
-                        details.setProjectAddress(project.getLokasi());
-                        projectDetails.add(details);
-                    }
-                }
-
-                return projectDetails;
             } catch (Exception e) {
-                return new ArrayList<>();
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
         }
+
+    
         // public ResponseEntity<Map<String, Object>> getAllAbsen(@RequestHeader("Authorization") String tokenWithBearer, @RequestBody MemberRequest request) {
         //         try {
         //             if (tokenWithBearer.startsWith("Bearer ")) {

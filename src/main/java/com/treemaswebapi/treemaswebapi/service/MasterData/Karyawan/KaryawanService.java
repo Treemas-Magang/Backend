@@ -2,6 +2,7 @@ package com.treemaswebapi.treemaswebapi.service.MasterData.Karyawan;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
@@ -41,6 +43,7 @@ import lombok.RequiredArgsConstructor;
         private final CutiRepository cutiRepository;
 
         private final PasswordEncoder passwordEncoder;
+        private final JwtService jwtService;
 
         public ResponseEntity<Map<String, String>> karyawanAdd(
             KaryawanAddRequest request,
@@ -52,6 +55,14 @@ import lombok.RequiredArgsConstructor;
                 String token = jwtToken.substring(7);
                 System.out.println("TOKEN : "+token);
 
+                // Cari nik dari token
+                String userToken = jwtService.extractUsername(token);
+                // Cari nama dari token
+                Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+                String nama = user.get().getNama();
+
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
                 // Ambil default value LEAVE di table generalparam
                 String defaultCutiString = generalParamRepository.findById("LEAVE")
                     .orElseThrow(() -> new RuntimeException("LEAVE not found"))
@@ -108,7 +119,11 @@ import lombok.RequiredArgsConstructor;
                         .fullName(request.getNama())
                         .role(Role.LEADER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
+                        .wrongPassCount((short) 0)
+                        .timesLocked(0)
                         .sqlPassword(passwordEncoder.encode("123456"))
+                        .usrCrt(nama)
+                        .dtmCrt(dtmCrt)
                     .build();
                     sysUserRepository.save(sysUser);
                 } else {
@@ -119,7 +134,10 @@ import lombok.RequiredArgsConstructor;
                         .fullName(request.getNama())
                         .role(Role.USER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
+                        .wrongPassCount((short) 0)
                         .sqlPassword(passwordEncoder.encode("123456"))
+                        .usrCrt(nama)
+                        .dtmCrt(dtmCrt)
                     .build();
                     sysUserRepository.save(sysUser);
                 }

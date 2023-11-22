@@ -36,6 +36,12 @@ public class AbsenService {
                 absenData.put("jamPulang", absen.getJamPlg());
                 absenData.put("catatanTerlambat", absen.getNoteTelatMsk());
                 absenData.put("totalJamKerja", absen.getTotalJamKerja());
+                absenData.put("isCuti", absen.getIsCuti());
+                absenData.put("isOther", absen.getIsOther());
+                absenData.put("isSakit", absen.getIsSakit());
+                absenData.put("isWfh", absen.getIsWfh());
+                absenData.put("isLembur", absen.getIsLembur());
+                absenData.put("projectId", absen.getProjectId());
         
                 responseData.add(absenData);
             }

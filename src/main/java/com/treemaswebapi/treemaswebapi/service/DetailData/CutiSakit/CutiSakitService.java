@@ -2,9 +2,11 @@ package com.treemaswebapi.treemaswebapi.service.DetailData.CutiSakit;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +53,13 @@ public class CutiSakitService {
             // Disetujui atau ditolak
             List<CutiEntity> cutiList  = cutiRepository.findByFlagApp("cuti");
             List<Map<String, Object>> responseData = new ArrayList<>();
-
+            // Format dtmapp to YYYY-MM-DD
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            
             for (CutiEntity cuti : cutiList) {
                 Map<String, Object> cutiData = new HashMap<>();
+                Date dtmAppDate = new Date(cuti.getDtmApp().getTime());
+                String formattedDtmApp = dateFormat.format(dtmAppDate);
                 cutiData.put("nik", cuti.getNik());
                 cutiData.put("namaKaryawan", cuti.getNama());
                 cutiData.put("tglMulai", cuti.getTglMulai());
@@ -66,7 +72,8 @@ public class CutiSakitService {
                 cutiData.put("status", cuti.getIsApproved());
                 cutiData.put("noteApp", cuti.getNoteApp());
                 cutiData.put("usrapp", cuti.getUsrApp());
-                cutiData.put("dtmapp", cuti.getDtmApp());
+                cutiData.put("dtmapp", formattedDtmApp);
+                cutiData.put("isApproved", cuti.getIsApproved());
         
                 responseData.add(cutiData);
             }
@@ -74,9 +81,11 @@ public class CutiSakitService {
             // Menunggu
             List<CutiAppEntity> cutiAppList  = cutiAppRepository.findByFlgKet("cuti");
             List<Map<String, Object>> responseDataApp = new ArrayList<>();
-
+            
             for (CutiAppEntity cutiApp : cutiAppList) {
                 Map<String, Object> cutiDataApp = new HashMap<>();
+                Date dtmAppDate = new Date(cutiApp.getDtmApp().getTime());
+                String formattedDtmApp = dateFormat.format(dtmAppDate);
                 cutiDataApp.put("nik", cutiApp.getNik());
                 cutiDataApp.put("namaKaryawan", cutiApp.getNama());
                 cutiDataApp.put("tglMulai", cutiApp.getTglMulai());
@@ -89,8 +98,8 @@ public class CutiSakitService {
                 cutiDataApp.put("status", cutiApp.getIsApproved());
                 cutiDataApp.put("noteApp", cutiApp.getNoteApp());
                 cutiDataApp.put("usrapp", cutiApp.getUsrApp());
-                cutiDataApp.put("dtmapp", cutiApp.getDtmApp());
-        
+                cutiDataApp.put("dtmapp", formattedDtmApp);
+                
                 responseDataApp.add(cutiDataApp);
             }
 

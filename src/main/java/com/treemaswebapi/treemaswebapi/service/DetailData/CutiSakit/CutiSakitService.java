@@ -1,0 +1,497 @@
+package com.treemaswebapi.treemaswebapi.service.DetailData.CutiSakit;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
+
+import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.CutiApprove;
+import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.CutiRequest;
+import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.SakitRequest;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageAppEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
+import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiImageAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiImageRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
+import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.MasterCutiRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class CutiSakitService {
+    
+    private final CutiRepository cutiRepository;
+    private final KaryawanRepository karyawanRepository;
+    private final JwtService jwtService;
+    private final CutiAppRepository cutiAppRepository;
+    private final MasterCutiRepository masterCutiRepository;
+    private final CutiImageRepository cutiImageRepository;
+    private final CutiImageAppRepository cutiImageAppRepository;
+
+    public ResponseEntity<Map<String, Object>> cutiGet() {
+        try {
+            // Disetujui atau ditolak
+            List<CutiEntity> cutiList  = cutiRepository.findByFlagApp("cuti");
+            List<Map<String, Object>> responseData = new ArrayList<>();
+
+            for (CutiEntity cuti : cutiList) {
+                Map<String, Object> cutiData = new HashMap<>();
+                cutiData.put("nik", cuti.getNik());
+                cutiData.put("namaKaryawan", cuti.getNama());
+                cutiData.put("tglMulai", cuti.getTglMulai());
+                cutiData.put("tglSelesai", cuti.getTglSelesai());
+                cutiData.put("tglMasuk", cuti.getTglKembaliKerja());
+                cutiData.put("jmlCuti", cuti.getJmlCuti());
+                cutiData.put("jmlCutiBersama", cuti.getJmlCutiBersama());
+                cutiData.put("jmlCutiKhusus", cuti.getJmlCutiKhusus());
+                cutiData.put("keperluanCuti", cuti.getKeperluanCuti());
+                cutiData.put("status", cuti.getIsApproved());
+                cutiData.put("noteApp", cuti.getNoteApp());
+                cutiData.put("usrapp", cuti.getUsrApp());
+                cutiData.put("dtmapp", cuti.getDtmApp());
+        
+                responseData.add(cutiData);
+            }
+
+            // Menunggu
+            List<CutiAppEntity> cutiAppList  = cutiAppRepository.findByFlgKet("cuti");
+            List<Map<String, Object>> responseDataApp = new ArrayList<>();
+
+            for (CutiAppEntity cutiApp : cutiAppList) {
+                Map<String, Object> cutiDataApp = new HashMap<>();
+                cutiDataApp.put("nik", cutiApp.getNik());
+                cutiDataApp.put("namaKaryawan", cutiApp.getNama());
+                cutiDataApp.put("tglMulai", cutiApp.getTglMulai());
+                cutiDataApp.put("tglSelesai", cutiApp.getTglSelesai());
+                cutiDataApp.put("tglMasuk", cutiApp.getTglKembaliKerja());
+                cutiDataApp.put("jmlCuti", cutiApp.getJmlCuti());
+                cutiDataApp.put("jmlCutiBersama", cutiApp.getJmlCutiBersama());
+                cutiDataApp.put("jmlCutiKhusus", cutiApp.getJmlCutiKhusus());
+                cutiDataApp.put("keperluanCuti", cutiApp.getKeperluanCuti());
+                cutiDataApp.put("status", cutiApp.getIsApproved());
+                cutiDataApp.put("noteApp", cutiApp.getNoteApp());
+                cutiDataApp.put("usrapp", cutiApp.getUsrApp());
+                cutiDataApp.put("dtmapp", cutiApp.getDtmApp());
+        
+                responseDataApp.add(cutiDataApp);
+            }
+
+            Map<String, Object> dataApporveOrNoOrWait = new HashMap<>();
+            dataApporveOrNoOrWait.put("setujuAtauTolak", responseData);
+            dataApporveOrNoOrWait.put("menunggu", responseDataApp);
+        
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", dataApporveOrNoOrWait);
+
+           
+            
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve cuti");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> sakitGet() {
+        try {
+            // Disetujui atau ditolak
+            List<CutiEntity> sakitList  = cutiRepository.findByFlagApp("sakit");
+            List<Map<String, Object>> responseData = new ArrayList<>();
+
+            for (CutiEntity sakit : sakitList) {
+                Map<String, Object> cutiData = new HashMap<>();
+                cutiData.put("nik", sakit.getNik());
+                cutiData.put("namaKaryawan", sakit.getNama());
+                cutiData.put("tglMulai", sakit.getTglMulai());
+                cutiData.put("tglSelesai", sakit.getTglSelesai());
+                cutiData.put("tglMasuk", sakit.getTglKembaliKerja());
+                cutiData.put("jmlCuti", sakit.getJmlCuti());
+                cutiData.put("jmlCutiBersama", sakit.getJmlCutiBersama());
+                cutiData.put("jmlCutiKhusus", sakit.getJmlCutiKhusus());
+                cutiData.put("keperluanCuti", sakit.getKeperluanCuti());
+                cutiData.put("status", sakit.getIsApproved());
+                cutiData.put("noteApp", sakit.getNoteApp());
+                cutiData.put("usrapp", sakit.getUsrApp());
+                cutiData.put("dtmapp", sakit.getDtmApp());
+        
+                responseData.add(cutiData);
+            }
+
+            // Menunggu
+            List<CutiAppEntity> sakitAppList  = cutiAppRepository.findByFlgKet("sakit");
+            List<Map<String, Object>> responseDataApp = new ArrayList<>();
+
+            for (CutiAppEntity sakitApp : sakitAppList) {
+                Map<String, Object> sakitDataApp = new HashMap<>();
+                sakitDataApp.put("nik", sakitApp.getNik());
+                sakitDataApp.put("namaKaryawan", sakitApp.getNama());
+                sakitDataApp.put("tglMulai", sakitApp.getTglMulai());
+                sakitDataApp.put("tglSelesai", sakitApp.getTglSelesai());
+                sakitDataApp.put("tglMasuk", sakitApp.getTglKembaliKerja());
+                sakitDataApp.put("jmlCuti", sakitApp.getJmlCuti());
+                sakitDataApp.put("jmlCutiBersama", sakitApp.getJmlCutiBersama());
+                sakitDataApp.put("jmlCutiKhusus", sakitApp.getJmlCutiKhusus());
+                sakitDataApp.put("keperluanCuti", sakitApp.getKeperluanCuti());
+                sakitDataApp.put("status", sakitApp.getIsApproved());
+                sakitDataApp.put("noteApp", sakitApp.getNoteApp());
+                sakitDataApp.put("usrapp", sakitApp.getUsrApp());
+                sakitDataApp.put("dtmapp", sakitApp.getDtmApp());
+        
+                responseDataApp.add(sakitDataApp);
+            }
+
+            Map<String, Object> dataApporveOrNoOrWait = new HashMap<>();
+            dataApporveOrNoOrWait.put("setujuAtauTolak", responseData);
+            dataApporveOrNoOrWait.put("menunggu", responseDataApp);
+        
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", dataApporveOrNoOrWait);
+            
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve cuti");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> userCutiAdd(
+        @RequestHeader("Authorization") String jwtToken,
+        CutiRequest request
+    ) {
+        try {
+            // Cari siapa yang akses api ini
+            String token = jwtToken.substring(7);
+            String userToken = jwtService.extractUsername(token);
+            
+            Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+            String nama = user.get().getNama();
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+
+            MasterCutiEntity masterCutiEntity = masterCutiRepository.findById(request.getSelectedMasterCutiId())
+                .orElseThrow(() -> new RuntimeException("MasterCuti not found for id: " + request.getSelectedMasterCutiId()));
+
+            // Cari hakcuti dari table karyawan dan tempatkan ke tbl cuti di sisa cuti
+            BigDecimal hakCuti = karyawanRepository.findByNik(userToken)
+                .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                .getHakCuti();
+
+            // Ke tbl_cuti_app
+            var cutiApp = CutiAppEntity.builder()
+                .nik(userToken)
+                .nama(nama)
+                .tglMulai(request.getTglMulai())
+                .tglSelesai(request.getTglSelesai())
+                .tglKembaliKerja(request.getTglKembaliKerja())
+                .keperluanCuti(request.getKeperluanCuti())
+                .alamatCuti(request.getAlamatCuti())
+                .jmlCutiBersama(request.getJmlCutiBersama())
+                .jmlCutiKhusus(request.getJmlCutiKhusus())
+                .flgKet("cuti")
+                .dtmCrt(dtmCrt)
+                .usrCrt(nama)
+                .jmlCuti(request.getJmlCuti())
+                .masterCutiEntity(masterCutiEntity)
+                .sisaCuti(hakCuti)
+            .build();
+
+            cutiAppRepository.save(cutiApp);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Cuti Created");
+            response.put("data", cutiApp);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Create Cuti");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> cutiApprove(
+        @RequestHeader("Authorization") String jwtToken,
+        CutiApprove request,
+        Long id
+    ) {
+        try {
+            // Cari siapa yang akses api ini
+            String token = jwtToken.substring(7);
+            String userToken = jwtService.extractUsername(token);
+
+            Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+            String nama = user.get().getNama();
+            Optional<CutiAppEntity> cutiApp = cutiAppRepository.findById(id);
+
+            if(cutiApp.isPresent()) {
+                var cutiAppList = cutiApp.get();
+                // Orang Lain
+                String nikCutiUser = cutiApp.get().getNik();
+                Optional<KaryawanEntity> nikOther = karyawanRepository.findByNik(nikCutiUser);
+
+                BigDecimal hakCuti = karyawanRepository.findByNik(nikCutiUser)
+                .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                .getHakCuti();
+
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp dtmApp = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+
+                MasterCutiEntity masterCutiEntity = cutiAppList.getMasterCutiEntity(); // Retrieve from CutiAppEntity
+
+                CutiEntity cutiApproved = new CutiEntity();
+                cutiApproved.setUsrApp(nama);
+                cutiApproved.setDtmApp(dtmApp);
+                cutiApproved.setNoteApp(request.getNoteApp());
+                cutiApproved.setIsApproved(request.getIsApproved());
+                cutiApproved.setNik(cutiAppList.getNik());
+                cutiApproved.setNama(cutiAppList.getNama());
+                cutiApproved.setTglMulai(cutiAppList.getTglMulai());
+                cutiApproved.setTglSelesai(cutiAppList.getTglSelesai());
+                cutiApproved.setTglKembaliKerja(cutiAppList.getTglKembaliKerja());
+                cutiApproved.setJmlCuti(cutiAppList.getJmlCuti());
+                cutiApproved.setKeperluanCuti(cutiAppList.getKeperluanCuti());
+                cutiApproved.setAlamatCuti(cutiAppList.getAlamatCuti());
+                cutiApproved.setFlgKet(cutiAppList.getFlgKet());
+                cutiApproved.setDtmCrt(cutiAppList.getDtmCrt());
+                cutiApproved.setUsrCrt(cutiAppList.getUsrCrt());
+                cutiApproved.setMasterCutiEntity(masterCutiEntity);
+                cutiApproved.setSisaCuti(cutiAppList.getSisaCuti());
+                cutiApproved.setFlagApp("cuti");
+                // If isApproved is "1", decrement hakCuti by 1
+                String isApproved = request.getIsApproved();
+                if ("1".equals(isApproved)) {
+                    BigDecimal updatedHakCuti = hakCuti.subtract(BigDecimal.ONE);
+                    nikOther.get().setHakCuti(updatedHakCuti);
+                    karyawanRepository.save(nikOther.get());
+                    cutiApproved.setSisaCuti(updatedHakCuti);
+                } else {
+                    cutiRepository.save(cutiApproved);
+                    cutiAppRepository.delete(cutiAppList);
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "Success");
+                    response.put("message", "Cuti not Approved");
+                    response.put("data", cutiApproved);
+
+                    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                }
+
+                cutiRepository.save(cutiApproved);
+                cutiAppRepository.delete(cutiAppList);
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Success");
+                response.put("message", "Cuti Approved");
+                response.put("data", cutiApproved);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } else {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Cuti Not Found");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Approve Cuti");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> userSakitAdd(
+        @RequestHeader("Authorization") String jwtToken,
+        SakitRequest request
+    ) {
+        try {
+            // Cari siapa yang akses api ini
+            String token = jwtToken.substring(7);
+            String userToken = jwtService.extractUsername(token);
+            
+            Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+            String nama = user.get().getNama();
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+
+            // Ke tbl_cuti_app
+            var sakitApp = CutiAppEntity.builder()
+                .nik(userToken)
+                .nama(nama)
+                .tglMulai(request.getTglMulai())
+                .tglSelesai(request.getTglSelesai())
+                .tglKembaliKerja(request.getTglKembaliKerja())
+                .keperluanCuti(request.getKeperluanCuti())
+                .flgKet("sakit")
+                .dtmCrt(dtmCrt)
+                .usrCrt(nama)
+                .jmlCuti(request.getJmlCuti())
+            .build();
+
+            cutiAppRepository.save(sakitApp);
+            
+            Long sakitAppId = sakitApp.getId();
+            // image sakit ke tbl cuti_image
+            var sakitAppImage = CutiImageAppEntity.builder()
+                .id(sakitAppId)
+                .nik(userToken)
+                .tglMulai(request.getTglMulai())
+                .flgKet("sakit")
+                .image(request.getImage() != null ? request.getImage() : null)
+                .usrCrt(nama)
+                .dtmCrt(dtmCrt)
+            .build();
+
+            cutiImageAppRepository.save(sakitAppImage);
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("dataSakit", sakitApp);
+            data.put("dataSakitImage", sakitAppImage);
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Sakit Created");
+            response.put("data", data);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Create Sakit");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> sakitApprove(
+        @RequestHeader("Authorization") String jwtToken,
+        CutiApprove request,
+        Long id
+    ) {
+        try {
+            // Cari siapa yang akses api ini
+            String token = jwtToken.substring(7);
+            String userToken = jwtService.extractUsername(token);
+
+            Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+            String nama = user.get().getNama();
+            // Cari data sakit di table cutiApp
+            Optional<CutiAppEntity> sakitApp = cutiAppRepository.findById(id);
+
+            if(sakitApp.isPresent()) {
+                var sakitAppList = sakitApp.get();
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp dtmApp = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+                var nikOtherUser = sakitApp.get().getNik();
+                // Cari data imageApp di table imageApp
+                Optional<CutiImageAppEntity> image = cutiImageAppRepository.findById(id);
+                var imageDataReal = image.get();
+                // Tbl Cuti entity
+                CutiEntity sakitApproved = new CutiEntity();
+                sakitApproved.setUsrApp(nama);
+                sakitApproved.setDtmApp(dtmApp);
+                sakitApproved.setNoteApp(request.getNoteApp());
+                sakitApproved.setIsApproved(request.getIsApproved());
+                sakitApproved.setNik(sakitAppList.getNik());
+                sakitApproved.setNama(sakitAppList.getNama());
+                sakitApproved.setTglMulai(sakitAppList.getTglMulai());
+                sakitApproved.setTglSelesai(sakitAppList.getTglSelesai());
+                sakitApproved.setTglKembaliKerja(sakitAppList.getTglKembaliKerja());
+                sakitApproved.setJmlCuti(sakitAppList.getJmlCuti());
+                sakitApproved.setKeperluanCuti(sakitAppList.getKeperluanCuti());
+                sakitApproved.setFlgKet(sakitAppList.getFlgKet());
+                sakitApproved.setDtmCrt(sakitAppList.getDtmCrt());
+                sakitApproved.setUsrCrt(sakitAppList.getUsrCrt());
+                sakitApproved.setFlagApp("sakit");
+
+                String isApproved = request.getIsApproved();
+                if("0".equals(isApproved)) {
+                    cutiRepository.save(sakitApproved);
+                    cutiAppRepository.delete(sakitAppList);
+                    cutiImageAppRepository.delete(imageDataReal);
+                    // delete cuti image app 
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("status", "Success");
+                    response.put("message", "Sakit not Approved");
+                    response.put("data", sakitApproved);
+
+                    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                }
+                // Pindahkan image dari app ke image
+                // Tbl Cuti Image
+                CutiImageEntity cutiApproved = new CutiImageEntity();
+                cutiApproved.setNik(imageDataReal.getNik());
+                cutiApproved.setTglMulai(imageDataReal.getTglMulai());
+                cutiApproved.setFlgKet("sakit");
+                cutiApproved.setImage(imageDataReal.getImage());
+                cutiApproved.setUsrCrt(imageDataReal.getUsrCrt());
+                cutiApproved.setDtmCrt(imageDataReal.getDtmCrt());
+                cutiApproved.setUsrApp(nama);
+                cutiApproved.setDtmapp(dtmApp);
+
+                // kirim image ke tbl cuti entity untuk api get sakit
+
+                cutiImageRepository.save(cutiApproved);
+                cutiImageAppRepository.delete(imageDataReal);
+                cutiRepository.save(sakitApproved);
+                cutiAppRepository.delete(sakitAppList);
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Success");
+                response.put("message", "Sakit Approved");
+                response.put("data", sakitApproved);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } else {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Sakit Not Found");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Approve Sakit");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+}

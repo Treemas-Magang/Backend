@@ -33,7 +33,7 @@ public class CutiService {
         @RequestHeader("Authorization") String jwtToken
     ) {
         try {
-              // Cari siapa yang akses api ini
+            // Cari siapa yang akses api ini
             String token = jwtToken.substring(7);
             String userToken = jwtService.extractUsername(token);
             

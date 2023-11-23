@@ -30,39 +30,39 @@ import lombok.RequiredArgsConstructor;
 
         public ResponseEntity<Map<String, Object>> login(LoginRequest request) {
             try {
-                authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getNik(), request.getPassword())
-                );
-                var user = sysUserRepository.findByUserId(request.getNik())
-                    .orElseThrow();
-                
-                // set Login true
-                user.setIsLogin("1");
-                String isWebAccess = request.getIsWebAccess();
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getNik(), request.getPassword())
+            );
+            var user = sysUserRepository.findByUserId(request.getNik())
+                .orElseThrow();
 
-                if ("0".equals(isWebAccess)) { // Check if it's not a web access
+            // set Login true
+            user.setIsLogin("1");
+            String isWebAccess = request.getIsWebAccess();
 
-                    Optional<KaryawanEntity> isHandsetImeiOptional = karyawanRepository.findByNik(request.getNik());
-        
-                    if (isHandsetImeiOptional.isPresent()) {
-                        KaryawanEntity karyawanEntity = isHandsetImeiOptional.get();
-                        String existingHandsetImei = karyawanEntity.getHandsetImei();
-                        String requestedHandsetImei = request.getHandsetImei();
-        
-                        if (existingHandsetImei == null) {
-                            // If handsetImei in the database is null, set it from the request
-                            karyawanEntity.setHandsetImei(requestedHandsetImei);
-                            karyawanRepository.save(karyawanEntity);
-                        } else if (!existingHandsetImei.equals(requestedHandsetImei)) {
-                            // If handsetImei is already set and different from the request, send an unauthorized response
-                            String message = "HANDSET IMEI MISMATCH!";
-                            Map<String, Object> response = new HashMap<>();
-                            response.put("success", false);
-                            response.put("data", message);
-                            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-                        }
+            if ("0".equals(isWebAccess)) { // Check if it's not a web access
+
+                Optional<KaryawanEntity> isHandsetImeiOptional = karyawanRepository.findByNik(request.getNik());
+    
+                if (isHandsetImeiOptional.isPresent()) {
+                    KaryawanEntity karyawanEntity = isHandsetImeiOptional.get();
+                    String existingHandsetImei = karyawanEntity.getHandsetImei();
+                    String requestedHandsetImei = request.getHandsetImei();
+    
+                    if (existingHandsetImei == null) {
+                        // If handsetImei in the database is null, set it from the request
+                        karyawanEntity.setHandsetImei(requestedHandsetImei);
+                        karyawanRepository.save(karyawanEntity);
+                    } else if (!existingHandsetImei.equals(requestedHandsetImei)) {
+                        // If handsetImei is already set and different from the request, send an unauthorized response
+                        String message = "HANDSET IMEI MISMATCH!";
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", false);
+                        response.put("data", message);
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
                     }
                 }
+            }
 
             var jwtToken = jwtService.generateToken(user);
             

@@ -16,4 +16,5 @@ public class LiburRequest {
     private String keterangan;
     private String usrCrt;
     private String usrUpd;
+    private String isCutiBersama;
 }

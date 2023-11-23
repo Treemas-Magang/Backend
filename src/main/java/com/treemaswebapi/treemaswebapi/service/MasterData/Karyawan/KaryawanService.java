@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Karyawan;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
+import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
+import com.treemaswebapi.treemaswebapi.repository.GeneralParamRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
@@ -33,6 +37,8 @@ import lombok.RequiredArgsConstructor;
         private final KaryawanRepository karyawanRepository;
         private final SysUserRepository sysUserRepository;
         private final KaryawanImageRepository karyawanImageRepository;
+        private final GeneralParamRepository generalParamRepository;
+        private final CutiRepository cutiRepository;
 
         private final PasswordEncoder passwordEncoder;
 
@@ -45,6 +51,15 @@ import lombok.RequiredArgsConstructor;
                 // Real Token terpisah dari Bearer 
                 String token = jwtToken.substring(7);
                 System.out.println("TOKEN : "+token);
+
+                // Ambil default value LEAVE di table generalparam
+                String defaultCutiString = generalParamRepository.findById("LEAVE")
+                    .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                    .getVal();
+
+                // Karena defaultCuti adalah String di table general param dan field sisa cuti di table cuti entity adalah BigDecimal kita konversi
+                // defaultCuti yang String ke BigDecimal
+                BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
 
                 // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
@@ -76,7 +91,7 @@ import lombok.RequiredArgsConstructor;
                     .isLeader(request.getIsLeader())
                     .usrUpd(request.getUsrUpd())
                     .handsetImei(request.getHandsetImei())
-                    .hakCuti(request.getHakCuti())
+                    .hakCuti(defaultCuti)
                     .isKaryawan(request.getIsKaryawan())
                     .handsetImei(null)
                 .build();

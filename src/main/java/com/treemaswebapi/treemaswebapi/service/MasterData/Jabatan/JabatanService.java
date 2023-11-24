@@ -92,7 +92,8 @@ public class JabatanService {
 
             if (jabatanOptional.isPresent()) {
                 JabatanEntity jabatanEntity = jabatanOptional.get();
-
+                // Hapus entitas lama
+                jabatanRepository.delete(jabatanEntity);
                 // Buat entitas baru dengan ID baru
                 JabatanEntity newJabatanEntity = new JabatanEntity();
                 newJabatanEntity.setJabatanId(request.getJabatanId());
@@ -101,8 +102,7 @@ public class JabatanService {
                 newJabatanEntity.setDtmUpd(dtmUpd);
                 jabatanRepository.save(newJabatanEntity);
 
-                // Hapus entitas lama
-                jabatanRepository.delete(jabatanEntity);
+                
 
                 Map<String, Object> response = new HashMap<>();
                 response.put("status", "Success");

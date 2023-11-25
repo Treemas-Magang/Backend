@@ -243,6 +243,8 @@ public class AbsenService {
                             absenImgEntity.setNik(nik);
                             absenImgEntity.setTglAbsen(LocalDate.now());
                             absenImgEntity.setImage64(request.getPhotoAbsen());
+                            absenImgEntity.setUsrUpd(nama);
+                            absenImgEntity.setDtmUpd(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
     
                             absenImgEntity = absenImgRepository.save(absenImgEntity);
     

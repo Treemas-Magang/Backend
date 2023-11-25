@@ -1,9 +1,11 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.controller.MemberController.request.MemberRequest;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+import com.treemaswebapi.treemaswebapi.repository.AbsenImgRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
@@ -28,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
     private final PenempatanRepository penempatanRepository;
+    private final AbsenImgRepository absenImgRepository;
     private final AbsenRepository absenRepository;
     private final JwtService jwtService;
     private final ProjectRepository projectRepository;
@@ -196,7 +202,80 @@ public class MemberService {
             }
         }
 
-    
+        public ResponseEntity<Map<String, Object>> getAbsenMemberByProjectId(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("projectId") ProjectEntity projectId) {
+            try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+                    LocalDate date = LocalDate.now();
+                    //mau narik data yang ada di penempatanEntity, cari by projectId
+                    List<AbsenEntity> listAbsen = absenRepository.findAllByProjectIdAndTglAbsen(projectId, date);
+                    Map<String, Object> response = new HashMap<>();
+                    if (listAbsen.isEmpty()) {
+                        response.put("success", true);
+                        response.put("message", "belum ada member yang absen");
+                        response.put("data", listAbsen);
+                    }else{
+                    response.put("success", true);
+                    response.put("message", "berhasil mendapatkan member by projectId");
+                    response.put("data", listAbsen);
+                    }
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        }
+        
+        public ResponseEntity<Map<String, Object>> getDataAbsenMember(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("idAbsen") Long idAbsen, AbsenResponse absenResponse) {
+            try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+                    //mau narik data yang ada di penempatanEntity, cari by projectId
+                    AbsenEntity dataAbsen = absenRepository.findByIdAbsen(idAbsen);
+                    String dataAbsenImg = absenImgRepository.findById(idAbsen).get().getImage64();
+                    absenResponse.setAbsenEntity(dataAbsen);
+                    absenResponse.setAbsenImg(dataAbsenImg);
+
+                    Map<String, Object> response = new HashMap<>();
+                    if (dataAbsen == null) {
+                        response.put("success", true);
+                        response.put("message", "idAbsen salah");
+                        response.put("data", absenResponse);
+                    }else{
+                    
+                    response.put("success", true);
+                    response.put("message", "berhasil mendapatkan data absen seorang member");
+                    response.put("data", absenResponse);
+                    }
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        }
+
         // public ResponseEntity<Map<String, Object>> getAllAbsen(@RequestHeader("Authorization") String tokenWithBearer, @RequestBody MemberRequest request) {
         //         try {
         //             if (tokenWithBearer.startsWith("Bearer ")) {

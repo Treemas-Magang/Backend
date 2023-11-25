@@ -2,8 +2,10 @@ package com.treemaswebapi.treemaswebapi.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
@@ -11,7 +13,9 @@ import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
 @Repository
 public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
-    String findByProjectId(ProjectEntity projectId);
+
+    @Query("SELECT a FROM AbsenEntity a WHERE a.id = :id")
+    AbsenEntity findByIdAbsen(Long id);
 
     List<AbsenEntity> findAllByProjectId(ProjectEntity projectId);
 
@@ -20,6 +24,8 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
     List<AbsenEntity> findAllByProjectIdAndTglAbsen(ProjectEntity projectId, LocalDate targetDate);
 
     List<AbsenEntity> findIdAbsenByNikAndIsAbsenIsNull(String nik);
+
+    
 
     int countByIsAbsenAndNik(String string, String nik);
 
@@ -32,4 +38,5 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
     int countByIsCutiAndNik(String string, String nik);
 
     int countByJamMskIsNullAndJamPlgIsNullAndNik(String nik);
+
 }

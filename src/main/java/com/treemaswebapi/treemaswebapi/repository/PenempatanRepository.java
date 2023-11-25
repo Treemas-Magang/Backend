@@ -27,4 +27,6 @@ public interface PenempatanRepository extends JpaRepository<PenempatanEntity, Lo
     @Query("SELECT p FROM PenempatanEntity p WHERE p.projectId = :projectId AND p.nik = :nik")
     PenempatanEntity findActiveByProjectIdAndNik(@Param("projectId")ProjectEntity project,@Param("nik") String nik);
 
+    List<PenempatanEntity> findAllNikByProjectId(ProjectEntity projectId);
+
 }

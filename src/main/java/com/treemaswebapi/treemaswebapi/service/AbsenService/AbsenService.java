@@ -190,11 +190,8 @@ public class AbsenService {
                     }
                     List<PenempatanEntity> registeredProjects = penempatanRepository.findAllByNik(nik);
                     // ini buat ngecek penempatan entitinya, ada apa engga dia
-                    System.out.println("Kesini  " + registeredProjects);
                     boolean projectFound = false;
                     String projectRequest = request.getProjectId().getProjectId().toString();
-                    System.out.println("kesini 2  " + projectRequest);
-                    System.out.println("kesini 3  " + registeredProjects.get(0).getProjectId());
                     for (PenempatanEntity projReq : registeredProjects) {
                         if (projReq.getProjectId().getProjectId().equals(projectRequest)) {
                             projectFound = true;
@@ -221,6 +218,7 @@ public class AbsenService {
                             absenEntity.setNoteTelatMsk(request.getNoteTelatMsk());
                             absenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
                             absenEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
+                            absenEntity.setIsWfh(request.getIsWfh());
     
                             absenEntity = absenRepository.save(absenEntity);
 
@@ -237,6 +235,8 @@ public class AbsenService {
                             absenTrackingEntity.setNoteTelatMsk(request.getNoteTelatMsk());
                             absenTrackingEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
                             absenTrackingEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
+                            absenTrackingEntity.setIsWfh(request.getIsWfh());
+
                             absenTrackingRepository.save(absenTrackingEntity);
     
                             AbsenImgEntity absenImgEntity = new AbsenImgEntity();
@@ -505,5 +505,115 @@ public class AbsenService {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+    public ResponseEntity<Map<String, Object>> otherAbsen(@RequestHeader("Authorization") String tokenWithBearer, AbsenRequest request) {
+        try {
+            // Extracting NIK from the token
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                String token = tokenWithBearer.substring("Bearer ".length());
+                String nik = jwtService.extractUsername(token);
+                
+                // Check if NIK is valid
+                if (nik != null) {
+                    // Retrieve KaryawanEntity by NIK
+                    String karyawanEntities = karyawanRepository.findNamaByNik(nik);
+                    
+                    if (karyawanEntities.isEmpty()) {
+                        // NIK not found in KaryawanEntity
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", false);
+                        response.put("message", "NIK not found in KaryawanEntity. Please contact the administrator.");
+                        response.put("niknya", nik);
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                    }
+                    
+                    // Extracting the user's name from KaryawanEntity (just in case)
+                    String nama = karyawanEntities;
+                    
+                    // Retrieve registered projects for the user
+                    List<PenempatanEntity> registeredProjects = penempatanRepository.findAllByNik(nik);
+                    boolean projectFound = false;
+                    
+                    // Check if the requested project is among the registered projects
+                    for (PenempatanEntity penempatanEntity : registeredProjects) {
+                        if (penempatanEntity.getProjectId().getProjectId().equals(request.getProjectId().getProjectId().toString())) {
+                            projectFound = true;
+                            // break;
+                        }
+                    }
+                    
+                    if (projectFound) {
+                        // Project found, proceed to update absen data
+                        LocalDate currentDate = LocalDate.now();
+                        List<AbsenEntity> existingAbsenEntityList = absenRepository.findByNikAndTglAbsen(nik, currentDate);
+                        AbsenEntity existingAbsenEntity = existingAbsenEntityList.get(0);
+                        AbsenTrackingEntity trackingAbsenEntity = new AbsenTrackingEntity();
+                        if (!existingAbsenEntityList.isEmpty()) {
+                            // Update the existing AbsenEntity
+                            existingAbsenEntity.setJamMsk(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+                            existingAbsenEntity.setJarakMsk(request.getJarakMsk());
+                            existingAbsenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
+                            existingAbsenEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
+                            
+                            // Save the updated AbsenEntity
+                            absenRepository.save(existingAbsenEntity);
+                            
+                            // Submitting the updated value to the tbl_absen_tracking
+                            trackingAbsenEntity.setDtmCrt(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+                            trackingAbsenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
+                            trackingAbsenEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
+                            trackingAbsenEntity.setJamMsk(LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+                            trackingAbsenEntity.setHari(getIndonesianDayOfWeek(LocalDate.now().getDayOfWeek()));
+                            trackingAbsenEntity.setJarakMsk(request.getJarakMsk());
+                            trackingAbsenEntity.setLokasiMsk(request.getLokasiMsk());
+                            trackingAbsenEntity.setNama(nama);
+                            trackingAbsenEntity.setNoteTelatMsk(request.getNoteTelatMsk());
+
+                            // save it to the tracking table
+                            absenTrackingRepository.save(trackingAbsenEntity);
+
+
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("success", true);
+                            response.put("message", "Absen data updated successfully");
+                            response.put("data", trackingAbsenEntity);
+                            
+                            return ResponseEntity.status(HttpStatus.OK).body(response);
+                        } else {
+                            // Absen data not found for the current date
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("success", false);
+                            response.put("message", "Absen data not found for the current date");
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                        }
+                    } else {
+                        // User is not authorized to access this project
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", false);
+                        response.put("message", "You are not authorized to access this project");
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+                    }
+                }
+            } else {
+                // Invalid token format
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            // Error occurred
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to update absen data");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    
+        // Default return statement for unexpected cases
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "Unexpected error occurred");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

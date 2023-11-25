@@ -20,4 +20,16 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
     List<AbsenEntity> findAllByProjectIdAndTglAbsen(ProjectEntity projectId, LocalDate targetDate);
 
     List<AbsenEntity> findIdAbsenByNikAndIsAbsenIsNull(String nik);
+
+    int countByIsAbsenAndNik(String string, String nik);
+
+    int countByIsSakitAndNik(String string, String nik);
+
+    int countByNoteTelatMskIsNotNullAndNik(String nik);
+
+    int countByNotePlgCepatIsNotNullAndNik(String nik);
+
+    int countByIsCutiAndNik(String string, String nik);
+
+    int countByJamMskIsNullAndJamPlgIsNullAndNik(String nik);
 }

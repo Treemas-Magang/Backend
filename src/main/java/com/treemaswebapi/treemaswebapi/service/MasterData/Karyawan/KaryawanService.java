@@ -9,14 +9,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.DashboardController.DashboardResponse;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
+import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
@@ -31,6 +35,8 @@ import lombok.RequiredArgsConstructor;
         private final KaryawanRepository karyawanRepository;
         private final SysUserRepository sysUserRepository;
         private final KaryawanImageRepository karyawanImageRepository;
+        private final AbsenRepository absenRepository;
+        private final JwtService jwtService;
 
         private final PasswordEncoder passwordEncoder;
 
@@ -149,6 +155,43 @@ import lombok.RequiredArgsConstructor;
             e.printStackTrace();
         }
         return null; // or an empty string if needed
+    }
+    public ResponseEntity<Map<String, Object>> getDataPribadi(@RequestHeader("Authorization") String tokenWithBearer, DashboardResponse dashboardResponse) {
+        
+        try{
+            Map<String, Object> response = new HashMap<>();
+            if (tokenWithBearer.startsWith("Bearer ")) {
+            String token = tokenWithBearer.substring("Bearer ".length());
+            String nik = jwtService.extractUsername(token);
+            int totalMasuk = absenRepository.countByIsAbsenAndNik("1", nik);
+            int totalSakit = absenRepository.countByIsSakitAndNik("1", nik);
+            int totalTelatMasuk = absenRepository.countByNoteTelatMskIsNotNullAndNik(nik);
+            int totalPulangCepat = absenRepository.countByNotePlgCepatIsNotNullAndNik(nik);
+            int totalCuti = absenRepository.countByIsCutiAndNik("1", nik);
+            int totalTidakMasuk = absenRepository.countByJamMskIsNullAndJamPlgIsNullAndNik(nik);
+            dashboardResponse.setTotalMasuk(totalMasuk);
+            dashboardResponse.setTotalSakit(totalSakit);
+            dashboardResponse.setTotalTelatMasuk(totalTelatMasuk);
+            dashboardResponse.setTotalPulangCepat(totalPulangCepat);
+            dashboardResponse.setTotalCuti(totalCuti);
+            dashboardResponse.setTotalTidakMasuk(totalTidakMasuk);
+
+            response.put("success", true);
+            response.put("message", "berhasil get data kehadiran karyawan");
+            response.put("data", dashboardResponse);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+            }else{
+            response.put("success", false);
+            response.put("message", "Invalid Token");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     // Helper method to getFile path

@@ -73,7 +73,6 @@ public class AbsenController {
         return absenService.getUnprocessedAbsen(token);
     }
 
-    // di bawah ini fungsi buat si leader
 
     @GetMapping("/get-member")
     public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(

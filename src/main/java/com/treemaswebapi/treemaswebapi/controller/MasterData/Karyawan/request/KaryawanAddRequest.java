@@ -69,4 +69,10 @@ public class KaryawanAddRequest {
     private Role role;
     private String sql_password;
     private String isLogin;
+
+    // android id
+    // jabatan
+    // project
+    // hakcuti di web dari request?
+    // isKaryawan
 }

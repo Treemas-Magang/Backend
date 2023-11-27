@@ -40,29 +40,12 @@ public class CutiService {
             Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
             String nama = user.get().getNama();
 
-            String id = request.getId();
-            Optional<MasterCutiEntity> existingId = masterCutiRepository.findById(id);
-
-            if(existingId.isPresent()) {
-                int nextNumber = 1;
-                String newId;
-                do {
-                    nextNumber++;
-                    newId = id + nextNumber;
-                } while (masterCutiRepository.existsById(newId));
-                id = newId;
-                System.out.println("Masuk Id Generate");
-            } else {
-                id = request.getId();
-                System.out.println("Masuk Id Baru Pertama Kali");
-            }
-
             long currentTimeMillis = System.currentTimeMillis();
             Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
 
             System.out.println(nama);
             var masterCutiEntity = MasterCutiEntity.builder()
-                .id(id)
+                .id(request.getId())
                 .cutiDesc(request.getCutiDesc())
                 .value(request.getValue())
                 .dtmCrt(dtmCrt)
@@ -141,7 +124,7 @@ public class CutiService {
                 masterCutiRepository.deleteById(id);
                 // Create a new entity with the updated ID
                 MasterCutiEntity newMasterCutiEntity = new MasterCutiEntity();
-                newMasterCutiEntity.setId(id);
+                newMasterCutiEntity.setId(request.getId());
                 newMasterCutiEntity.setValue(request.getValue());
                 newMasterCutiEntity.setCutiDesc(request.getCutiDesc());
                 newMasterCutiEntity.setUsrUpd(nama);

@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AbsenController {
     
-    private AbsenService service;
+    private final AbsenService service;
 
     @GetMapping("/absen-view")
     public ResponseEntity<Map<String, Object>> absenGet() {

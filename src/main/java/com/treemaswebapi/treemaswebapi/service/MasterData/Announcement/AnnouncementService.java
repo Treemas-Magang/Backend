@@ -137,15 +137,15 @@ public class AnnouncementService {
 
     public ResponseEntity<Map<String, Object>> announcementGetId(Long id){
         try {
-            List<AnnouncementEntity> announcements = announcementRepository.findAll(); // Fetch all records from the AnnouncementEntity table
-        
-            int totalAnnouncements = announcements.size();
+            Optional<AnnouncementEntity> announcements = announcementRepository.findById(id); // Fetch all records from the AnnouncementEntity table
+    
 
             List<Map<String, Object>> formattedAnnouncements = new ArrayList<>();
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            for (AnnouncementEntity announcement : announcements) {
+            if(announcements.isPresent()) {
+                AnnouncementEntity announcement = announcements.get();
                 Map<String, Object> formattedAnnouncement = new HashMap<>();
                 formattedAnnouncement.put("id", announcement.getId());
                 
@@ -169,7 +169,6 @@ public class AnnouncementService {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Announcements Retrieved");
-            response.put("jumlah_announcement", totalAnnouncements);
             response.put("data", formattedAnnouncements);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);

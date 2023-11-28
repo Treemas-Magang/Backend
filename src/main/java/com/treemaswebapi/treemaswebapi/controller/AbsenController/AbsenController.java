@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -104,6 +105,16 @@ public class AbsenController {
     ){
         return updatePenempatan.updateProject(token, request);
     }
+
+    @GetMapping("/get-is-absen")
+    public ResponseEntity<Map<String, Object>> getIsAbsen(
+        @RequestHeader("Authorization") String token, LocalDate hariIni
+    ){
+        return absenService.getIsAbsen(token, hariIni);
+    }
+
+
+
     // @GetMapping("/get-all-members")
     // public ResponseEntity<Map<String, Object>> headMemberDetails(
     //     @RequestHeader("Authorization") String token

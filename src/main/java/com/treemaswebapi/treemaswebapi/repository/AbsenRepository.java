@@ -39,4 +39,6 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
 
     int countByJamMskIsNullAndJamPlgIsNullAndNik(String nik);
 
+    int countByJamMskIsNotNullAndNik(String nik);
+
 }

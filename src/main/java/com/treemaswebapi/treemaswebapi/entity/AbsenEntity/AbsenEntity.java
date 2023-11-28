@@ -2,7 +2,9 @@ package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
@@ -121,13 +123,13 @@ public class AbsenEntity {
     private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private java.sql.Timestamp dtmCrt;
+    private Timestamp dtmCrt;
 
     @Column(name = "usrapp")
     private String usrApp;
 
     @Column(name = "dtmapp")
-    private java.sql.Timestamp dtmApp;
+    private LocalTime dtmApp;
 
     @Column(name = "note_app")
     private String noteApp;

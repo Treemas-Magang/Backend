@@ -242,24 +242,97 @@ public class MemberService {
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
+                    System.out.println(nik);
                     //mau narik data yang ada di penempatanEntity, cari by projectId
                     AbsenEntity dataAbsen = absenRepository.findByIdAbsen(idAbsen);
                     String dataAbsenImg = absenImgRepository.findById(idAbsen).get().getImage64();
                     absenResponse.setAbsenEntity(dataAbsen);
                     absenResponse.setAbsenImg(dataAbsenImg);
-
                     Map<String, Object> response = new HashMap<>();
                     if (dataAbsen == null) {
-                        response.put("success", true);
+                        response.put("success", false);
                         response.put("message", "idAbsen salah");
                         response.put("data", absenResponse);
                     }else{
-                    
                     response.put("success", true);
                     response.put("message", "berhasil mendapatkan data absen seorang member");
                     response.put("data", absenResponse);
                     }
                     return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        }
+
+        public ResponseEntity<Map<String, Object>> getProject(String tokenWithBearer) {
+            try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+        
+                    List<PenempatanEntity> projectPenempatan = penempatanRepository.findByNik(nik);
+        
+                    if (!projectPenempatan.isEmpty()) {
+                        Map<String, Object> response = new HashMap<>();
+                        List<ProjectDetails> projectDetailsList = new ArrayList<>();
+        
+                        for (PenempatanEntity penempatanEntity : projectPenempatan) {
+                            ProjectEntity project = penempatanEntity.getProjectId();
+        
+                            if (project != null) {
+                                List<PenempatanEntity> members = penempatanRepository.findAllByProjectId(project);
+        
+                                if (!members.isEmpty()) {
+                                    ProjectDetails details = new ProjectDetails();
+                                    PenempatanEntity penempatan = penempatanRepository.findActiveByProjectIdAndNik(project, nik);
+        
+                                    details.setProjectId(project.getProjectId().toString());
+                                    details.setProjectName(project.getNamaProject());
+                                    details.setProjectAddress(project.getLokasi());
+                                    details.setJrkMax(project.getJrkMax());
+                                    details.setGpsLongitude(project.getGpsLongitude());
+                                    details.setGpsLatitude(project.getGpsLatitude());
+                                    details.setJamMasuk(project.getJamMasuk());
+                                    details.setJamKeluar(project.getJamKeluar());
+        
+                                    if (penempatan != null) {
+                                        details.setActive(penempatan.getActive());
+                                    } else {
+                                        details.setActive(null); // or any default value you want to set
+                                    }
+        
+                                    projectDetailsList.add(details);
+                                }
+                            }
+                        }
+        
+                        if (!projectDetailsList.isEmpty()) {
+                            response.put("success", true);
+                            response.put("message", "Project details retrieved successfully");
+                            response.put("data", projectDetailsList);
+                            return ResponseEntity.status(HttpStatus.OK).body(response);
+                        } else {
+                            response.put("success", false);
+                            response.put("message", "No member data found!");
+                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                        }
+                    } else {
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", false);
+                        response.put("message", "No project placement found for the user!");
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    }
                 } else {
                     // Handle the case where the token format is invalid
                     Map<String, Object> response = new HashMap<>();

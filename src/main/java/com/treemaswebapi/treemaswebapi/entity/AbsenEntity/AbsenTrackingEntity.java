@@ -1,7 +1,9 @@
 package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
@@ -120,7 +122,7 @@ public class AbsenTrackingEntity {
     private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private LocalTime dtmCrt;
+    private Timestamp dtmCrt;
 
     @Column(name = "usrapp")
     private String usrApp;

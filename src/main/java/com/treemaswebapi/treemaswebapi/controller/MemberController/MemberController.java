@@ -23,6 +23,13 @@ public class MemberController {
     private final MemberService memberService;
     private final AbsenService absenService;
 
+    @GetMapping("/get-project")
+    public ResponseEntity<Map<String, Object>> getProject(
+        @RequestHeader("Authorization") String tokenWithBearer
+    ){
+        return memberService.getProject(tokenWithBearer);
+    }
+
     @GetMapping("/get-member-project")
     public ResponseEntity<Map<String, Object>> getProjectDetails(
         @RequestHeader("Authorization") String tokenWithBearer,

@@ -295,6 +295,7 @@ public class AbsenService {
                 if (tokenWithBearer.startsWith("Bearer ")){
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
+                String nama = karyawanRepository.findNamaByNik(nik);
                 // Check if the user has already done the input for the current date
                 LocalDate currentDate = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                 List<AbsenEntity> existingAbsenRecords = absenRepository.findByNikAndTglAbsen(nik, currentDate);
@@ -326,8 +327,8 @@ public class AbsenService {
                             existingAbsenEntity.setIsLembur("0");
                         }
                     }
-                    boolean other = request.getNoteOther().isEmpty();
-                    if (!other) {
+                    
+                    if (request.getNoteOther() != null) {
                         existingAbsenEntity.setNoteOther(request.getNoteOther());
                         existingAbsenEntity.setIsOther("1");
                     }
@@ -335,6 +336,15 @@ public class AbsenService {
                     // save ke absenTrackingEntity
                     AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();
                     
+                    absenTrackingEntity.setProjectId(request.getProjectId());
+                    absenTrackingEntity.setNik(nik);
+                    absenTrackingEntity.setNama(nama);
+                    absenTrackingEntity.setHari(getIndonesianDayOfWeek(LocalDate.now().getDayOfWeek()));
+                    absenTrackingEntity.setTglAbsen(LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+                    absenTrackingEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
+                    absenTrackingEntity.setGpsLongitudePlg(request.getGpsLongitudePlg());
+                    absenTrackingEntity.setLokasiPlg(request.getLokasiPlg());
+                    absenTrackingEntity.setJarakPlg(request.getJarakPlg());
                     absenTrackingEntity.setNotePekerjaan(request.getNotePekerjaan());
                     absenTrackingEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
                     absenTrackingEntity.setGpsLongitudePlg(request.getGpsLongitudePlg());
@@ -342,7 +352,7 @@ public class AbsenService {
                     absenTrackingEntity.setJarakPlg(request.getJarakPlg());
                     absenTrackingEntity.setJamPlg(jamSekarang);
                     absenTrackingEntity.setNotePlgCepat(request.getNotePlgCepat());
-                    if (!other) {
+                    if (request.getNoteOther() != null) {
                         absenTrackingEntity.setNoteOther(request.getNoteOther());
                         absenTrackingEntity.setIsOther("1");
                     }
@@ -422,8 +432,8 @@ public class AbsenService {
                         if (!existingAbsenEntityList.isEmpty()) {
                             // Update the existing AbsenEntity
                             LocalTime jamSekarang = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                            existingAbsenEntity.setJamMsk(jamSekarang);
                             existingAbsenEntity.setJarakMsk(request.getJarakMsk());
+                            existingAbsenEntity.setProjectId(request.getProjectId());
                             existingAbsenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
                             existingAbsenEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
                             
@@ -432,6 +442,9 @@ public class AbsenService {
                             
                             // Submitting the updated value to the tbl_absen_tracking
                             trackingAbsenEntity.setDtmCrt(Timestamp.valueOf(LocalDateTime.now()));
+                            trackingAbsenEntity.setProjectId(request.getProjectId());
+                            trackingAbsenEntity.setNik(nik);
+                            trackingAbsenEntity.setTglAbsen(currentDate);
                             trackingAbsenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
                             trackingAbsenEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
                             trackingAbsenEntity.setJamMsk(jamSekarang);

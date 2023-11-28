@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

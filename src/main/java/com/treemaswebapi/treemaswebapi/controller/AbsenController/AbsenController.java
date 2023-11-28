@@ -45,7 +45,6 @@ public class AbsenController {
     @PostMapping("/update-absen")
     public ResponseEntity<Map<String, Object>> updateProject(
         @RequestHeader("Authorization") String token,
-        @RequestParam("date") LocalDate currentDate,
         @RequestBody AbsenRequest updateRequest
     ) {
         return absenService.updateAbsen(token, updateRequest);

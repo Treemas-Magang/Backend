@@ -146,6 +146,7 @@ public class CutiSakitService {
                 cutiData.put("noteApp", sakit.getNoteApp());
                 cutiData.put("usrapp", sakit.getUsrApp());
                 cutiData.put("dtmapp", sakit.getDtmApp());
+                cutiData.put("isApproved", sakit.getIsApproved());
         
                 responseData.add(cutiData);
             }

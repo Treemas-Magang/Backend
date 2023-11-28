@@ -110,6 +110,53 @@ public class AnnouncementService {
                 formattedAnnouncement.put("header", announcement.getHeader());
                 formattedAnnouncement.put("note", announcement.getNote());
                 formattedAnnouncement.put("footer", announcement.getFooter());
+               
+                
+                // Tambahan properti lain yang ingin Anda tampilkan
+                formattedAnnouncement.put("usrCrt", announcement.getUsrCrt());
+
+                formattedAnnouncements.add(formattedAnnouncement);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Announcements Retrieved");
+            response.put("jumlah_announcement", totalAnnouncements);
+            response.put("data", formattedAnnouncements);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed!");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> announcementGetId(Long id){
+        try {
+            List<AnnouncementEntity> announcements = announcementRepository.findAll(); // Fetch all records from the AnnouncementEntity table
+        
+            int totalAnnouncements = announcements.size();
+
+            List<Map<String, Object>> formattedAnnouncements = new ArrayList<>();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            for (AnnouncementEntity announcement : announcements) {
+                Map<String, Object> formattedAnnouncement = new HashMap<>();
+                formattedAnnouncement.put("id", announcement.getId());
+                
+                Date tglUploadDate = new Date(announcement.getTglUpload().getTime());
+                String formattedTglUpload = dateFormat.format(tglUploadDate);
+                
+                formattedAnnouncement.put("tgl_upload", formattedTglUpload);
+                formattedAnnouncement.put("title", announcement.getTitle());
+                formattedAnnouncement.put("header", announcement.getHeader());
+                formattedAnnouncement.put("note", announcement.getNote());
+                formattedAnnouncement.put("footer", announcement.getFooter());
                 formattedAnnouncement.put("image64", announcement.getImage64());
                 formattedAnnouncement.put("image", announcement.getImage());
                 
@@ -135,7 +182,6 @@ public class AnnouncementService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-
     public ResponseEntity<Map<String, Object>> announcementUpdate(
         Long id,  
         AnnouncementRequest request,

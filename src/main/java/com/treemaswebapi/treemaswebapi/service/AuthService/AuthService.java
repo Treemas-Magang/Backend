@@ -49,9 +49,7 @@ import lombok.RequiredArgsConstructor;
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
      
             }
-            // set Login true
-            user.setIsLogin("1");
-            user.setActive("1");
+            
             String isWebAccess = request.getIsWebAccess();
 
             if ("0".equals(isWebAccess)) { // Check if it's not a web access
@@ -77,6 +75,11 @@ import lombok.RequiredArgsConstructor;
                     }
                 }
             }
+
+            // set Login true
+            user.setIsLogin("1");
+            user.setActive("1");
+            user.setWrongPassCount((short) 0);
 
             var jwtToken = jwtService.generateToken(user);
             

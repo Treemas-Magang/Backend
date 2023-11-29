@@ -28,6 +28,14 @@ public class DashboardController {
         return response;
     }
 
+    @GetMapping("/navbar")
+    public ResponseEntity<Map<String, Object>> dashboardGetFoto(
+        @RequestHeader("Authorization") String jwtToken
+        ) {
+        ResponseEntity<Map<String, Object>> response = service.dashboardGetFoto(jwtToken);
+        return response;
+    }
+
     // @GetMapping("/data-kehadiran-member")
     // public ResponseEntity<Map<String, Object>> dashboardGetMember(
     //     DashboardResponse dashboardResponse

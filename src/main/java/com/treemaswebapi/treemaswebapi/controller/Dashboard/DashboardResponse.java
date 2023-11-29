@@ -16,4 +16,5 @@ public class DashboardResponse {
     int totalSakit;
     int totalTelatMasuk;
     int totalTidakMasuk;
+    String nama;
 }

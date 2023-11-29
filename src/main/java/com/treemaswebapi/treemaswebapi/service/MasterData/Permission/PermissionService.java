@@ -111,7 +111,7 @@ public class PermissionService {
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Failed");
-            response.put("message", "Failed To Create Permission");
+            response.put("message", "Failed To Update Permission");
             response.put("error", e.getMessage());
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

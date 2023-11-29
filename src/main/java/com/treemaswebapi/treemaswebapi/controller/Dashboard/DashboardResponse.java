@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.controller.DashboardController;
+package com.treemaswebapi.treemaswebapi.controller.Dashboard;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,4 +16,5 @@ public class DashboardResponse {
     int totalSakit;
     int totalTelatMasuk;
     int totalTidakMasuk;
+    String nama;
 }

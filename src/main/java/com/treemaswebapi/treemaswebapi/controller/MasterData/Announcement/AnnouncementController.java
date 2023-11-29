@@ -41,6 +41,14 @@ public class AnnouncementController {
         return response;
     }
 
+    @GetMapping("/announcement-view/{id}")
+    public ResponseEntity<Map<String, Object>> announcementGetId(
+        @PathVariable Long id
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.announcementGetId(id);
+        return response;
+    }
+
     @PutMapping("/announcement-form/edit/{id}")
     public ResponseEntity<Map<String, Object>> announcementUpdate(
         @PathVariable Long id, 

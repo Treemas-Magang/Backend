@@ -34,18 +34,10 @@ public class GeneralParamEntity {
     @Column(name = "isvisible")
     private String isVisible;
 
-    @Column(name = "isapprove")
-    private String isApprove;
-
     @Column(name = "usrupd")
     private String usrUpd;
 
     @Column(name = "dtmupd")
     private Date dtmUpd;
 
-    @Column(name = "usrapp")
-    private String usrApp;
-
-    @Column(name = "dtmapp")
-    private Date dtmApp;
 }

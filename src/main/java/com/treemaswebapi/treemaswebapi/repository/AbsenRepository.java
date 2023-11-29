@@ -27,15 +27,15 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
 
     
 
-    int countByIsAbsenAndNik(String string, String nik);
+    int countByIsAbsenAndNik(String isAbsen, String nik);
 
-    int countByIsSakitAndNik(String string, String nik);
+    int countByIsSakitAndNik(String isSakit, String nik);
 
     int countByNoteTelatMskIsNotNullAndNik(String nik);
 
     int countByNotePlgCepatIsNotNullAndNik(String nik);
 
-    int countByIsCutiAndNik(String string, String nik);
+    int countByIsCutiAndNik(String isCuti, String nik);
 
     int countByJamMskIsNullAndJamPlgIsNullAndNik(String nik);
 

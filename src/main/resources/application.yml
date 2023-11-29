@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:postgresql://google/treemas-cloud?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=treemas-api-403500:asia-southeast1:treemas-db
+    url: jdbc:postgresql://google/treemas-cloud?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=treemas-api-405402:asia-southeast2:treemas-db
     username: postgres
     password: 123
     driver-class-name: org.postgresql.Driver
@@ -25,4 +25,4 @@ http:
 cloud:
   gcp:
     credentials:
-      location: C:\Users\Heru M\Desktop\Project\Backend-test-feature-andro\src\main\resources\treemas-api-403500-66dcb2582bfa.json
+      location: C:\Users\Heru M\Desktop\Project\cloud-web-android\Backend\src\main\resources\treemas-api-405402-57ec0885e2ee.json

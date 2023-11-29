@@ -218,7 +218,7 @@ public class AbsenService {
                             absenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
                             absenEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
                             absenEntity.setIsWfh(request.getIsWfh());
-                            absenEntity = absenRepository.save(absenEntity);
+                            absenRepository.save(absenEntity);
                             System.out.println("sekarang tuh jam segini +" + jamSekarang);
                             // Save to absentrackingentity
                             AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();

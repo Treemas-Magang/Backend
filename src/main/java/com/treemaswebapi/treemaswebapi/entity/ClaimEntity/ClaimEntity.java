@@ -39,9 +39,6 @@ public class ClaimEntity {
     @Column(name = "nominal")
     private BigDecimal nominal;
 
-    @Column(name = "id_claim")
-    private String idClaim;
-
     @Column(name = "keterangan")
     private String keterangan;
 
@@ -50,4 +47,8 @@ public class ClaimEntity {
     
     @Column(name = "dtmcrt")
     private Timestamp dtmCrt;
+
+    @OneToOne
+    @JoinColumn(name = "id_claim", referencedColumnName = "id_claim")
+    private TipeClaimEntity tipeClaimEntity;
 }

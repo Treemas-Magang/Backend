@@ -13,7 +13,7 @@ import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 @Repository
 public interface KaryawanRepository extends JpaRepository<KaryawanEntity, String> {
     Optional<KaryawanEntity> findByNik(String nik);
-
+    Optional<KaryawanEntity> findByNama(String nama);    
     @Query("SELECT k.nama FROM KaryawanEntity k WHERE k.nik = :nik")
     String findNamaByNik(@Param("nik") String nik);
 

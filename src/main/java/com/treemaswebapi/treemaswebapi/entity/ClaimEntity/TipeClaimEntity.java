@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 public class TipeClaimEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_claim")
     private Long idClaim;
 

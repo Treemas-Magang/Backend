@@ -2,29 +2,27 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/treemas_ori
+    url: jdbc:postgresql://google/treemas-cloud?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=treemas-api-403500:asia-southeast1:treemas-db
     username: postgres
     password: 123
     driver-class-name: org.postgresql.Driver
   jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
     properties:
-        hibernate:
-            ddl-auto: validate
-            format-sql: true
+      hibernate:
+        format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
-logging:
-    level:
-        org:
-            hibernate:
-                SQL: DEBUG
-                type:
-                    descriptor:
-                        sql:
-                            BasicBinder: TRACE
+servlet:
+  multipart:
+    enabled: true
+http:
+  multipart:
+    max-file-size: 10MB
+    max-request-size: 
+cloud:
+  gcp:
+    credentials:
+      location: C:\Users\Heru M\Desktop\Project\Backend-test-feature-andro\src\main\resources\treemas-api-403500-66dcb2582bfa.json

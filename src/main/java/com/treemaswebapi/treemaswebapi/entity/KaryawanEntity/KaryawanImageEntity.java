@@ -1,10 +1,5 @@
 package com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
 
-import java.io.IOException;
-import java.util.Base64;
-
-import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -55,34 +50,6 @@ public class KaryawanImageEntity {
 
     @Column(name = "foto")
     private String foto;
-
-    public KaryawanImageEntity(
-        MultipartFile foto,
-        MultipartFile fotoKtp,
-        MultipartFile fotoNpwp,
-        MultipartFile fotoKk,
-        MultipartFile fotoAsuransi
-    ) {
-        this.foto = convertToBase64(foto);
-        this.fotoKtp = convertToBase64(fotoKtp);
-        this.fotoNpwp = convertToBase64(fotoNpwp);
-        this.fotoKk = convertToBase64(fotoKk);
-        this.fotoAsuransi = convertToBase64(fotoAsuransi);
-    }
-
-    // Helper method to convert MultipartFile to Base64
-    private String convertToBase64(MultipartFile file) {
-        try {
-            if (file != null) {
-                byte[] bytes = file.getBytes();
-                return Base64.getEncoder().encodeToString(bytes);
-            }
-        } catch (IOException e) {
-            // Handle the exception, for example, log it
-            e.printStackTrace();
-        }
-        return null; // or an empty string if needed
-    }
 
     // @OneToOne
     // @MapsId

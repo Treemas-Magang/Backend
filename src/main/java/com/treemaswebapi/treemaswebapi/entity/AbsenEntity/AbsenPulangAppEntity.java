@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,7 +59,7 @@ public class AbsenPulangAppEntity {
     private String jarakMsk;
 
     @Column(name = "jam_msk")
-    private Time jamMsk;
+    private LocalTime jamMsk;
 
     @Column(name = "gps_latitude_plg")
     private Double gpsLatitudePlg;

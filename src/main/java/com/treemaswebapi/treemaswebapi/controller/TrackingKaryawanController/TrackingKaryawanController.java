@@ -13,7 +13,6 @@ import com.treemaswebapi.treemaswebapi.entity.UserLocationHistoryEntity.UserLoca
 import com.treemaswebapi.treemaswebapi.service.AbsenService.AbsenService;
 import com.treemaswebapi.treemaswebapi.service.AbsenService.MemberService;
 import com.treemaswebapi.treemaswebapi.service.UpdateListProjectService.UpdateListProjectService;
-import com.treemaswebapi.treemaswebapi.service.UserLocationHistoryService.UserLocationHIstoryService;
 import com.treemaswebapi.treemaswebapi.service.UserLocationHistoryService.UserLocationHistoryService;
 
 import lombok.Data;

@@ -1,11 +1,7 @@
 package com.treemaswebapi.treemaswebapi.controller.AbsenController;
 
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class AbsenResponse {
-    AbsenEntity absenEntity;
-    String absenImg;
-    // buat response unprocessedAbsenEntity
-    
+
+public class AbsenBelumPulangResponse {
+    private String projectName;
+    private String noteTelatMsk;
+    private LocalTime jamMsk;
+    private String lokasiProject;
+    private LocalDate tglAbsen;
+    private Long idAbsen;
+
 }

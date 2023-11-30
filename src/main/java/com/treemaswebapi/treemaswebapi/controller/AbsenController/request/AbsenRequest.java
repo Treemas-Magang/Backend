@@ -51,6 +51,7 @@ public class AbsenRequest {
     private Timestamp dtmApp;
     private String noteApp;
     private String photoAbsen;
+    private String keteranganLupaPulang;
 }
 
 

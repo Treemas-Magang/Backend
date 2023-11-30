@@ -33,9 +33,12 @@ public class UserLocationHistoryService {
                     String nik = jwtService.extractUsername(token);
                     UserLocationHistoryEntity userLocation = new UserLocationHistoryEntity();
                     userLocation.setAccuracy(trackingKaryawanRequest.getAccuracy());
+                    System.out.println("ACCURACY YANG MASUK "+ trackingKaryawanRequest.getAccuracy());
                     userLocation.setUserId(nik);
                     userLocation.setLatitude(trackingKaryawanRequest.getLatitude());
+                    System.out.println("LATITUDE YANG MASUK "+ trackingKaryawanRequest.getLatitude());
                     userLocation.setLongitude(trackingKaryawanRequest.getLongitude());
+                    System.out.println("LONGITUDE YANG MASUK "+ trackingKaryawanRequest.getLongitude());
                     userLocation.setDtmcrt(Timestamp.valueOf(LocalDateTime.now()));
                     userLocationHistoryRepository.save(userLocation);
 

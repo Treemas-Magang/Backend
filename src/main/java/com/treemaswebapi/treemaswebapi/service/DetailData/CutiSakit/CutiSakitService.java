@@ -225,15 +225,15 @@ public class CutiSakitService {
                 .tglKembaliKerja(request.getTglKembaliKerja())
                 .keperluanCuti(request.getKeperluanCuti())
                 .alamatCuti(request.getAlamatCuti())
-                .jmlCutiBersama(request.getJmlCutiBersama())
-                .jmlCutiKhusus(request.getJmlCutiKhusus())
+                .jmlCutiBersama(request.getJmlCutiBersama())//ambil dari table, bukan dari req
+                .jmlCutiKhusus(request.getJmlCutiKhusus())//ambil dari table, bukan dari req
                 .flgKet("cuti")
                 .dtmCrt(dtmCrt)
                 .usrCrt(nama)
-                .jmlCuti(request.getJmlCuti())
+                .jmlCuti(request.getJmlCuti())//ambil dari table, bukan dari req
                 .masterCutiEntity(masterCutiEntity)
                 .sisaCuti(hakCuti)
-            .build();
+                .build();
 
             cutiAppRepository.save(cutiApp);
 
@@ -282,7 +282,7 @@ public class CutiSakitService {
 
                 MasterCutiEntity masterCutiEntity = cutiAppList.getMasterCutiEntity(); // Retrieve from CutiAppEntity
 
-                CutiEntity cutiApproved = new CutiEntity();
+                CutiEntity cutiApproved = new CutiEntity(); // buat ngestore ke CutiEntity
                 cutiApproved.setUsrApp(nama);
                 cutiApproved.setDtmApp(dtmApp);
                 cutiApproved.setNoteApp(request.getNoteApp());
@@ -302,7 +302,7 @@ public class CutiSakitService {
                 cutiApproved.setSisaCuti(cutiAppList.getSisaCuti());
                 cutiApproved.setFlagApp("cuti");
                 // If isApproved is "1", decrement hakCuti by 1
-                String isApproved = request.getIsApproved();
+                String isApproved = request.getIsApproved(); //kalo diapprove harusnya ngurangin cuti pengganti dulu baru ke hak_cuti
                 if ("1".equals(isApproved)) {
                     BigDecimal updatedHakCuti = hakCuti.subtract(BigDecimal.ONE);
                     nikOther.get().setHakCuti(updatedHakCuti);
@@ -504,4 +504,5 @@ public class CutiSakitService {
         }
     }
 
+    
 }

@@ -3,6 +3,8 @@ package com.treemaswebapi.treemaswebapi.service.DetailData.CutiSakit;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,12 +23,14 @@ import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.CutiApprove;
 import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.CutiRequest;
 import com.treemaswebapi.treemaswebapi.controller.DetailData.CutiSakit.request.SakitRequest;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
+import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiImageAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiImageRepository;
@@ -47,8 +51,23 @@ public class CutiSakitService {
     private final MasterCutiRepository masterCutiRepository;
     private final CutiImageRepository cutiImageRepository;
     private final CutiImageAppRepository cutiImageAppRepository;
+    private final AbsenRepository absenRepository;
+
+     private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
+        Map<String,String> indonesianDayMap = new HashMap<>();
+        indonesianDayMap.put("MONDAY", "Senin");
+        indonesianDayMap.put("TUESDAY", "Selasa");
+        indonesianDayMap.put("WEDNESDAY", "Rabu");
+        indonesianDayMap.put("THURSDAY", "Kamis");
+        indonesianDayMap.put("FRIDAY", "Jumat");
+        indonesianDayMap.put("SATURDAY", "Sabtu");
+        indonesianDayMap.put("SUNDAY", "Minggu");
+
+        return indonesianDayMap.get(dayOfWeek.toString());
+    }
 
     public ResponseEntity<Map<String, Object>> cutiGet() {
+        
         try {
             // Disetujui atau ditolak
             List<CutiEntity> cutiList  = cutiRepository.findByFlagApp("cuti");
@@ -225,15 +244,15 @@ public class CutiSakitService {
                 .tglKembaliKerja(request.getTglKembaliKerja())
                 .keperluanCuti(request.getKeperluanCuti())
                 .alamatCuti(request.getAlamatCuti())
-                .jmlCutiBersama(request.getJmlCutiBersama())
-                .jmlCutiKhusus(request.getJmlCutiKhusus())
+                .jmlCutiBersama(request.getJmlCutiBersama())//ambil dari table, bukan dari req
+                .jmlCutiKhusus(request.getJmlCutiKhusus())//ambil dari table, bukan dari req
                 .flgKet("cuti")
                 .dtmCrt(dtmCrt)
                 .usrCrt(nama)
-                .jmlCuti(request.getJmlCuti())
+                .jmlCuti(request.getJmlCuti())//ambil dari table, bukan dari req
                 .masterCutiEntity(masterCutiEntity)
                 .sisaCuti(hakCuti)
-            .build();
+                .build();
 
             cutiAppRepository.save(cutiApp);
 
@@ -282,7 +301,7 @@ public class CutiSakitService {
 
                 MasterCutiEntity masterCutiEntity = cutiAppList.getMasterCutiEntity(); // Retrieve from CutiAppEntity
 
-                CutiEntity cutiApproved = new CutiEntity();
+                CutiEntity cutiApproved = new CutiEntity(); // buat ngestore ke CutiEntity
                 cutiApproved.setUsrApp(nama);
                 cutiApproved.setDtmApp(dtmApp);
                 cutiApproved.setNoteApp(request.getNoteApp());
@@ -302,7 +321,7 @@ public class CutiSakitService {
                 cutiApproved.setSisaCuti(cutiAppList.getSisaCuti());
                 cutiApproved.setFlagApp("cuti");
                 // If isApproved is "1", decrement hakCuti by 1
-                String isApproved = request.getIsApproved();
+                String isApproved = request.getIsApproved(); //kalo diapprove harusnya ngurangin cuti pengganti dulu baru ke hak_cuti
                 if ("1".equals(isApproved)) {
                     BigDecimal updatedHakCuti = hakCuti.subtract(BigDecimal.ONE);
                     nikOther.get().setHakCuti(updatedHakCuti);
@@ -414,6 +433,7 @@ public class CutiSakitService {
         Long id
     ) {
         try {
+            
             // Cari siapa yang akses api ini
             String token = jwtToken.substring(7);
             String userToken = jwtService.extractUsername(token);
@@ -474,12 +494,25 @@ public class CutiSakitService {
                 cutiApproved.setUsrApp(nama);
                 cutiApproved.setDtmapp(dtmApp);
 
+                // Sakit Kirim isSakit = 1, set nik, nama, hari, dtmcrt, usrcrt ke tbl_absen
+                
+                AbsenEntity absenData = new AbsenEntity();
+                absenData.setNik(cutiApproved.getNik());
+                absenData.setNama(sakitAppList.getNama());
+                absenData.setHari(getIndonesianDayOfWeek(LocalDate.now().getDayOfWeek()));
+                absenData.setDtmCrt(imageDataReal.getDtmCrt());
+                absenData.setUsrCrt(imageDataReal.getUsrCrt());
+
+
                 // kirim image ke tbl cuti entity untuk api get sakit
 
                 cutiImageRepository.save(cutiApproved);
+                absenRepository.save(absenData);
                 cutiImageAppRepository.delete(imageDataReal);
                 cutiRepository.save(sakitApproved);
                 cutiAppRepository.delete(sakitAppList);
+                
+
                 Map<String, Object> response = new HashMap<>();
                 response.put("status", "Success");
                 response.put("message", "Sakit Approved");
@@ -504,4 +537,5 @@ public class CutiSakitService {
         }
     }
 
+    
 }

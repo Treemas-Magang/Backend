@@ -1,7 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -14,9 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,9 +27,7 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenBelumPulangResponse;
-import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
-import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.repository.AbsenImgRepository;
@@ -43,9 +38,6 @@ import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -573,7 +565,7 @@ public class AbsenService {
                     String lokasiProject = absenEntity.getLokasiMsk();
                     LocalDate tglAbsen = absenEntity.getTglAbsen();
                     Long idAbsen = absenEntity.getId();
-                    
+
                     AbsenBelumPulangResponse response = new AbsenBelumPulangResponse(projectName, noteTelatMsk, jamMsk, lokasiProject, tglAbsen, idAbsen);
                     listAbsenResponse.add(response);
                 }

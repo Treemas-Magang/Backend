@@ -219,6 +219,7 @@ public class AbsenService {
                             System.out.println("sekarang tuh jam segini +" + jamSekarang);
                             // Save to absentrackingentity
                             AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();
+                            absenTrackingEntity.setId(absenEntity.getId());
                             absenTrackingEntity.setProjectId(project);
                             absenTrackingEntity.setNik(nik);
                             absenTrackingEntity.setNama(nama);
@@ -235,6 +236,7 @@ public class AbsenService {
                             absenTrackingRepository.save(absenTrackingEntity);
     
                             AbsenImgEntity absenImgEntity = new AbsenImgEntity();
+                            absenImgEntity.setId(absenEntity.getId());
                             absenImgEntity.setNik(nik);
                             absenImgEntity.setId(absenEntity.getId());
                             absenImgEntity.setTglAbsen(LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));

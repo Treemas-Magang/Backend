@@ -25,6 +25,8 @@ import com.treemaswebapi.treemaswebapi.service.UpdateListProjectService.UpdateLi
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+
+// api awal buat absen
 @RestController
 @RequestMapping("/api/absen")
 @Data
@@ -34,7 +36,7 @@ public class AbsenController {
     private final AbsenService absenService;
     private final UpdateListProjectService updatePenempatan;
 
-
+    // buat retrieve project
     @GetMapping("/project-list")
     public ResponseEntity<Map<String, Object>> getProjectDetails(
         @RequestHeader("Authorization") String token
@@ -42,6 +44,7 @@ public class AbsenController {
         return absenService.getProjectDetails(token);
     }
 
+    // update absen
     @PostMapping("/update-absen")
     public ResponseEntity<Map<String, Object>> updateProject(
         @RequestHeader("Authorization") String token,
@@ -50,6 +53,7 @@ public class AbsenController {
         return absenService.updateAbsen(token, updateRequest);
     }
 
+    // input absenMsk
     @PostMapping("/input-absen")
     public ResponseEntity<Map<String, Object>> inputAbsen(
         @RequestHeader("Authorization") String token,
@@ -58,6 +62,7 @@ public class AbsenController {
         return absenService.inputAbsen(token, request);
     }
 
+    // input absenPlg
     @PostMapping("/input-absen-pulang")
     public ResponseEntity<Map<String, Object>> inputAbsenPulang(
         @RequestHeader("Authorization") String token,
@@ -66,14 +71,24 @@ public class AbsenController {
         return absenService.inputAbsenPulang(token, request);
     }
 
+    // get absenMsk yang gaada data absenPlg
     @GetMapping("/get-absen-belum-pulang")
     public ResponseEntity<Map<String, Object>> getUnprocessedAbsen(
         @RequestHeader("Authorization") String token
     ){
-        return absenService.getUnprocessedAbsen(token);
+        return absenService.getAbsenBelumPulang(token);
     }
 
+    @PostMapping("/input-absen-belum-pulang")
+    public ResponseEntity<Map<String, Object>> inputAbsenBelumPulang(
+        @RequestHeader("Authorization") String token, 
+        @RequestParam("id") Long idAbsen,
+        @RequestBody AbsenRequest request
+    ) {
+        return absenService.inputAbsenBelumPulang(token, idAbsen, request);
+    }
 
+    // cari data absen by projectId, ntar keluarnya list data absen
     @GetMapping("/get-member")
     public ResponseEntity<Map<String, Object>> getAbsenFromProjectId(
         @RequestHeader("Authorization") String token,
@@ -82,6 +97,7 @@ public class AbsenController {
         return memberService.getAbsenFromProjectId(token, request);
     }
 
+    // fungsi buat si leader untuk retrieve data project yang dia pegang
     @GetMapping("/get-project-details")
     public ResponseEntity<Map<String, Object>> leaderProjectDetails(
         @RequestHeader("Authorization") String token,
@@ -90,6 +106,7 @@ public class AbsenController {
         return memberService.leaderProjectDetails(token, projectIdReq);
     }
 
+    // fungsi buat HEAD untuk ambil semua data project yang ada
     @GetMapping("/get-all-projects")
     public ResponseEntity<Map<String,Object>> projectDetails(
         @RequestHeader("Authorization") String token
@@ -97,6 +114,7 @@ public class AbsenController {
         return memberService.projectDetails(token);
     }
 
+    // fungsi buat update alias PUT data penempatan
     @PatchMapping("/update-penempatan")
     public ResponseEntity<Map<String, Object>> updatePenempatan(
         @RequestHeader("Authorization") String token,
@@ -105,6 +123,7 @@ public class AbsenController {
         return updatePenempatan.updateProject(token, request);
     }
 
+    // fungsi buat ambil data isAbsen hari ini
     @GetMapping("/get-is-absen")
     public ResponseEntity<Map<String, Object>> getIsAbsen(
         @RequestHeader("Authorization") String token, LocalDate hariIni

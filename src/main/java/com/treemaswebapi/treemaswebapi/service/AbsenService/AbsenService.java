@@ -1,7 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.AbsenService;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,21 +25,19 @@ import com.treemaswebapi.treemaswebapi.controller.AbsenController.request.AbsenR
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
-import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenResponse;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
+import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenBelumPulangResponse;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
-import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.repository.AbsenImgRepository;
+import com.treemaswebapi.treemaswebapi.repository.AbsenPulangAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenTrackingRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -55,6 +51,7 @@ public class AbsenService {
     private final AbsenTrackingRepository absenTrackingRepository;
     private final AbsenImgRepository absenImgRepository;
     private final KaryawanRepository karyawanRepository;
+    private final AbsenPulangAppRepository absenPulangAppRepository;
 
     private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
         Map<String,String> indonesianDayMap = new HashMap<>();
@@ -218,7 +215,7 @@ public class AbsenService {
                             absenEntity.setGpsLatitudeMsk(request.getGpsLatitudeMsk());
                             absenEntity.setGpsLongitudeMsk(request.getGpsLongitudeMsk());
                             absenEntity.setIsWfh(request.getIsWfh());
-                            absenEntity = absenRepository.save(absenEntity);
+                            absenRepository.save(absenEntity);
                             System.out.println("sekarang tuh jam segini +" + jamSekarang);
                             // Save to absentrackingentity
                             AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();
@@ -239,6 +236,7 @@ public class AbsenService {
     
                             AbsenImgEntity absenImgEntity = new AbsenImgEntity();
                             absenImgEntity.setNik(nik);
+                            absenImgEntity.setId(absenEntity.getId());
                             absenImgEntity.setTglAbsen(LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
                             absenImgEntity.setImage64(request.getPhotoAbsen());
                             absenImgEntity.setUsrUpd(nama);
@@ -387,6 +385,54 @@ public class AbsenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    public ResponseEntity<Map<String, Object>> inputAbsenBelumPulang(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("id") Long idAbsen, AbsenRequest request) {
+        try {
+                if (tokenWithBearer.startsWith("Bearer ")){
+                String token = tokenWithBearer.substring("Bearer ".length());
+                String nik = jwtService.extractUsername(token);
+                String nama = karyawanRepository.findNamaByNik(nik);
+                AbsenEntity existingAbsenData = absenRepository.findByIdAbsen(idAbsen);
+                // ngga perlu cek, langsung tarik dari screen.
+                AbsenPulangAppEntity lupaPulang = new AbsenPulangAppEntity();
+                lupaPulang.setId(idAbsen);
+                lupaPulang.setNik(nik);
+                lupaPulang.setKeterangan(request.getKeteranganLupaPulang());
+                lupaPulang.setNotePekerjaan(request.getNotePekerjaan());
+                lupaPulang.setLokasiPlg(request.getLokasiPlg());
+                lupaPulang.setGpsLatitudePlg(request.getGpsLatitudePlg());
+                lupaPulang.setGpsLongitudePlg(request.getGpsLongitudePlg());
+                lupaPulang.setFlagApp("0");
+                lupaPulang.setHari(request.getHari());
+                lupaPulang.setJamPlg(request.getJamPlg());
+                lupaPulang.setJarakPlg(request.getJarakPlg());
+                lupaPulang.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
+                lupaPulang.setGpsLatitudeMsk(existingAbsenData.getGpsLatitudeMsk());
+                lupaPulang.setGpsLongitudeMsk(existingAbsenData.getGpsLongitudeMsk());
+                lupaPulang.setJamMsk(existingAbsenData.getJamMsk());
+                lupaPulang.setLokasiMsk(existingAbsenData.getLokasiMsk());
+
+                absenPulangAppRepository.save(lupaPulang);
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("message", "oke udah masuk");
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            
+            } else {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to insert absen data");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
     public ResponseEntity<Map<String, Object>> updateAbsen(@RequestHeader("Authorization") String tokenWithBearer, AbsenRequest request) {
         try {
             // Extracting NIK from the token
@@ -501,19 +547,32 @@ public class AbsenService {
         response.put("message", "Unexpected error occurred");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-    public ResponseEntity<Map<String, Object>> getUnprocessedAbsen(String tokenWithBearer) {
+    public ResponseEntity<Map<String, Object>> getAbsenBelumPulang(String tokenWithBearer) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
 
-                // Search for idAbsen that has no Plg data
+                // Search for idAbsen that has no Plg data`
                 List<AbsenEntity> unprocessedAbsenList = absenRepository.findIdAbsenByNikAndIsAbsenIsNull(nik);
 
+                List<AbsenBelumPulangResponse> listAbsenResponse = new ArrayList<>();
+                for(AbsenEntity absenEntity : unprocessedAbsenList){
+                    ProjectEntity projectId = absenEntity.getProjectId();
+                    String projectName = projectId.getNamaProject();
+                    String noteTelatMsk = absenEntity.getNoteTelatMsk();
+                    LocalTime jamMsk = absenEntity.getJamMsk();
+                    String lokasiProject = absenEntity.getLokasiMsk();
+                    LocalDate tglAbsen = absenEntity.getTglAbsen();
+                    Long idAbsen = absenEntity.getId();
+
+                    AbsenBelumPulangResponse response = new AbsenBelumPulangResponse(projectName, noteTelatMsk, jamMsk, lokasiProject, tglAbsen, idAbsen);
+                    listAbsenResponse.add(response);
+                }
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", true);
                 response.put("message", "Unprocessed Absen data retrieved successfully");
-                response.put("data", unprocessedAbsenList);
+                response.put("data", listAbsenResponse);
 
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {

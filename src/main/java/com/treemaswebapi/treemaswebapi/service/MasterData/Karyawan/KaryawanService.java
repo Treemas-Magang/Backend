@@ -232,7 +232,7 @@ import lombok.RequiredArgsConstructor;
             String token = tokenWithBearer.substring("Bearer ".length());
             String nik = jwtService.extractUsername(token);
             int masuk = absenRepository.countByJamMskIsNotNullAndNik(nik);
-            int totalMasuk = absenRepository.countByIsAbsenAndNik("1", nik) + masuk;
+            int totalMasuk = masuk;
             int totalSakit = absenRepository.countByIsSakitAndNik("1", nik);
             int totalTelatMasuk = absenRepository.countByNoteTelatMskIsNotNullAndNik(nik);
             int totalPulangCepat = absenRepository.countByNotePlgCepatIsNotNullAndNik(nik);

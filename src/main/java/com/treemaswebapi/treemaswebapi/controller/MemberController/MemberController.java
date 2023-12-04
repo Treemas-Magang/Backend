@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.service.AbsenService.AbsenService;
 import com.treemaswebapi.treemaswebapi.service.AbsenService.MemberService;

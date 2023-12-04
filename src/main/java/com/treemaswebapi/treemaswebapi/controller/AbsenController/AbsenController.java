@@ -1,10 +1,8 @@
 package com.treemaswebapi.treemaswebapi.controller.AbsenController;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.request.AbsenRequest;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.request.UpdatePenempatanReq;
 import com.treemaswebapi.treemaswebapi.controller.MemberController.request.MemberRequest;
-import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.service.AbsenService.AbsenService;
 import com.treemaswebapi.treemaswebapi.service.AbsenService.MemberService;
 import com.treemaswebapi.treemaswebapi.service.UpdateListProjectService.UpdateListProjectService;

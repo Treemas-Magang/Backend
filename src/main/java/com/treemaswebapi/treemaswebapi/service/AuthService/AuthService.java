@@ -1,6 +1,5 @@
 package com.treemaswebapi.treemaswebapi.service.AuthService;
 
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -8,15 +7,12 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
-import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;

@@ -258,6 +258,7 @@ public class MemberService {
                         response.put("success", false);
                         response.put("message", "idAbsen salah");
                         response.put("data", absenResponse);
+                        //ini penambahan fungsinya
                     }else{
                     response.put("success", true);
                     response.put("message", "berhasil mendapatkan data absen seorang member");

@@ -746,25 +746,65 @@ public class AbsenService {
         }
     }
 
-    public ResponseEntity <Map<String, Object>> getCutiByDate(@RequestHeader("Authorization") String tokenWithBearer, LocalDate hariIni) {
+    public ResponseEntity <Map<String, Object>> getAllCuti(@RequestHeader("Authorization") String tokenWithBearer) {
         try{
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
-                LocalDate hariIniBanget = hariIni.now();
                 Map<String, Object> response = new HashMap<>();
                 if (nik != null) {
                     // check absen masuk nik tersebut di hari ini
-                    List<AbsenEntity> kondisiAbsen = absenRepository.findByNikAndTglAbsen(nik, hariIniBanget);
-                    if (kondisiAbsen.isEmpty()) {
+                    List<AbsenEntity> dataCuti = absenRepository.findIdAbsenByIsCuti("1");
+                    if (dataCuti.isEmpty()) {
                         response.put("success", true);
-                        response.put("message", "data absen masih kosong untuk hari ini");
-                        response.put("data", kondisiAbsen);
+                        response.put("message", "data cuti tidak ditemukan");
+                        response.put("data", null);
                         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
                     }else{
                     response.put("success", false);
-                    response.put("message", "data absen sudah terisi");
-                    response.put("data", kondisiAbsen);
+                    response.put("message", "data cuti berhasil diretrieve");
+                    response.put("data", dataCuti);
+                    return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(response);
+                    }
+                } else {
+                    response.put("success", false);
+                    response.put("message", "nik tidak dapat ditemukan");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            } else {
+                // Invalid token format
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "terjadi kesalahan dalam memproses permintaan");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    public ResponseEntity <Map<String, Object>> getCutiByDate(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("date") LocalDate date) {
+        try{
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                String token = tokenWithBearer.substring("Bearer ".length());
+                String nik = jwtService.extractUsername(token);
+                Map<String, Object> response = new HashMap<>();
+                if (nik != null) {
+                    // check absen masuk nik tersebut di hari ini
+                    List<AbsenEntity> dataCuti = absenRepository.findIdAbsenByIsCutiAndTglAbsen("1", date);
+                    if (dataCuti.isEmpty()) {
+                        response.put("success", true);
+                        response.put("message", "data cuti tidak ditemukan");
+                        response.put("data", null);
+                        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+                    }else{
+                    response.put("success", false);
+                    response.put("message", "data cuti berhasil diretrieve");
+                    response.put("data", dataCuti);
                     return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(response);
                     }
                 } else {

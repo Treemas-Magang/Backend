@@ -47,6 +47,7 @@ public class LiburService {
                 .keterangan(request.getKeterangan())
                 .dtmCrt(dtmCrt)
                 .usrCrt(nama)
+                .isCutiBersama(request.getIsCutiBersama())
             .build();
             liburRepository.save(liburEntity);
 
@@ -117,6 +118,7 @@ public class LiburService {
                 newLiburEntity.setKeterangan(request.getKeterangan());
                 newLiburEntity.setDtmUpd(dtmUpd);
                 newLiburEntity.setUsrUpd(nama);
+                newLiburEntity.setIsCutiBersama(request.getIsCutiBersama());
 
                 liburRepository.save(newLiburEntity);
                 

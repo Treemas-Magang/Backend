@@ -123,13 +123,13 @@ public class AbsenTrackingEntity {
     private String usrCrt;
 
     @Column(name = "dtmcrt")
-    private Timestamp dtmCrt;
+    private java.sql.Timestamp dtmCrt;
 
     @Column(name = "usrapp")
     private String usrApp;
 
     @Column(name = "dtmapp")
-    private LocalTime dtmApp;
+    private java.sql.Timestamp dtmApp;
 
     @Column(name = "note_app")
     private String noteApp; 

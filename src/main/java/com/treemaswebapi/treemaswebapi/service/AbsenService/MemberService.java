@@ -237,7 +237,7 @@ public class MemberService {
             }
         }
         
-        public ResponseEntity<Map<String, Object>> getDataAbsenMember(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("idAbsen") Long idAbsen, AbsenResponse absenResponse) {
+        public ResponseEntity<Map<String, Object>> getDataAbsenMember(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("idAbsen") Long idAbsen) {
             try {
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
@@ -245,7 +245,14 @@ public class MemberService {
                     System.out.println(nik);
                     //mau narik data yang ada di penempatanEntity, cari by projectId
                     AbsenEntity dataAbsen = absenRepository.findByIdAbsen(idAbsen);
+                    System.out.println("ini data absennya"+dataAbsen);
                     String dataAbsenImg = absenImgRepository.findById(idAbsen).get().getImage64();
+                    System.out.println("ini data gambarnya"+dataAbsenImg);
+
+                    if(dataAbsenImg == null){
+                        System.out.println("data gambarnya gaada");
+                    }
+                    AbsenResponse absenResponse = new AbsenResponse();
                     if (dataAbsenImg == null) {           
                     absenResponse.setAbsenEntity(dataAbsen);
                     absenResponse.setAbsenImg(null);

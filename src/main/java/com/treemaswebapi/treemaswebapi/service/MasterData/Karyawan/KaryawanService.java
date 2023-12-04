@@ -1,6 +1,8 @@
 package com.treemaswebapi.treemaswebapi.service.MasterData.Karyawan;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +17,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
-import com.treemaswebapi.treemaswebapi.controller.DashboardController.DashboardResponse;
+import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
+import com.treemaswebapi.treemaswebapi.repository.GeneralParamRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
@@ -36,16 +41,40 @@ import lombok.RequiredArgsConstructor;
         private final KaryawanRepository karyawanRepository;
         private final SysUserRepository sysUserRepository;
         private final KaryawanImageRepository karyawanImageRepository;
+        private final GeneralParamRepository generalParamRepository;
+        private final CutiRepository cutiRepository;
         private final AbsenRepository absenRepository;
-        private final JwtService jwtService;
 
         private final PasswordEncoder passwordEncoder;
+        private final JwtService jwtService;
 
         public ResponseEntity<Map<String, String>> karyawanAdd(
             KaryawanAddRequest request,
             @RequestHeader("Authorization") String jwtToken
         ) {
             try {            
+
+                // Real Token terpisah dari Bearer 
+                String token = jwtToken.substring(7);
+                System.out.println("TOKEN : "+token);
+
+                // Cari nik dari token
+                String userToken = jwtService.extractUsername(token);
+                // Cari nama dari token
+                Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+                String nama = user.get().getNama();
+
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+                // Ambil default value LEAVE di table generalparam
+                String defaultCutiString = generalParamRepository.findById("LEAVE")
+                    .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                    .getVal();
+
+                // Karena defaultCuti adalah String di table general param dan field sisa cuti di table cuti entity adalah BigDecimal kita konversi
+                // defaultCuti yang String ke BigDecimal
+                BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
+
                 // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
                     .nik(request.getNik())
@@ -76,7 +105,7 @@ import lombok.RequiredArgsConstructor;
                     .isLeader(request.getIsLeader())
                     .usrUpd(request.getUsrUpd())
                     .handsetImei(request.getHandsetImei())
-                    .hakCuti(request.getHakCuti())
+                    .hakCuti(defaultCuti)
                     .isKaryawan(request.getIsKaryawan())
                     .handsetImei(null)
                 .build();
@@ -93,7 +122,11 @@ import lombok.RequiredArgsConstructor;
                         .fullName(request.getNama())
                         .role(Role.LEADER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
+                        .wrongPassCount((short) 0)
+                        .timesLocked(0)
                         .sqlPassword(passwordEncoder.encode("123456"))
+                        .usrCrt(nama)
+                        .dtmCrt(dtmCrt)
                     .build();
                     sysUserRepository.save(sysUser);
                 } else {
@@ -104,7 +137,10 @@ import lombok.RequiredArgsConstructor;
                         .fullName(request.getNama())
                         .role(Role.USER)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
+                        .wrongPassCount((short) 0)
                         .sqlPassword(passwordEncoder.encode("123456"))
+                        .usrCrt(nama)
+                        .dtmCrt(dtmCrt)
                     .build();
                     sysUserRepository.save(sysUser);
                 }
@@ -188,7 +224,7 @@ import lombok.RequiredArgsConstructor;
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-    public ResponseEntity<Map<String, Object>> getDataPribadi(@RequestHeader("Authorization") String tokenWithBearer, DashboardResponse dashboardResponse) {
+    public ResponseEntity<Map<String, Object>> getDataPribadi(@RequestHeader("Authorization") String tokenWithBearer,DashboardResponse dashboardResponse) {
         
         try{
             Map<String, Object> response = new HashMap<>();
@@ -196,7 +232,7 @@ import lombok.RequiredArgsConstructor;
             String token = tokenWithBearer.substring("Bearer ".length());
             String nik = jwtService.extractUsername(token);
             int masuk = absenRepository.countByJamMskIsNotNullAndNik(nik);
-            int totalMasuk = absenRepository.countByIsAbsenAndNik("1", nik) + masuk;
+            int totalMasuk = masuk;
             int totalSakit = absenRepository.countByIsSakitAndNik("1", nik);
             int totalTelatMasuk = absenRepository.countByNoteTelatMskIsNotNullAndNik(nik);
             int totalPulangCepat = absenRepository.countByNotePlgCepatIsNotNullAndNik(nik);

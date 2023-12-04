@@ -128,7 +128,18 @@ public class AbsenController {
         return absenService.getIsAbsen(token, hariIni);
     }
 
-
+    @GetMapping("/cek-cuti")
+    public ResponseEntity<Map<String, Object>> getAllCuti(
+        @RequestHeader("Authorization") String token
+    ){
+        return absenService.getAllCuti(token);
+    }
+    @GetMapping("/cek-cuti-by")
+    public ResponseEntity<Map<String, Object>> getCutiByDate(
+        @RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date
+    ){
+        return absenService.getCutiByDate(token, date);
+    }
 
     // @GetMapping("/get-all-members")
     // public ResponseEntity<Map<String, Object>> headMemberDetails(

@@ -18,7 +18,6 @@ import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.controller.MemberController.request.MemberRequest;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
-import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
@@ -250,7 +249,9 @@ public class MemberService {
                     System.out.println("ini data gambarnya"+dataAbsenImg);
 
                     if(dataAbsenImg == null){
-                        System.out.println("data gambarnya gaada");
+                    AbsenResponse absenResponse = new AbsenResponse();
+                    absenResponse.setAbsenEntity(dataAbsen);
+                    absenResponse.setAbsenImg(null);
                     }
                     AbsenResponse absenResponse = new AbsenResponse();
                     if (dataAbsenImg == null) {           

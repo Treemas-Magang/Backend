@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.Parameter.Reimburse.request.ReimburseAddRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
-import com.treemaswebapi.treemaswebapi.entity.LiburEntity.LiburEntity;
-import com.treemaswebapi.treemaswebapi.entity.PermissionEntity.PermissionEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseParamEntity;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseParamRepository;

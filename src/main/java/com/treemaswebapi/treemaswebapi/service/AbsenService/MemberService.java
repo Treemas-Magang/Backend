@@ -250,7 +250,9 @@ public class MemberService {
                     System.out.println("ini data gambarnya"+dataAbsenImg);
 
                     if(dataAbsenImg == null){
-                        System.out.println("data gambarnya gaada");
+                    AbsenResponse absenResponse = new AbsenResponse();
+                    absenResponse.setAbsenEntity(dataAbsen);
+                    absenResponse.setAbsenImg(null);
                     }
                     AbsenResponse absenResponse = new AbsenResponse();
                     absenResponse.setAbsenEntity(dataAbsen);

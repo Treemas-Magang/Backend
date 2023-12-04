@@ -246,8 +246,13 @@ public class MemberService {
                     //mau narik data yang ada di penempatanEntity, cari by projectId
                     AbsenEntity dataAbsen = absenRepository.findByIdAbsen(idAbsen);
                     String dataAbsenImg = absenImgRepository.findById(idAbsen).get().getImage64();
+                    if (dataAbsenImg == null) {           
+                    absenResponse.setAbsenEntity(dataAbsen);
+                    absenResponse.setAbsenImg(null);
+                    }else{
                     absenResponse.setAbsenEntity(dataAbsen);
                     absenResponse.setAbsenImg(dataAbsenImg);
+                    }
                     Map<String, Object> response = new HashMap<>();
                     if (dataAbsen == null) {
                         response.put("success", false);

@@ -24,7 +24,7 @@ public class ApprovalResponse {
     private List<AbsenAppEntity> absenApproval;
     private List<CutiAppEntity> cutiApproval;
     private List<CutiAppUploadEntity> cutiApprovalWeb;
-    private List<AbsenAppUploadEntity> absenPulangWebApproval;
+    private List<AbsenAppUploadEntity> absenWebApproval;
     private List<AbsenPulangAppEntity> absenPulangApproval;
     private List<GeneralParamApprovalEntity> generalParamApproval;
     private List<ReimburseAppEntity> reimburseApproval;

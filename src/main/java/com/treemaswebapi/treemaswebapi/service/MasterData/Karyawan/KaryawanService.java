@@ -19,14 +19,18 @@ import org.springframework.web.multipart.MultipartFile;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Karyawan.request.KaryawanAddRequest;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.GeneralParamRepository;
+import com.treemaswebapi.treemaswebapi.repository.JabatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +45,8 @@ import lombok.RequiredArgsConstructor;
         private final KaryawanImageRepository karyawanImageRepository;
         private final GeneralParamRepository generalParamRepository;
         private final CutiRepository cutiRepository;
+        private final JabatanRepository jabatanRepository;
+        private final ProjectRepository projectRepository;
 
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
@@ -72,7 +78,17 @@ import lombok.RequiredArgsConstructor;
                 // defaultCuti yang String ke BigDecimal
                 BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
 
-                // Mengirim ke table Karyawan
+                // Cari jabatanId di tbl_jabatan
+                JabatanEntity jabatan = jabatanRepository.findById(request.getSelectedRole())
+                    .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + request.getSelectedRole()));
+
+                ProjectEntity project = projectRepository.findById(request.getSelectedProject())
+                    .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+                // Harus Head
+                Optional<SysUserEntity> roleSysUser = sysUserRepository.findByUserId(userToken);
+
+                if (roleSysUser.get().getRole() != null && roleSysUser.get().getRole().getJabatanId().equals("HEAD")) {
+                    // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
                     .nik(request.getNik())
                     .nama(request.getNama())
@@ -96,7 +112,7 @@ import lombok.RequiredArgsConstructor;
                     .statusEmergency(request.getStatusEmergency())
                     .alamatEmergency(request.getAlamatEmergency())
                     .telpEmergency(request.getTelpEmergency())
-                    .projectId(request.getProjectId())
+                    .projectId(project)
                     .divisi(request.getDivisi())
                     .nikLeader(request.getNikLeader())
                     .isLeader(request.getIsLeader())
@@ -108,16 +124,12 @@ import lombok.RequiredArgsConstructor;
                 .build();
                 karyawanRepository.save(karyawan);
                 
-                String isLeader = request.getIsLeader();
-                System.out.println("LEADER : "+isLeader);
-                // Mengirim ke table Sys_User
-                if("1".equals(isLeader)) {
                     System.out.println("MASUK DIA LEADER");
                     var sysUser = SysUserEntity.builder()
                         .userId(request.getNik())
                         .email(request.getEmail())
                         .fullName(request.getNama())
-                        .role(Role.LEADER)
+                        .role(jabatan)
                         .isLogin("0") // set ke 0 karena di table ini tidak boleh null
                         .wrongPassCount((short) 0)
                         .timesLocked(0)
@@ -126,21 +138,7 @@ import lombok.RequiredArgsConstructor;
                         .dtmCrt(dtmCrt)
                     .build();
                     sysUserRepository.save(sysUser);
-                } else {
-                    System.out.println("MASUK DIA MEMBER");
-                    var sysUser = SysUserEntity.builder()
-                        .userId(request.getNik())
-                        .email(request.getEmail())
-                        .fullName(request.getNama())
-                        .role(Role.USER)
-                        .isLogin("0") // set ke 0 karena di table ini tidak boleh null
-                        .wrongPassCount((short) 0)
-                        .sqlPassword(passwordEncoder.encode("123456"))
-                        .usrCrt(nama)
-                        .dtmCrt(dtmCrt)
-                    .build();
-                    sysUserRepository.save(sysUser);
-                }
+               
 
                 // Mengirim ke table Karyawan Image
                 var karyawanImage = KaryawanImageEntity.builder()
@@ -163,6 +161,13 @@ import lombok.RequiredArgsConstructor;
             response.put("message", "Registration Successful");
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    Map<String, String> response = new HashMap<>();
+                    response.put("status", "Failed");
+                    response.put("message", "Not Allowed");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+                
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("status", "Failed");
@@ -222,6 +227,152 @@ import lombok.RequiredArgsConstructor;
         }
     }
 
+    public ResponseEntity<Map<String, String>> karyawanEdit(
+            String id,
+            @RequestHeader("Authorization") String jwtToken,
+            KaryawanAddRequest request
+        ) {
+            try {            
+                // Real Token terpisah dari Bearer 
+                String token = jwtToken.substring(7);
+                System.out.println("TOKEN : "+token);
 
+                // Cari nik dari token
+                String userToken = jwtService.extractUsername(token);
+                // Cari nama dari token
+                Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+                Optional<SysUserEntity> roleSysUser = sysUserRepository.findByUserId(userToken);
 
+                if (roleSysUser.get().getRole() != null && roleSysUser.get().getRole().getJabatanId().equals("HEAD")) {
+                    if (user.isPresent()) {
+                    String nama = user.get().getNama();
+
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+                // Ambil default value LEAVE di table generalparam
+                String defaultCutiString = generalParamRepository.findById("LEAVE")
+                    .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                    .getVal();
+
+                // Karena defaultCuti adalah String di table general param dan field sisa cuti di table cuti entity adalah BigDecimal kita konversi
+                // defaultCuti yang String ke BigDecimal
+                BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
+
+                // Cari Jabatan di tbl_jabatan
+                // Cari jabatanId di tbl_jabatan
+                JabatanEntity jabatan = jabatanRepository.findById(request.getSelectedRole())
+                    .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + request.getSelectedRole()));
+                
+                ProjectEntity project = projectRepository.findById(request.getSelectedProject())
+                    .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+
+                // Mengirim ke table Karyawan
+                 var karyawan = KaryawanEntity.builder()
+                    .nik(request.getNik())
+                    .nama(request.getNama())
+                    .tempatLahir(request.getTempatLahir())
+                    .tanggalLahir(request.getTanggalLahir())
+                    .jenisKelamin(request.getJenisKelamin())
+                    .agama(request.getAgama())
+                    .kewarganegaraan(request.getKewarganegaraan())
+                    .kodePos(request.getKodePos())
+                    .alamatKtp(request.getAlamatKtp())
+                    .noHp(request.getNoHp())
+                    .noRek(request.getNoRek())
+                    .noNpwp(request.getNoNpwp())
+                    .jenjangPendidikan(request.getJenjangPendidikan())
+                    .tanggalBergabung(request.getTanggalBergabung())
+                    .alamatSekarang(request.getAlamatSekarang())
+                    .statusPerkawinan(request.getStatusPerkawinan())
+                    .golonganDarah(request.getGolonganDarah())
+                    .nomorKtp(request.getNomorKtp())
+                    .emergencyContact(request.getEmergencyContact())
+                    .statusEmergency(request.getStatusEmergency())
+                    .alamatEmergency(request.getAlamatEmergency())
+                    .telpEmergency(request.getTelpEmergency())
+                    .projectId(project)
+                    .divisi(request.getDivisi())
+                    .nikLeader(request.getNikLeader())
+                    .isLeader(request.getIsLeader())
+                    .usrUpd(request.getUsrUpd())
+                    .handsetImei(request.getHandsetImei())
+                    .hakCuti(defaultCuti)
+                    .isKaryawan(request.getIsKaryawan())
+                    .handsetImei(null)
+                .build();
+                karyawanRepository.save(karyawan);
+                
+                String isLeader = request.getIsLeader();
+                System.out.println("LEADER : "+isLeader);
+                // Mengirim ke table Sys_User
+                    System.out.println("MASUK DIA LEADER");
+                    var sysUser = SysUserEntity.builder()
+                        .userId(request.getNik())
+                        .email(request.getEmail())
+                        .fullName(request.getNama())
+                        .role(jabatan)
+                        .isLogin("0") // set ke 0 karena di table ini tidak boleh null
+                        .wrongPassCount((short) 0)
+                        .timesLocked(0)
+                        .sqlPassword(passwordEncoder.encode("123456"))
+                        .usrCrt(nama)
+                        .dtmCrt(dtmCrt)
+                    .build();
+                    sysUserRepository.save(sysUser);
+                
+
+                // Mengirim ke table Karyawan Image
+                var karyawanImage = KaryawanImageEntity.builder()
+                    .nik(request.getNik())
+                    .foto(request.getFoto() != null ? request.getFoto() : null)
+                    .fotoKtp(request.getFotoKtp() != null ? request.getFotoKtp() : null)
+                    .fotoNpwp(request.getFotoNpwp() != null ? request.getFotoNpwp() : null)
+                    .fotoKk(request.getFotoKk() != null ? request.getFotoKk() : null)
+                    .fotoAsuransi(request.getFotoAsuransi() != null ? request.getFotoAsuransi() : null)
+                    .fotoPath(request.getFotoPath() != null ? request.getFotoPath() : null)
+                    .fotoKtpPath(request.getFotoKtpPath() != null ? request.getFotoKtpPath() : null)
+                    .fotoNpwpPath(request.getFotoNpwpPath() != null ? request.getFotoNpwpPath() : null)
+                    .fotoKkPath(request.getFotoKkPath() != null ? request.getFotoKkPath() : null)
+                    .fotoAsuransiPath(request.getFotoAsuransiPath() != null ? request.getFotoAsuransiPath() : null)
+                .build();
+                karyawanImageRepository.save(karyawanImage);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Registration Successful");
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    Map<String, String> response = new HashMap<>();
+                    response.put("status", "Failed");
+                    response.put("message", "User not found");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } else {
+                Map<String, String> response = new HashMap<>();
+                    response.put("status", "Failed");
+                    response.put("message", "Not Allowed");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+                
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Registration Failed");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+    
+public static Role convertToRole(String roleName) {
+    for (Role role : Role.values()) {
+        if (role.name().equalsIgnoreCase(roleName)) {
+            return role;
+        }
+    }
+    throw new IllegalArgumentException("Invalid role name: " + roleName);
 }
+}
+

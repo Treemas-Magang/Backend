@@ -14,11 +14,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.AuthController.ChangePasswordRequest;
 import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +34,7 @@ import lombok.RequiredArgsConstructor;
         private final KaryawanRepository karyawanRepository;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
+        private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         public ResponseEntity<Map<String, Object>> login(LoginRequest request) {
             try {
@@ -49,9 +53,7 @@ import lombok.RequiredArgsConstructor;
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
      
             }
-            // set Login true
-            user.setIsLogin("1");
-            user.setActive("1");
+            
             String isWebAccess = request.getIsWebAccess();
 
             if ("0".equals(isWebAccess)) { // Check if it's not a web access
@@ -77,14 +79,19 @@ import lombok.RequiredArgsConstructor;
                     }
                 }
             }
-
+            Optional<SysUserEntity> userOptional = sysUserRepository.findByUserId(request.getNik());
+            SysUserEntity sysUser = userOptional.get();
+            sysUser.setActive("1");
+            sysUser.setIsLogin("1");
+            sysUserRepository.save(sysUser);
+            System.out.println("Masuk Login");
             var jwtToken = jwtService.generateToken(user);
             
             Map<String, Object> userData = new HashMap<>();
             userData.put("nik", user.getUserId()); 
             userData.put("full_name", user.getFullName());
             userData.put("email", user.getEmail());
-            userData.put("role", user.getRole().toString());
+            userData.put("role", user.getRole().getJabatanId());
             userData.put("is_pass_chg", user.getIsPassChg());
 
             Map<String, Object> data = new HashMap<>();
@@ -121,6 +128,7 @@ import lombok.RequiredArgsConstructor;
             if (user.getWrongPassCount() >= 3) {
                 user.setIsLocked("1");
                 user.setTimesLocked(user.getTimesLocked() + 1);
+                user.setLockedTime(dtmCrt);
             }
             // Save the updated user
             sysUserRepository.save(user);
@@ -130,6 +138,41 @@ import lombok.RequiredArgsConstructor;
             response.put("error", e.getMessage());
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        }
+
+        public ResponseEntity<Map<String, Object>> forgetPassword(
+            ChangePasswordRequest request) {
+            try {            
+                Optional<SysUserEntity> existingEmail = sysUserRepository.findByEmail(request.getEmail());
+                // Check jika email dari token sama dengan email dari request maka akan do something...
+                if (existingEmail.isPresent()) {
+                    Optional<SysUserEntity> sysUser = sysUserRepository.findByEmail(existingEmail.get().getEmail());
+                    SysUserEntity userPw = sysUser.get();
+                    userPw.setSqlPassword(passwordEncoder.encode("123456"));
+                    sysUserRepository.save(userPw);
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "Set password to default success");
+                    response.put("data", sysUser.get());
+
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    // TODO: handle exception
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "error");
+                response.put("message", "No Email found!");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "error");
+                response.put("message", "Set Password to default failed!");
+                response.put("error", e.getMessage());
+
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         }
     }

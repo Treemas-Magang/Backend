@@ -1,7 +1,8 @@
 package com.treemaswebapi.treemaswebapi.entity.UserRole;
 
 public enum Role {
-    USER,
+    EMPL,
     HEAD,
-    LEADER
+    LEAD,
+    MNTR
 }

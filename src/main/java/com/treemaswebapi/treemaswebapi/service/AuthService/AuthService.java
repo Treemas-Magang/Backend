@@ -12,8 +12,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.AuthController.ChangePasswordRequest;
 import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
@@ -103,6 +105,39 @@ import lombok.RequiredArgsConstructor;
             response.put("error", e.getMessage());
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        }
+
+        public ResponseEntity<Map<String, Object>> forgetPassword(
+            ChangePasswordRequest request) {
+            try {            
+                Optional<SysUserEntity> existingEmail = sysUserRepository.findByEmail(request.getEmail());
+                // Check jika email dari token sama dengan email dari request maka akan do something...
+                if (existingEmail.isPresent()) {
+                    Optional<SysUserEntity> sysUser = sysUserRepository.findByEmail(existingEmail.get().getEmail());
+                    sysUser.get().setSqlPassword("123456");
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "Set password to default success");
+                    response.put("data", sysUser.get());
+
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    // TODO: handle exception
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "error");
+                response.put("message", "No Email found!");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "error");
+                response.put("message", "Set Password to default failed!");
+                response.put("error", e.getMessage());
+
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         }
     }

@@ -3,6 +3,8 @@ package com.treemaswebapi.treemaswebapi.entity.KaryawanEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -15,6 +17,10 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date; // Import java.util.Date untuk mendukung tanggal lahir
+
+import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
+import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
 @Data
 @Builder
@@ -97,9 +103,6 @@ public class KaryawanEntity {
     @Column(name = "telp_emergency")
     private String telpEmergency;
 
-    @Column(name = "project_id")
-    private String projectId;
-
     @Column(name = "divisi")
     private String divisi;
 
@@ -131,4 +134,8 @@ public class KaryawanEntity {
     // @OneToOne(mappedBy = "karyawan2", cascade = CascadeType.ALL)
     // @PrimaryKeyJoinColumn
     // private KaryawanImageEntity karyawanImageEntity;
+
+    @OneToOne
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id")
+    private ProjectEntity projectId;
 }

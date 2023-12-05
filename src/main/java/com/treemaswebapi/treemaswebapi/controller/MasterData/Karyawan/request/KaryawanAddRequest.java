@@ -70,6 +70,10 @@ public class KaryawanAddRequest {
     private String sql_password;
     private String isLogin;
 
+    // Untuk jabatanId / Role
+    private String selectedRole;
+    private String selectedProject;
+
     // android id
     // jabatan
     // project

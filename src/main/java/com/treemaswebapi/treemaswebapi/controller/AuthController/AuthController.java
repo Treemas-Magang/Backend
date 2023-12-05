@@ -30,11 +30,6 @@ public class AuthController {
         return response;
     }
 
-    @GetMapping("/")
-    public String sayHello() {
-        return "Treemas Api";
-    }
-
     @PutMapping("/forgot-password")
     public ResponseEntity<Map<String, Object>> forgetPassword(
         @RequestBody ChangePasswordRequest request

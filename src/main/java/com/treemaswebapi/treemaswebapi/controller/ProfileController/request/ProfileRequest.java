@@ -1,4 +1,4 @@
-package com.treemaswebapi.treemaswebapi.controller.ProfieController.request;
+package com.treemaswebapi.treemaswebapi.controller.ProfileController.request;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -53,11 +53,11 @@ public class ProfileRequest {
     private String fullName;
 
     // image file
-    private MultipartFile foto;
-    private MultipartFile fotoKtp;
-    private MultipartFile fotoNpwp;
-    private MultipartFile fotoKk;
-    private MultipartFile fotoAsuransi;
+    private String foto;
+    private String fotoKtp;
+    private String fotoNpwp;
+    private String fotoKk;
+    private String fotoAsuransi;
 
     // image path
     private String fotoPath;
@@ -70,4 +70,12 @@ public class ProfileRequest {
     private Role role;
     private String sql_password;
     private String isLogin;
+
+    // new password
+    private String oldPassword;
+    private String newPassword;
+    private String confPassword;
+
+    private String selectedRole;
+    private String selectedProject;
 }

@@ -15,8 +15,10 @@ import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Jabatan.request.JabatanRequest;
 import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.JabatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ public class JabatanService {
     private final JabatanRepository jabatanRepository;
     private final KaryawanRepository karyawanRepository;
     private final JwtService jwtService;
+    private final SysUserRepository sysUserRepository;
 
     public ResponseEntity<Map<String, Object>> jabatanAdd(
         JabatanRequest request
@@ -102,11 +105,18 @@ public class JabatanService {
                 newJabatanEntity.setDtmUpd(dtmUpd);
                 jabatanRepository.save(newJabatanEntity);
 
-                
+                List<SysUserEntity> userRoles = sysUserRepository.findByRole(id);
+                if (!userRoles.isEmpty()) {
+                    for (SysUserEntity sysUserEntity : userRoles) {
+                        sysUserEntity.setRole(newJabatanEntity);
+                        sysUserRepository.save(sysUserEntity);
+                    }
+                }
 
+            
                 Map<String, Object> response = new HashMap<>();
                 response.put("status", "Success");
-                response.put("message", "Jabatan Created");
+                response.put("message", "Jabatan Updated");
                 response.put("data", newJabatanEntity);
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);

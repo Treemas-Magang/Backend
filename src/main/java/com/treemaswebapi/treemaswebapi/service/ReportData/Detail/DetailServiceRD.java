@@ -1,6 +1,5 @@
 package com.treemaswebapi.treemaswebapi.service.ReportData.Detail;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -8,14 +7,11 @@ import java.util.List;
 import java.util.Map;
 // Import statements
 import java.util.Date;
-import java.util.Calendar;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
-import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 
 import lombok.RequiredArgsConstructor;

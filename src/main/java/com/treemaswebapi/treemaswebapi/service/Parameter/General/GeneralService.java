@@ -12,13 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
-import com.treemaswebapi.treemaswebapi.controller.MasterData.Permission.request.PermissionRequest;
 import com.treemaswebapi.treemaswebapi.controller.Parameter.General.request.GeneralAddRequest;
-import com.treemaswebapi.treemaswebapi.controller.Parameter.Reimburse.request.ReimburseAddRequest;
 import com.treemaswebapi.treemaswebapi.entity.GeneralEntity.GeneralParamEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
-import com.treemaswebapi.treemaswebapi.entity.PermissionEntity.PermissionEntity;
-import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseParamEntity;
 import com.treemaswebapi.treemaswebapi.repository.GeneralParamRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 

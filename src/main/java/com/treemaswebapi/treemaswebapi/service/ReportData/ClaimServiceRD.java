@@ -1,6 +1,5 @@
 package com.treemaswebapi.treemaswebapi.service.ReportData;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -11,8 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import java.sql.Date;
-import java.time.LocalDate;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,12 +17,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.ReportData.request.ClaimRequestRD;
-import com.treemaswebapi.treemaswebapi.entity.AnnouncementEntity.AnnouncementEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
-import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
-import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.repository.ClaimImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimRepository;

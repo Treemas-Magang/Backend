@@ -4,11 +4,15 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +35,9 @@ public class AbsenAppEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "project_id")
-    private String projectId;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private ProjectEntity projectId;
 
     @Column(name = "nik")
     private String nik;

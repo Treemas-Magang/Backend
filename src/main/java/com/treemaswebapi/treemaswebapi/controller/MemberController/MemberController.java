@@ -41,8 +41,8 @@ public class MemberController {
     @GetMapping("/get-data-absen")
     public ResponseEntity<Map<String, Object>> getDataAbsen(
         @RequestHeader("Authorization") String tokenWithBearer,
-        @RequestParam("idAbsen") Long id
+        @RequestParam("nik") String nik
     ) {
-        return memberService.getDataAbsenMember(tokenWithBearer, id);
+        return memberService.getDataAbsenMember(tokenWithBearer, nik);
     }
 }

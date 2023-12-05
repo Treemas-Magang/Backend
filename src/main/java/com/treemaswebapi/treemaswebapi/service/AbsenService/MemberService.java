@@ -19,11 +19,13 @@ import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.controller.MemberController.request.MemberRequest;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenImgRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
+import com.treemaswebapi.treemaswebapi.repository.AbsenTrackingRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 
@@ -35,6 +37,7 @@ public class MemberService {
     private final PenempatanRepository penempatanRepository;
     private final AbsenImgRepository absenImgRepository;
     private final AbsenRepository absenRepository;
+    private final AbsenTrackingRepository absenTrackingRepository;
     private final JwtService jwtService;
     private final ProjectRepository projectRepository;
 
@@ -237,28 +240,32 @@ public class MemberService {
             }
         }
         
-        public ResponseEntity<Map<String, Object>> getDataAbsenMember(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("idAbsen") Long idAbsen) {
+        public ResponseEntity<Map<String, Object>> getDataAbsenMember(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("nik") String nik) {
             try {
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
-                    String nik = jwtService.extractUsername(token);
-                    System.out.println(nik);
+                    String nikUser = jwtService.extractUsername(token);
+                    System.out.println("ini user yang lagi loginnya"+nikUser);
+                    LocalDate currentDate = LocalDate.now();
+                    List<AbsenEntity> idAbsen = absenRepository.findByNikAndTglAbsen(nik, currentDate);
+                    System.out.println("ini id absen orang yang dicari"+idAbsen);
+                    Long idAbsenLong = idAbsen.get(0).getId();
                     //mau narik data yang ada di penempatanEntity, cari by projectId
-                    AbsenEntity dataAbsen = absenRepository.findByIdAbsen(idAbsen);
-                    System.out.println("ini data absennya"+dataAbsen);
-                    String dataAbsenImg = absenImgRepository.findById(idAbsen).get().getImage64();
+                    List<AbsenTrackingEntity> dataAbsenTracking = absenTrackingRepository.findByTglAbsenAndNik(currentDate, nik);
+                    System.out.println("ini data absen Tracking-nya"+dataAbsenTracking);
+                    String dataAbsenImg = absenImgRepository.findById(idAbsenLong).get().getImage64();
                     System.out.println("ini data gambarnya"+dataAbsenImg);
 
                     if(dataAbsenImg == null){
                     AbsenResponse absenResponse = new AbsenResponse();
-                    absenResponse.setAbsenEntity(dataAbsen);
+                    absenResponse.setAbsenTrackingEntities(dataAbsenTracking);
                     absenResponse.setAbsenImg(null);
                     }
                     AbsenResponse absenResponse = new AbsenResponse();
-                    absenResponse.setAbsenEntity(dataAbsen);
+                    absenResponse.setAbsenTrackingEntities(dataAbsenTracking);
                     absenResponse.setAbsenImg(dataAbsenImg);
                     Map<String, Object> response = new HashMap<>();
-                    if (dataAbsen == null) {
+                    if (dataAbsenTracking == null) {
                         response.put("success", false);
                         response.put("message", "idAbsen salah");
                         response.put("data", absenResponse);

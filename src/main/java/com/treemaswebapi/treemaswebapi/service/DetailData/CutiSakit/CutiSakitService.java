@@ -225,7 +225,7 @@ public class CutiSakitService {
             long currentTimeMillis = System.currentTimeMillis();
             Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
 
-            MasterCutiEntity masterCutiEntity = masterCutiRepository.findById(request.getSelectedMasterCutiId())
+            MasterCutiEntity jenisCuti = masterCutiRepository.findById(request.getSelectedMasterCutiId())
                 .orElseThrow(() -> new RuntimeException("MasterCuti not found for id: " + request.getSelectedMasterCutiId()));
 
             // Cari hakcuti dari table karyawan dan tempatkan ke tbl cuti di sisa cuti
@@ -237,18 +237,18 @@ public class CutiSakitService {
             var cutiApp = CutiAppEntity.builder()
                 .nik(userToken)
                 .nama(nama)
-                .tglMulai(request.getTglMulai())
-                .tglSelesai(request.getTglSelesai())
-                .tglKembaliKerja(request.getTglKembaliKerja())
-                .keperluanCuti(request.getKeperluanCuti())
-                .alamatCuti(request.getAlamatCuti())
-                .jmlCutiBersama(request.getJmlCutiBersama())//ambil dari table, bukan dari req
-                .jmlCutiKhusus(request.getJmlCutiKhusus())//ambil dari table, bukan dari req
+                .tglMulai(request.getTglMulai())// value ini ntar si user yang milih
+                .tglSelesai(request.getTglSelesai())// value ini ntar si Rizki yang milihin
+                .tglKembaliKerja(request.getTglKembaliKerja())// auto rizki
+                .keperluanCuti(request.getKeperluanCuti())// si user
+                .alamatCuti(request.getAlamatCuti())// si user
+                .jmlCutiBersama(request.getJmlCutiBersama())//dari rizki
+                .jmlCutiKhusus(request.getJmlCutiKhusus())//dari rizki, yang nentuin tanggal berapa aja yang libur tuh si Andoi
                 .flgKet("cuti")
                 .dtmCrt(dtmCrt)
                 .usrCrt(nama)
                 .jmlCuti(request.getJmlCuti())//ambil dari table, bukan dari req
-                .masterCutiEntity(masterCutiEntity)
+                .jenisCuti(jenisCuti)
                 .sisaCuti(hakCuti)
                 .build();
 
@@ -297,7 +297,7 @@ public class CutiSakitService {
                 long currentTimeMillis = System.currentTimeMillis();
                 Timestamp dtmApp = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
 
-                MasterCutiEntity masterCutiEntity = cutiAppList.getMasterCutiEntity(); // Retrieve from CutiAppEntity
+                MasterCutiEntity jenisCuti = cutiAppList.getJenisCuti(); // Retrieve from CutiAppEntity
 
                 CutiEntity cutiApproved = new CutiEntity(); // buat ngestore ke CutiEntity
                 cutiApproved.setUsrApp(nama);
@@ -315,13 +315,14 @@ public class CutiSakitService {
                 cutiApproved.setFlgKet(cutiAppList.getFlgKet());
                 cutiApproved.setDtmCrt(cutiAppList.getDtmCrt());
                 cutiApproved.setUsrCrt(cutiAppList.getUsrCrt());
-                cutiApproved.setMasterCutiEntity(masterCutiEntity);
+                cutiApproved.setMasterCutiEntity(jenisCuti);
                 cutiApproved.setSisaCuti(cutiAppList.getSisaCuti());
                 cutiApproved.setFlagApp("cuti");
                 // If isApproved is "1", decrement hakCuti by 1
                 String isApproved = request.getIsApproved(); //kalo diapprove harusnya ngurangin cuti pengganti dulu baru ke hak_cuti
                 if ("1".equals(isApproved)) {
-                    BigDecimal updatedHakCuti = hakCuti.subtract(BigDecimal.ONE);
+                    BigDecimal decrementValue = request.getJumlahCuti();
+                    BigDecimal updatedHakCuti = hakCuti.subtract(decrementValue);
                     nikOther.get().setHakCuti(updatedHakCuti);
                     karyawanRepository.save(nikOther.get());
                     cutiApproved.setSisaCuti(updatedHakCuti);

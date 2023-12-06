@@ -11,6 +11,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+
 // project_id FK dari tbl_project
 
 @Data
@@ -25,8 +27,9 @@ public class ReimburseAppEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "project_id")
-    private String projectId;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private ProjectEntity projectId;
 
     @Column(name = "nik")
     private String nik;

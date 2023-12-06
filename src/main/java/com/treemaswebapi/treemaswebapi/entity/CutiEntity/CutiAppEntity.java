@@ -87,5 +87,5 @@ public class CutiAppEntity {
 
     @OneToOne
     @JoinColumn(name = "jenis_cuti", referencedColumnName = "id")
-    private MasterCutiEntity masterCutiEntity;
+    private MasterCutiEntity jenisCuti;
 }

@@ -1,5 +1,9 @@
 package com.treemaswebapi.treemaswebapi.repository;
 
+
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -8,13 +12,7 @@ import com.treemaswebapi.treemaswebapi.entity.GeneralEntity.GeneralParamApproval
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
 @Repository
-public class GeneralParamApprovalRepository {
+public interface GeneralParamApprovalRepository extends JpaRepository<GeneralParamApprovalEntity, String> {
 
-    public List<GeneralParamApprovalEntity> findAll() {
-        return null;
-    }
-
-    public List<GeneralParamApprovalEntity> findAllByProjectId(ProjectEntity projectId) {
-        return null;
-    }   
+    
 }

@@ -11,4 +11,6 @@ import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 public interface CutiAppRepository extends JpaRepository<CutiAppEntity, Long> {
     List<CutiAppEntity> findByFlgKet(String flgKet);
 
+    Long countByFlgKet(String string);
+
 }

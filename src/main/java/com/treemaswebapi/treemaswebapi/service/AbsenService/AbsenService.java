@@ -235,10 +235,11 @@ public class AbsenService {
 
                             absenTrackingRepository.save(absenTrackingEntity);
     
+                            Long idAbsen = absenEntity.getId();
                             AbsenImgEntity absenImgEntity = new AbsenImgEntity();
                             absenImgEntity.setId(absenEntity.getId());
                             absenImgEntity.setNik(nik);
-                            absenImgEntity.setId(absenEntity.getId());
+                            absenImgEntity.setId(idAbsen);
                             absenImgEntity.setTglAbsen(LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
                             absenImgEntity.setImage64(request.getPhotoAbsen());
                             absenImgEntity.setUsrUpd(nama);

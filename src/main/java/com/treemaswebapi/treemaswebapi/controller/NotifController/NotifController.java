@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.service.NotifService.NotifService;
 
 import lombok.Data;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotifController {
 
+    private final ProjectRepository projectRepository;
     private final NotifService notifService;
     
     // @GetMapping("/get-all-approval")
@@ -36,12 +38,13 @@ public class NotifController {
     public ResponseEntity<Map<String, Object>> getApprovalBy(
             @RequestHeader("Authorization") String tokenWithBearer,
             @RequestParam("by") String by,
-            @RequestParam("in") ProjectEntity projectId
+            @RequestParam("projectId") String projectIdString
     ) {
+        ProjectEntity projectId = projectRepository.findByProjectId(projectIdString);
         switch (by.toLowerCase()) {
 
             case "absen":
-                return notifService.getAbsenApproval(tokenWithBearer, projectId);
+                return notifService.getAbsenApproval(tokenWithBearer, projectIdString);
 
             case "cuti":
                 return notifService.getCutiApproval(tokenWithBearer);
@@ -59,7 +62,10 @@ public class NotifController {
                 return notifService.getGeneralParamApproval(tokenWithBearer);
 
             case "reimburse":
-                return notifService.getReimburseApproval(tokenWithBearer, projectId);    
+                return notifService.getReimburseApproval(tokenWithBearer, projectId);
+            
+            case "sakit":
+                return notifService.getSakitApproval(tokenWithBearer);
             
             default:
                 // Handle the case where 'by' is not recognized

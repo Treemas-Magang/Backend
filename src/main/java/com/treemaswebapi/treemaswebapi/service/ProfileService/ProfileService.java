@@ -59,7 +59,7 @@ public class ProfileService {
             System.out.println("INI USER DARI TOKEN : "+userToken);
             // User hasil compare nik dari request dengan database
             Optional<KaryawanEntity> nikKOptional = karyawanRepository.findByNik(userToken);
-            // Check if selectedRole is present and not empty
+            // Check if selectedRole is present and not empty (Ini yang dirubah)
             String selectedRole = request.getSelectedRole();
             JabatanEntity jabatan = null;
             if (selectedRole != null && !selectedRole.isEmpty()) {

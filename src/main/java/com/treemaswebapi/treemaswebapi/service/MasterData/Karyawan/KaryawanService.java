@@ -77,7 +77,7 @@ import lombok.RequiredArgsConstructor;
                 // defaultCuti yang String ke BigDecimal
                 BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
 
-                // Check if selectedRole is present and not empty
+                // Check if selectedRole is present and not empty (Ini yang dirubah)
                 String selectedRole = request.getSelectedRole();
                 JabatanEntity jabatan = null;
                 if (selectedRole != null && !selectedRole.isEmpty()) {
@@ -267,7 +267,7 @@ import lombok.RequiredArgsConstructor;
                 // defaultCuti yang String ke BigDecimal
                 BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
                 
-                // Check if selectedRole is present and not empty
+                // Check if selectedRole is present and not empty (Ini yang dirubah)
                 String selectedRole = request.getSelectedRole();
                 JabatanEntity jabatan = null;
                 if (selectedRole != null && !selectedRole.isEmpty()) {

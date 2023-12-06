@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.ProfileService;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +16,20 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
-import com.treemaswebapi.treemaswebapi.controller.ProfieController.request.ProfileRequest;
+import com.treemaswebapi.treemaswebapi.controller.ProfileController.request.ProfileRequest;
+import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
+import com.treemaswebapi.treemaswebapi.repository.JabatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,15 +41,13 @@ public class ProfileService {
     private final KaryawanImageRepository karyawanImageRepository;
     private final SysUserRepository sysUserRepository;
     private final JwtService jwtService;
-    
+    private final JabatanRepository jabatanRepository;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final ProjectRepository projectRepository;
+
     public ResponseEntity<Map<String, String>> updateProfile(
         ProfileRequest request, 
-        @RequestHeader("Authorization") String jwtToken,
-        @RequestPart(value = "foto", required = false) MultipartFile foto,
-        @RequestPart(value = "fotoKtp", required = false) MultipartFile fotoKtp,
-        @RequestPart(value = "fotoNpwp", required = false) MultipartFile fotoNpwp,
-        @RequestPart(value = "fotoKk", required = false) MultipartFile fotoKk,
-        @RequestPart(value = "fotoAsuransi", required = false) MultipartFile fotoAsuransi
+        @RequestHeader("Authorization") String jwtToken
         ) {
         try {
 
@@ -54,6 +59,22 @@ public class ProfileService {
             System.out.println("INI USER DARI TOKEN : "+userToken);
             // User hasil compare nik dari request dengan database
             Optional<KaryawanEntity> nikKOptional = karyawanRepository.findByNik(userToken);
+            // Check if selectedRole is present and not empty (Ini yang dirubah)
+            String selectedRole = request.getSelectedRole();
+            JabatanEntity jabatan = null;
+            if (selectedRole != null && !selectedRole.isEmpty()) {
+                jabatan = jabatanRepository.findById(selectedRole)
+                        .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + selectedRole));
+            } else {
+                throw new RuntimeException("Selected Role cannot be null or empty");
+            }
+
+            // Check if projectId is present in the request
+            ProjectEntity project = null;
+            if (request.getSelectedProject() != null && !request.getSelectedProject().isEmpty()) {
+                project = projectRepository.findById(request.getSelectedProject())
+                        .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+            }
 
             if (nikKOptional.isPresent()) {
                 KaryawanEntity nikK = nikKOptional.get();
@@ -80,7 +101,7 @@ public class ProfileService {
                 nikK.setStatusEmergency(request.getStatusEmergency());
                 nikK.setAlamatEmergency(request.getAlamatEmergency());
                 nikK.setTelpEmergency(request.getTelpEmergency());
-                nikK.setProjectId(request.getProjectId());
+                nikK.setProjectId(project);
                 nikK.setDivisi(request.getDivisi());
                 nikK.setNikLeader(request.getNikLeader());
                 nikK.setIsLeader(request.getIsLeader());
@@ -88,66 +109,70 @@ public class ProfileService {
                 nikK.setHandsetImei(request.getHandsetImei());
                 nikK.setHakCuti(request.getHakCuti());
                 nikK.setIsKaryawan(request.getIsKaryawan());
-                nikK.setHandsetImei(null);  // Example of setting a specific field to null
 
                 karyawanRepository.save(nikK);
             }
 
             Optional<KaryawanImageEntity> nikKIOptional = karyawanImageRepository.findByNik(userToken);
-
+            
             if(nikKIOptional.isPresent()) {
                 KaryawanImageEntity nikKI = nikKIOptional.get();
-                if (foto != null) {
-                    nikKI.setFoto(convertToBase64(foto));
-                    nikKI.setFotoPath(foto.getOriginalFilename());
-                }
-                
-                // Handle 'fotoKtp' conditionally
-                if (fotoKtp != null) {
-                    nikKI.setFotoKtp(convertToBase64(fotoKtp));
-                    nikKI.setFotoKtpPath(fotoKtp.getOriginalFilename());
-                }
-                
-                // Handle 'fotoNpwp' conditionally
-                if (fotoNpwp != null) {
-                    nikKI.setFotoNpwp(convertToBase64(fotoNpwp));
-                    nikKI.setFotoNpwpPath(fotoNpwp.getOriginalFilename());
-                }
-                
-                // Handle 'fotoKk' conditionally
-                if (fotoKk != null) {
-                    nikKI.setFotoKk(convertToBase64(fotoKk));
-                    nikKI.setFotoKkPath(fotoKk.getOriginalFilename());
-                }
-                
-                // Handle 'fotoAsuransi' conditionally
-                if (fotoAsuransi != null) {
-                    nikKI.setFotoAsuransi(convertToBase64(fotoAsuransi));
-                    nikKI.setFotoAsuransiPath(fotoAsuransi.getOriginalFilename());
-                }
-            
+                nikKI.setFoto(request.getFoto() != null ? request.getFoto() : null);
+                nikKI.setFotoKtp(request.getFotoKtp() != null ? request.getFotoKtp() : null);
+                nikKI.setFotoNpwp(request.getFotoNpwp() != null ? request.getFotoNpwp() : null);
+                nikKI.setFotoKk(request.getFotoKk() != null ? request.getFotoKk() : null);
+                nikKI.setFotoAsuransi(request.getFotoAsuransi() != null ? request.getFotoAsuransi() : null);
+                nikKI.setFotoPath(request.getFotoPath() != null ? request.getFotoPath() : null);
+                nikKI.setFotoKtpPath(request.getFotoKtpPath() != null ? request.getFotoKtpPath() : null);
+                nikKI.setFotoNpwpPath(request.getFotoNpwpPath() != null ? request.getFotoNpwpPath() : null);
+                nikKI.setFotoKkPath(request.getFotoKkPath() != null ? request.getFotoKkPath() : null);
+                nikKI.setFotoAsuransiPath(request.getFotoAsuransiPath() != null ? request.getFotoAsuransiPath() : null);;
+                                
                 karyawanImageRepository.save(nikKI);
             }
+            Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
+            String nama = user.get().getNama();
 
             Optional<SysUserEntity> userIdOptional = sysUserRepository.findByUserId(userToken);
-
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
             if(userIdOptional.isPresent()) {
-                String isLeader = request.getIsLeader();
-                if("1".equals(isLeader)) {
                     SysUserEntity userId = userIdOptional.get();
                     userId.setFullName(request.getNama());
-                    userId.setRole(Role.LEADER);
-                    userId.setIsLogin("0");
+                    userId.setRole(jabatan);
+                    userId.setUsrUpd(nama);
+                    userId.setDtmUpd(dtmCrt);
+                    userId.setEmail(request.getEmail());
+                    System.out.println(userId.getEmail());
+                    // Ambil password dari user
+                    // Set Password kalau old Pw dari request sesuai dengan pw di database
 
-                    sysUserRepository.save(userId);
+                // Check if the old password is provided and matches the stored password
+            if (request.getOldPassword() != null && !request.getOldPassword().isEmpty()) {
+                String storedPassword = userId.getSqlPassword();
+
+                if (passwordEncoder.matches(request.getOldPassword(), storedPassword)) {
+                    // Check if the new password and confirmation password match
+                    if (request.getNewPassword() != null && request.getNewPassword().equals(request.getConfPassword())) {
+                        // Update the password
+                        userId.setSqlPassword(passwordEncoder.encode(request.getNewPassword()));
+                        userId.setIsPassChg("1");
+                        userId.setLastPasschg(new Timestamp(System.currentTimeMillis()));
+                    } else {
+                        Map<String, String> response = new HashMap<>();
+                        response.put("status", "failed");
+                        response.put("message", "Sorry, the new password and confirmation password don't match. Please make sure they match to proceed.");
+                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                    }
                 } else {
-                    SysUserEntity userId = userIdOptional.get();
-                    userId.setFullName(request.getNama());
-                    userId.setRole(Role.USER);
-                    userId.setIsLogin("0");
-
-                    sysUserRepository.save(userId);
+                    Map<String, String> response = new HashMap<>();
+                    response.put("status", "failed");
+                    response.put("message", "Old password is incorrect.");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                 }
+            }
+                    sysUserRepository.save(userId);
+
             }
 
             Map<String, String> response = new HashMap<>();

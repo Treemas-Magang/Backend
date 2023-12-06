@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.UserRole.Role;
 
 import jakarta.persistence.Column;
@@ -17,10 +18,13 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 // butuh join column dengan sys_user_branch
@@ -104,13 +108,18 @@ public class SysUserEntity implements UserDetails {
     @Column(name = "token_jwt")
     private String tokenJwt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(50)")
-    private Role role;
+    @OneToOne
+    @JoinColumn(name = "role", referencedColumnName = "jabatan_id")
+    private JabatanEntity role;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        if (role != null && role.getJabatanId() != null) {
+            return List.of(new SimpleGrantedAuthority(role.getJabatanId()));
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override

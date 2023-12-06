@@ -156,14 +156,13 @@ import lombok.RequiredArgsConstructor;
                 Optional<SysUserEntity> existingEmail = sysUserRepository.findByEmail(request.getEmail());
                 // Check jika email dari token sama dengan email dari request maka akan do something...
                 if (existingEmail.isPresent()) {
-                    Optional<SysUserEntity> sysUser = sysUserRepository.findByEmail(existingEmail.get().getEmail());
-                    SysUserEntity userPw = sysUser.get();
-                    userPw.setSqlPassword(passwordEncoder.encode("123456"));
-                    sysUserRepository.save(userPw);
+                    SysUserEntity user = existingEmail.get();
+                    user.setSqlPassword(passwordEncoder.encode("123456"));
+                    sysUserRepository.save(user);
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Set password to default success");
-                    response.put("data", sysUser.get());
+                    response.put("data", user);
 
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {

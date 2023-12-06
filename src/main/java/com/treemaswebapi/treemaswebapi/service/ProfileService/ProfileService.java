@@ -59,13 +59,22 @@ public class ProfileService {
             System.out.println("INI USER DARI TOKEN : "+userToken);
             // User hasil compare nik dari request dengan database
             Optional<KaryawanEntity> nikKOptional = karyawanRepository.findByNik(userToken);
-            // Cari jabatanId di tbl_jabatan
-                JabatanEntity jabatan = jabatanRepository.findById(request.getSelectedRole())
-                    .orElseThrow(() -> new RuntimeException("TipeClaim not found for id: " + request.getSelectedRole()));
+            // Check if selectedRole is present and not empty
+            String selectedRole = request.getSelectedRole();
+            JabatanEntity jabatan = null;
+            if (selectedRole != null && !selectedRole.isEmpty()) {
+                jabatan = jabatanRepository.findById(selectedRole)
+                        .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + selectedRole));
+            } else {
+                throw new RuntimeException("Selected Role cannot be null or empty");
+            }
 
-            // Cari projectId di tbl_project;
-            ProjectEntity project = projectRepository.findById(request.getSelectedProject())
-                    .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+            // Check if projectId is present in the request
+            ProjectEntity project = null;
+            if (request.getSelectedProject() != null && !request.getSelectedProject().isEmpty()) {
+                project = projectRepository.findById(request.getSelectedProject())
+                        .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+            }
 
             if (nikKOptional.isPresent()) {
                 KaryawanEntity nikK = nikKOptional.get();
@@ -133,25 +142,26 @@ public class ProfileService {
                     userId.setRole(jabatan);
                     userId.setUsrUpd(nama);
                     userId.setDtmUpd(dtmCrt);
-
+                    userId.setEmail(request.getEmail());
+                    System.out.println(userId.getEmail());
                     // Ambil password dari user
-                    String storedPassword = userId.getSqlPassword();
-
                     // Set Password kalau old Pw dari request sesuai dengan pw di database
 
-                if (passwordEncoder.matches(request.getOldPassword(), storedPassword))
-                {
-                    System.out.println("Masuk Compare");
-                    if (request.getNewPassword().equals(request.getConfPassword())) 
-                    {
+                // Check if the old password is provided and matches the stored password
+            if (request.getOldPassword() != null && !request.getOldPassword().isEmpty()) {
+                String storedPassword = userId.getSqlPassword();
+
+                if (passwordEncoder.matches(request.getOldPassword(), storedPassword)) {
+                    // Check if the new password and confirmation password match
+                    if (request.getNewPassword() != null && request.getNewPassword().equals(request.getConfPassword())) {
+                        // Update the password
                         userId.setSqlPassword(passwordEncoder.encode(request.getNewPassword()));
                         userId.setIsPassChg("1");
-                        userId.setLastPasschg(dtmCrt);
+                        userId.setLastPasschg(new Timestamp(System.currentTimeMillis()));
                     } else {
                         Map<String, String> response = new HashMap<>();
-                        response.put("failed", "failed");
+                        response.put("status", "failed");
                         response.put("message", "Sorry, the new password and confirmation password don't match. Please make sure they match to proceed.");
-
                         return ResponseEntity.status(HttpStatus.OK).body(response);
                     }
                 } else {
@@ -160,6 +170,7 @@ public class ProfileService {
                     response.put("message", "Old password is incorrect.");
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                 }
+            }
                     sysUserRepository.save(userId);
 
             }

@@ -18,6 +18,7 @@ import com.treemaswebapi.treemaswebapi.controller.AuthController.ChangePasswordR
 import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
+import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
         private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        private final KaryawanImageRepository karyawanImageRepository;
 
         public ResponseEntity<Map<String, Object>> login(LoginRequest request) {
             try {
@@ -43,6 +45,9 @@ import lombok.RequiredArgsConstructor;
             );
             var user = sysUserRepository.findByUserId(request.getNik())
                 .orElseThrow();
+
+            var userImg = karyawanImageRepository.findByNik(request.getNik());
+            var karyawan = karyawanRepository.findByNik(request.getNik());
             
             // Check kalau times locked 1 langsung return
             if ("1".equals(user.getIsLocked())) {
@@ -93,6 +98,10 @@ import lombok.RequiredArgsConstructor;
             userData.put("email", user.getEmail());
             userData.put("role", user.getRole().getJabatanId());
             userData.put("is_pass_chg", user.getIsPassChg());
+            userData.put("karyawanImg", userImg.get().getFoto());
+            userData.put("alamatKaryawan", karyawan.get().getAlamatSekarang());
+            userData.put("jenisKelamin", karyawan.get().getJenisKelamin());
+            
 
             Map<String, Object> data = new HashMap<>();
             data.put("user", userData);
@@ -147,14 +156,13 @@ import lombok.RequiredArgsConstructor;
                 Optional<SysUserEntity> existingEmail = sysUserRepository.findByEmail(request.getEmail());
                 // Check jika email dari token sama dengan email dari request maka akan do something...
                 if (existingEmail.isPresent()) {
-                    Optional<SysUserEntity> sysUser = sysUserRepository.findByEmail(existingEmail.get().getEmail());
-                    SysUserEntity userPw = sysUser.get();
-                    userPw.setSqlPassword(passwordEncoder.encode("123456"));
-                    sysUserRepository.save(userPw);
+                    SysUserEntity user = existingEmail.get();
+                    user.setSqlPassword(passwordEncoder.encode("123456"));
+                    sysUserRepository.save(user);
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Set password to default success");
-                    response.put("data", sysUser.get());
+                    response.put("data", user);
 
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {

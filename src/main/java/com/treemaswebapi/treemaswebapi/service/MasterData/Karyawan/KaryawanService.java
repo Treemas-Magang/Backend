@@ -78,12 +78,22 @@ import lombok.RequiredArgsConstructor;
                 // defaultCuti yang String ke BigDecimal
                 BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
 
-                // Cari jabatanId di tbl_jabatan
-                JabatanEntity jabatan = jabatanRepository.findById(request.getSelectedRole())
-                    .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + request.getSelectedRole()));
+                // Check if selectedRole is present and not empty
+                String selectedRole = request.getSelectedRole();
+                JabatanEntity jabatan = null;
+                if (selectedRole != null && !selectedRole.isEmpty()) {
+                    jabatan = jabatanRepository.findById(selectedRole)
+                            .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + selectedRole));
+                } else {
+                    throw new RuntimeException("Selected Role cannot be null or empty");
+                }
 
-                ProjectEntity project = projectRepository.findById(request.getSelectedProject())
-                    .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+                // Check if projectId is present in the request
+                ProjectEntity project = null;
+                if (request.getSelectedProject() != null && !request.getSelectedProject().isEmpty()) {
+                    project = projectRepository.findById(request.getSelectedProject())
+                            .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+                }
                 // Harus Head
                 Optional<SysUserEntity> roleSysUser = sysUserRepository.findByUserId(userToken);
 
@@ -257,14 +267,23 @@ import lombok.RequiredArgsConstructor;
                 // Karena defaultCuti adalah String di table general param dan field sisa cuti di table cuti entity adalah BigDecimal kita konversi
                 // defaultCuti yang String ke BigDecimal
                 BigDecimal defaultCuti = new BigDecimal(defaultCutiString);
-
-                // Cari Jabatan di tbl_jabatan
-                // Cari jabatanId di tbl_jabatan
-                JabatanEntity jabatan = jabatanRepository.findById(request.getSelectedRole())
-                    .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + request.getSelectedRole()));
                 
-                ProjectEntity project = projectRepository.findById(request.getSelectedProject())
-                    .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+                // Check if selectedRole is present and not empty
+                String selectedRole = request.getSelectedRole();
+                JabatanEntity jabatan = null;
+                if (selectedRole != null && !selectedRole.isEmpty()) {
+                    jabatan = jabatanRepository.findById(selectedRole)
+                            .orElseThrow(() -> new RuntimeException("Jabatan not found for id: " + selectedRole));
+                } else {
+                    throw new RuntimeException("Selected Role cannot be null or empty");
+                }
+
+                // Check if projectId is present in the request
+                ProjectEntity project = null;
+                if (request.getSelectedProject() != null && !request.getSelectedProject().isEmpty()) {
+                    project = projectRepository.findById(request.getSelectedProject())
+                            .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
+                }
 
                 // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()

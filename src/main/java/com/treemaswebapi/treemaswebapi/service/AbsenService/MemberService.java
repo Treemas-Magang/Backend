@@ -20,6 +20,7 @@ import com.treemaswebapi.treemaswebapi.controller.MemberController.request.Membe
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingData.AbsenTrackingData;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
@@ -247,33 +248,58 @@ public class MemberService {
                     String nikUser = jwtService.extractUsername(token);
                     System.out.println("ini user yang lagi loginnya"+nikUser);
                     LocalDate currentDate = LocalDate.now();
-                    List<AbsenEntity> idAbsen = absenRepository.findByNikAndTglAbsen(nik, currentDate);
-                    System.out.println("ini id absen orang yang dicari"+idAbsen);
-                    Long idAbsenLong = idAbsen.get(0).getId();
+                    List<AbsenEntity> dataAbsenDb = absenRepository.findByNikAndTglAbsen(nik, currentDate);
+                    Long idAbsenLong = dataAbsenDb.isEmpty() ? null : dataAbsenDb.get(0).getId();
+                    System.out.println("ini id absen orang yang dicari"+idAbsenLong);
                     //mau narik data yang ada di penempatanEntity, cari by projectId
-                    List<AbsenTrackingEntity> dataAbsenTracking = absenTrackingRepository.findByTglAbsenAndNik(currentDate, nik);
-                    System.out.println("ini data absen Tracking-nya"+dataAbsenTracking);
+                    List<AbsenTrackingEntity> dataAbsenTrackingDb = absenTrackingRepository.findByTglAbsenAndNik(currentDate, nik);
+                    System.out.println("ini data absen Tracking-nya"+dataAbsenTrackingDb);
+                    
                     String dataAbsenImg = absenImgRepository.findById(idAbsenLong).get().getImage64();
-                    System.out.println("ini data gambarnya"+dataAbsenImg);
+                    System.out.println("ini data gambarnya"+absenImgRepository.findAll().get(0).getId());
 
-                    if(dataAbsenImg == null){
-                    AbsenResponse absenResponse = new AbsenResponse();
-                    absenResponse.setAbsenTrackingEntities(dataAbsenTracking);
-                    absenResponse.setAbsenImg(null);
+                    AbsenTrackingData absenTrackingData = new AbsenTrackingData();
+                    if (!dataAbsenTrackingDb.isEmpty()){
+                        AbsenTrackingEntity firstAbsenTrackingEntity = dataAbsenTrackingDb.get(0);
+                        AbsenTrackingEntity secondAbsenTrackingEntity = dataAbsenTrackingDb.size() > 1 ? dataAbsenTrackingDb.get(1) : null;
+                        AbsenTrackingEntity thirdAbsenTrackingEntity = dataAbsenTrackingDb.size() > 2 ? dataAbsenTrackingDb.get(2) : null;
+                        
+                        List<Double> gpsLatitudeMskList = new ArrayList<>();
+                        List<Double> gpsLongitudeMskList = new ArrayList<>();
+                        
+                        gpsLatitudeMskList.add(firstAbsenTrackingEntity.getGpsLatitudeMsk());
+                        gpsLongitudeMskList.add(firstAbsenTrackingEntity.getGpsLongitudeMsk());
+                        
+                        if(secondAbsenTrackingEntity != null){
+                        gpsLatitudeMskList.add(secondAbsenTrackingEntity.getGpsLatitudeMsk());
+                        gpsLongitudeMskList.add(secondAbsenTrackingEntity.getGpsLongitudeMsk());
+                        }
+
+                        if(thirdAbsenTrackingEntity != null){
+                        gpsLatitudeMskList.add(thirdAbsenTrackingEntity.getGpsLatitudeMsk());
+                        gpsLongitudeMskList.add(thirdAbsenTrackingEntity.getGpsLongitudeMsk());    
+                        }
+                        
+                    absenTrackingData.setGpsLatitudeMsk(gpsLatitudeMskList);
+                    absenTrackingData.setGpsLongitudeMsk(gpsLongitudeMskList);
+                    }else{
+                        System.out.println("data longlat gaada");
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("success", false);
+                        response.put("message", "data long lat tidak ada");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                     }
+                    absenTrackingData.setGpsLatitudePlg(dataAbsenDb.get(0).getGpsLatitudePlg());
+                    absenTrackingData.setGpsLongitudePlg(dataAbsenDb.get(0).getGpsLongitudePlg());
+                    absenTrackingData.setJamMsk(dataAbsenDb.get(0).getJamMsk());
+
                     AbsenResponse absenResponse = new AbsenResponse();
-                    absenResponse.setAbsenTrackingEntities(dataAbsenTracking);
+                    absenResponse.setAbsenTrackingData(absenTrackingData);
                     absenResponse.setAbsenImg(dataAbsenImg);
                     Map<String, Object> response = new HashMap<>();
-                    if (dataAbsenTracking == null) {
-                        response.put("success", false);
-                        response.put("message", "idAbsen salah");
-                        response.put("data", absenResponse);
-                    }else{
                     response.put("success", true);
-                    response.put("message", "berhasil mendapatkan data absen seorang member");
+                    response.put("message", "BERHASIL MENDAPATKAN DATA SEORANG MEMBER");
                     response.put("data", absenResponse);
-                    }
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     // Handle the case where the token format is invalid

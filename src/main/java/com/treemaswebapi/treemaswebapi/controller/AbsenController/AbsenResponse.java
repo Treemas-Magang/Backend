@@ -1,10 +1,6 @@
 package com.treemaswebapi.treemaswebapi.controller.AbsenController;
 
-
-import java.util.List;
-
-import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
-import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingData.AbsenTrackingData;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class AbsenResponse {
-    List<AbsenTrackingEntity> absenTrackingEntities;
+    AbsenTrackingData absenTrackingData;
     String absenImg;
     // buat response unprocessedAbsenEntity
     

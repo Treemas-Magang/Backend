@@ -291,6 +291,13 @@ public class MemberService {
                     absenTrackingData.setGpsLatitudePlg(dataAbsenDb.get(0).getGpsLatitudePlg());
                     absenTrackingData.setGpsLongitudePlg(dataAbsenDb.get(0).getGpsLongitudePlg());
                     absenTrackingData.setJamMsk(dataAbsenDb.get(0).getJamMsk());
+                    absenTrackingData.setCatatanPlgCpt(dataAbsenDb.get(0).getNotePlgCepat());
+                    absenTrackingData.setJamPlg(dataAbsenDb.get(0).getJamPlg());
+                    absenTrackingData.setNama(dataAbsenDb.get(0).getNama());
+                    absenTrackingData.setNamaProject(dataAbsenDb.get(0).getProjectId().getNamaProject());
+                    absenTrackingData.setNik(dataAbsenDb.get(0).getNik());
+                    absenTrackingData.setNotePekerjaan(dataAbsenDb.get(0).getNotePekerjaan());
+                    absenTrackingData.setCatatanTelat(dataAbsenDb.get(0).getNoteTelatMsk());
 
                     AbsenResponse absenResponse = new AbsenResponse();
                     absenResponse.setAbsenTrackingData(absenTrackingData);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -329,42 +330,32 @@ public class MemberService {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
         
-                    List<PenempatanEntity> projectPenempatan = penempatanRepository.findByNik(nik);
+                    Optional<PenempatanEntity> projectPenempatan = penempatanRepository.findByNikAndActive(nik, "1");
         
-                    if (!projectPenempatan.isEmpty()) {
-                        Map<String, Object> response = new HashMap<>();
-                        List<ProjectDetails> projectDetailsList = new ArrayList<>();
-        
-                        for (PenempatanEntity penempatanEntity : projectPenempatan) {
-                            ProjectEntity project = penempatanEntity.getProjectId();
-        
+                    Map<String, Object> response = new HashMap<>();
+                    if (projectPenempatan.isPresent()){
+                            ProjectEntity project = projectPenempatan.get().getProjectId();
+                            List<ProjectDetails> projectDetailsList = new ArrayList<>();
                             if (project != null) {
-                                List<PenempatanEntity> members = penempatanRepository.findAllByProjectId(project);
-        
-                                if (!members.isEmpty()) {
-                                    ProjectDetails details = new ProjectDetails();
-                                    PenempatanEntity penempatan = penempatanRepository.findActiveByProjectIdAndNik(project, nik);
-        
-                                    details.setProjectId(project.getProjectId().toString());
-                                    details.setProjectName(project.getNamaProject());
-                                    details.setProjectAddress(project.getLokasi());
-                                    details.setJrkMax(project.getJrkMax());
-                                    details.setGpsLongitude(project.getGpsLongitude());
-                                    details.setGpsLatitude(project.getGpsLatitude());
-                                    details.setJamMasuk(project.getJamMasuk());
-                                    details.setJamKeluar(project.getJamKeluar());
-        
-                                    if (penempatan != null) {
-                                        details.setActive(penempatan.getActive());
-                                    } else {
-                                        details.setActive(null); // or any default value you want to set
-                                    }
-        
-                                    projectDetailsList.add(details);
+                                ProjectDetails details = new ProjectDetails();
+                                PenempatanEntity penempatan = penempatanRepository.findActiveByProjectIdAndNik(project, nik);
+                                
+                                details.setProjectId(project.getProjectId().toString());
+                                details.setProjectName(project.getNamaProject());
+                                details.setProjectAddress(project.getLokasi());
+                                details.setJrkMax(project.getJrkMax());
+                                details.setGpsLongitude(project.getGpsLongitude());
+                                details.setGpsLatitude(project.getGpsLatitude());
+                                details.setJamMasuk(project.getJamMasuk());
+                                details.setJamKeluar(project.getJamKeluar());
+                                if (penempatan != null && "0".equals(penempatan.getActive())) {
+                                    details.setActive(penempatan.getActive());
+                                } else {
+                                    details.setActive(null);
                                 }
+    
+                                projectDetailsList.add(details);
                             }
-                        }
-        
                         if (!projectDetailsList.isEmpty()) {
                             response.put("success", true);
                             response.put("message", "Project details retrieved successfully");
@@ -373,13 +364,12 @@ public class MemberService {
                         } else {
                             response.put("success", false);
                             response.put("message", "No member data found!");
-                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                         }
                     } else {
-                        Map<String, Object> response = new HashMap<>();
                         response.put("success", false);
                         response.put("message", "No project placement found for the user!");
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                     }
                 } else {
                     // Handle the case where the token format is invalid

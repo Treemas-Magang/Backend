@@ -8,6 +8,8 @@ import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppUploadEntity;
 
 @Repository
 public interface CutiAppUploadRepository extends JpaRepository<CutiAppUploadEntity, Long> {
+
+    Long countByFlgKet(String string);
 }
 
 

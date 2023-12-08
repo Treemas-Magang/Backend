@@ -413,6 +413,17 @@ public class AbsenService {
                 lupaPulang.setGpsLongitudeMsk(existingAbsenData.getGpsLongitudeMsk());
                 lupaPulang.setJamMsk(existingAbsenData.getJamMsk());
                 lupaPulang.setLokasiMsk(existingAbsenData.getLokasiMsk());
+                /*
+                data yang harus lo kasih:
+                KeteranganLupaPulang
+                NotePekerjaan
+                LokasiPlg
+                GpsLatitudePlg
+                GpsLongitudePlg
+                Hari
+                JamPlg
+                JarakPlg
+                 */
 
                 absenPulangAppRepository.save(lupaPulang);
 

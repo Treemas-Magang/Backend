@@ -21,7 +21,8 @@ import lombok.NoArgsConstructor;
 @Builder
 
 public class ApprovalResponse {
-    private List<AbsenAppEntity> absenApproval;
+    private List<AbsenAppEntity> lemburApproval;
+    private List<AbsenAppEntity> liburApproval;
     private List<CutiAppEntity> sakitApproval;
     private List<CutiAppEntity> cutiApproval;
     private List<CutiAppUploadEntity> cutiApprovalWeb;

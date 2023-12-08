@@ -21,4 +21,23 @@ public interface AbsenAppRepository extends JpaRepository<AbsenAppEntity, Long> 
     @Query
     ("SELECT a FROM AbsenAppEntity a WHERE a.projectId = :projectId")
     List<AbsenAppEntity> findAllByProjectId(@Param("projectId") ProjectEntity projectId);
+
+    
+    @Query("SELECT a FROM AbsenAppEntity a WHERE a.projectId = :projectId AND a.isLibur = :isLibur")
+    List<AbsenAppEntity> findAllByProjectIdAndIsLibur(
+            @Param("projectId") ProjectEntity projectId,
+            @Param("isLibur") String isLibur
+    );
+
+    @Query("SELECT a FROM AbsenAppEntity a WHERE a.projectId = :projectId AND a.isLembur = :isLembur")
+    List<AbsenAppEntity> findAllByProjectIdAndIsLembur(
+            @Param("projectId") ProjectEntity projectId,
+            @Param("isLembur") String isLembur
+    );
+
+    Long countByProjectId(ProjectEntity projectId);
+
+    Long countByProjectIdAndIsLibur(ProjectEntity projectId, String string);
+
+    Long countByProjectIdAndIsLembur(ProjectEntity projectId, String string);
 }

@@ -43,8 +43,12 @@ public class NotifController {
         ProjectEntity projectId = projectRepository.findByProjectId(projectIdString);
         switch (by.toLowerCase()) {
 
-            case "absen":
-                return notifService.getAbsenApproval(tokenWithBearer, projectIdString);
+            // case libur ini adalah dapetin value approval buat orang yang kerja di hari sabtu dan minggu
+            case "libur":
+                return notifService.getLiburApproval(tokenWithBearer, projectIdString);
+            
+            case "lembur":
+                return notifService.getLemburApproval(tokenWithBearer, projectIdString);
 
             case "cuti":
                 return notifService.getCutiApproval(tokenWithBearer);
@@ -75,4 +79,9 @@ public class NotifController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+    @GetMapping("/get-data-count")
+    public ResponseEntity<Map<String, Object>> getDataCount(@RequestHeader("Authorization") String tokenWithBearer) {
+        return notifService.getFullCounter(tokenWithBearer);
+    }
+    
 }

@@ -51,7 +51,13 @@ public class NotifService {
     //                 .generalParamApproval(generalParamAppRepository.findAll())
     //                 .reimburseApproval(reimburseAppRepository.findAll())
     //                 .build();
+                    /*
+                  
 
+                    
+                    
+                    
+                    */
     //                 Map<String, Object> response = new HashMap<>();
     //                 response.put("success", true);
     //                 response.put("message","berhasil retrieve semua data approval");
@@ -73,7 +79,50 @@ public class NotifService {
     //         }
     //     }
 
-    public ResponseEntity<Map<String, Object>> getAbsenApproval(String tokenWithBearer, String projectIdString) {
+    // public ResponseEntity<Map<String, Object>> getAbsenApproval(String tokenWithBearer, String projectIdString) {
+    //     try {
+            
+    //         if (tokenWithBearer.startsWith("Bearer ")) {
+    //             Optional<ProjectEntity> projectOptional = projectRepository.findById(projectIdString);
+    
+    //             if (projectOptional.isPresent()) {
+    //                 ProjectEntity projectId = projectOptional.get();
+    //                 System.out.println(projectIdString);
+    //                 String token = tokenWithBearer.substring("Bearer ".length());
+    //                 String nik = jwtService.extractUsername(token);
+    //                 System.out.println(nik + "ini udah masuk getAbsenApproval");
+    //                 List<AbsenAppEntity> absenApproval = absenAppRepository.findAllByProjectId(projectId);
+    //                 Long counter = absenAppRepository.countByProjectId(projectId);
+    //                 Map<String, Object> response = new HashMap<>();
+    //                 response.put("success", true);
+    //                 response.put("message", "berhasil retrieve semua data approval");
+    //                 response.put("data", absenApproval);
+    //                 response.put("dataCount", counter);
+    //                 return ResponseEntity.status(HttpStatus.OK).body(response);
+    //             } else {
+    //                 // Handle the case where the project is not found
+    //                 Map<String, Object> response = new HashMap<>();
+    //                 response.put("success", false);
+    //                 response.put("message", "Project not found with ID: " + projectIdString);
+    //                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    //             }
+    //         } else {
+    //             // Handle the case where the token format is invalid
+    //             Map<String, Object> response = new HashMap<>();
+    //             response.put("success", false);
+    //             response.put("message", "Invalid token format");
+    //             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    //         }
+    //     } catch (Exception e) {
+    //         Map<String, Object> response = new HashMap<>();
+    //         response.put("success", false);
+    //         response.put("message", "Failed to retrieve project details");
+    //         response.put("error", e.getMessage());
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    //     }
+    // }
+
+    public ResponseEntity<Map<String, Object>> getLiburApproval(String tokenWithBearer, String projectIdString) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 Optional<ProjectEntity> projectOptional = projectRepository.findById(projectIdString);
@@ -84,12 +133,70 @@ public class NotifService {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenApproval");
-                    List<AbsenAppEntity> absenApproval = absenAppRepository.findAllByProjectId(projectId);
-    
+                    ApprovalResponse approvalResponse = ApprovalResponse.builder()
+                    .liburApproval(null)
+                    .lemburApproval(null)
+                    .absenPulangApproval(null)
+                    .absenWebApproval(null)
+                    .cutiApproval(null)
+                    .cutiApprovalWeb(cutiAppUploadRepository.findAll())
+                    .generalParamApproval(null)
+                    .reimburseApproval(null)
+                    .dataCounter(cutiAppUploadRepository.count())
+                    .build();
+                    
+                    Long counter = absenAppRepository.countByProjectIdAndIsLibur(projectId, "1");
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "berhasil retrieve semua data approval");
-                    response.put("data", absenApproval);
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getLiburApproval() != null) {
+                        data.put("getLiburApproval", approvalResponse.getLiburApproval());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    // Handle the case where the project is not found
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Project not found with ID: " + projectIdString);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            } else {
+                // Handle the case where the token format is invalid
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to retrieve project details");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> getLemburApproval(String tokenWithBearer, String projectIdString) {
+        try {
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                Optional<ProjectEntity> projectOptional = projectRepository.findById(projectIdString);
+    
+                if (projectOptional.isPresent()) {
+                    ProjectEntity projectId = projectOptional.get();
+                    System.out.println(projectIdString);
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+                    System.out.println(nik + "ini udah masuk getAbsenApproval");
+                    List<AbsenAppEntity> lemburApproval = absenAppRepository.findAllByProjectIdAndIsLembur(projectId, "1");
+                    Long counter = absenAppRepository.countByProjectIdAndIsLembur(projectId, "1");
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "berhasil retrieve semua data approval");
+                    response.put("data", lemburApproval);
+                    response.put("dataCounter", counter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     // Handle the case where the project is not found
@@ -121,7 +228,8 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getCutiApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .absenApproval(null)
+                    .liburApproval(null)
+                    .lemburApproval(null)
                     .absenPulangApproval(null)
                     .absenWebApproval(null)
                     .cutiApproval(cutiAppRepository.findAll())
@@ -134,7 +242,13 @@ public class NotifService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    response.put("data", approvalResponse);
+                    Long counter = absenAppRepository.count();
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getCutiApproval() != null) {
+                        data.put("cutiApproval", approvalResponse.getCutiApproval());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -159,7 +273,8 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getCutiWebApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .absenApproval(null)
+                    .liburApproval(null)
+                    .lemburApproval(null)
                     .absenPulangApproval(null)
                     .absenWebApproval(null)
                     .cutiApproval(null)
@@ -172,7 +287,13 @@ public class NotifService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    response.put("data", approvalResponse);
+                    Long counter = absenAppUploadRepository.count();
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getCutiApprovalWeb() != null) {
+                        data.put("cutiApprovalWeb", approvalResponse.getCutiApprovalWeb());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -197,7 +318,6 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenPulangApproval");
                     ApprovalResponse approvalResponse = new ApprovalResponse();
-                    approvalResponse.setAbsenApproval(null);
                     approvalResponse.setAbsenPulangApproval(absenPulangAppRepository.findAllByProjectId(projectId));
                     approvalResponse.setAbsenWebApproval(null);
                     approvalResponse.setCutiApproval(null);
@@ -209,7 +329,13 @@ public class NotifService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    response.put("data", approvalResponse);
+                    Long counter = absenPulangAppRepository.count();
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getAbsenPulangApproval() != null) {
+                        data.put("absenPulangApproval", approvalResponse.getAbsenPulangApproval());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -234,7 +360,8 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getGeneralParamApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .absenApproval(null)
+                    .liburApproval(null)
+                    .lemburApproval(null)
                     .absenPulangApproval(null)
                     .absenWebApproval(null)
                     .cutiApproval(null)
@@ -247,7 +374,13 @@ public class NotifService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    response.put("data", approvalResponse);
+                    Long counter = generalParamAppRepository.count();
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getGeneralParamApproval() != null) {
+                        data.put("generalParamApproval", approvalResponse.getGeneralParamApproval());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -272,7 +405,8 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getReimburseApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .absenApproval(null)
+                    .liburApproval(null)
+                    .lemburApproval(null)
                     .absenPulangApproval(null)
                     .absenWebApproval(null)
                     .cutiApproval(null)
@@ -285,7 +419,13 @@ public class NotifService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    response.put("data", approvalResponse);
+                    Long counter = reimburseAppRepository.count();
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getReimburseApproval() != null) {
+                        data.put("reimburseApproval", approvalResponse.getReimburseApproval());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -309,7 +449,8 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenWebApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .absenApproval(null)
+                    .liburApproval(null)
+                    .lemburApproval(null)
                     .absenPulangApproval(null)
                     .absenWebApproval(absenAppUploadRepository.findAllByProjectId(projectId))
                     .cutiApproval(null)
@@ -322,7 +463,13 @@ public class NotifService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    response.put("data", approvalResponse);
+                    Long counter = absenAppUploadRepository.count();
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getAbsenWebApproval() != null) {
+                        data.put("absenWebApproval", approvalResponse.getAbsenWebApproval());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -346,7 +493,8 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenWebApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .absenApproval(null)
+                    .liburApproval(null)
+                    .lemburApproval(null)
                     .sakitApproval(cutiAppRepository.findByFlgKet("sakit"))
                     .absenPulangApproval(null)
                     .absenWebApproval(null)
@@ -360,7 +508,47 @@ public class NotifService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    response.put("data", approvalResponse);
+                    Long counter = cutiAppRepository.countByFlgKet("sakit");
+                    Map<String, Object> data = new HashMap<>();
+                    if (approvalResponse.getSakitApproval() != null) {
+                        data.put("sakitApproval", approvalResponse.getSakitApproval());
+                    }
+                    response.put("data", data);
+                    response.put("dataCounter", counter);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+    }
+    public ResponseEntity<Map<String, Object>> getFullCounter(String tokenWithBearer){
+            try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    Long absenApprovalCount = absenAppRepository.count();
+                    Long absenPulangApprovalCount = absenPulangAppRepository.count();
+                    Long absenWebApprovalCount = absenAppUploadRepository.count();
+                    Long cutiApprovalCount = cutiAppRepository.countByFlgKet("cuti");
+                    Long cutiApprovalWebCount = cutiAppUploadRepository.countByFlgKet("cuti");
+                    Long sakitApprovalCount = cutiAppRepository.countByFlgKet("sakit");
+                    Long generalParamApprovalCount = generalParamAppRepository.count();
+                    Long reimburseApprovalCount = reimburseAppRepository.count();
+                    Long fullCounter = absenApprovalCount + absenPulangApprovalCount + cutiApprovalCount + 
+                    cutiApprovalWebCount + sakitApprovalCount + 
+                    generalParamApprovalCount + reimburseApprovalCount + absenWebApprovalCount;
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("berhasil menghitung semua data approval", false);
+                    response.put("dataCount", fullCounter);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid

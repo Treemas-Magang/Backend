@@ -330,16 +330,18 @@ public class MemberService {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
         
-                    Optional<PenempatanEntity> projectPenempatan = penempatanRepository.findByNikAndActive(nik, "1");
+                    List<PenempatanEntity> projectPenempatan = penempatanRepository.findByActiveAndNik("1", nik);
         
                     Map<String, Object> response = new HashMap<>();
-                    if (projectPenempatan.isPresent()){
-                            ProjectEntity project = projectPenempatan.get().getProjectId();
-                            List<ProjectDetails> projectDetailsList = new ArrayList<>();
+                    if (!projectPenempatan.isEmpty()) {
+                        List<ProjectDetails> projectDetailsList = new ArrayList<>();
+        
+                        for (PenempatanEntity penempatanSiLeader : projectPenempatan) {
+                            ProjectEntity project = penempatanSiLeader.getProjectId();
                             if (project != null) {
                                 ProjectDetails details = new ProjectDetails();
                                 PenempatanEntity penempatan = penempatanRepository.findActiveByProjectIdAndNik(project, nik);
-                                
+        
                                 details.setProjectId(project.getProjectId().toString());
                                 details.setProjectName(project.getNamaProject());
                                 details.setProjectAddress(project.getLokasi());
@@ -348,14 +350,17 @@ public class MemberService {
                                 details.setGpsLatitude(project.getGpsLatitude());
                                 details.setJamMasuk(project.getJamMasuk());
                                 details.setJamKeluar(project.getJamKeluar());
+        
                                 if (penempatan != null && "0".equals(penempatan.getActive())) {
                                     details.setActive(penempatan.getActive());
                                 } else {
                                     details.setActive(null);
                                 }
-    
+        
                                 projectDetailsList.add(details);
                             }
+                        }
+        
                         if (!projectDetailsList.isEmpty()) {
                             response.put("success", true);
                             response.put("message", "Project details retrieved successfully");
@@ -366,6 +371,7 @@ public class MemberService {
                             response.put("message", "No member data found!");
                             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                         }
+        
                     } else {
                         response.put("success", false);
                         response.put("message", "No project placement found for the user!");
@@ -386,6 +392,8 @@ public class MemberService {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
         }
+        
+    }
 
         // public ResponseEntity<Map<String, Object>> getAllAbsen(@RequestHeader("Authorization") String tokenWithBearer, @RequestBody MemberRequest request) {
         //         try {
@@ -409,4 +417,4 @@ public class MemberService {
         //             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         //         }
         //     }
-}
+

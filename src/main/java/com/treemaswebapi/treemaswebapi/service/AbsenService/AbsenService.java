@@ -399,17 +399,19 @@ public class AbsenService {
                 AbsenPulangAppEntity lupaPulang = new AbsenPulangAppEntity();
                 lupaPulang.setId(idAbsen);
                 lupaPulang.setNik(nik);
+                // bagian yang dapet dari front-end request
                 lupaPulang.setKeterangan(request.getKeteranganLupaPulang());
                 lupaPulang.setNotePekerjaan(request.getNotePekerjaan());
                 lupaPulang.setLokasiPlg(request.getLokasiPlg());
                 lupaPulang.setGpsLatitudePlg(request.getGpsLatitudePlg());
                 lupaPulang.setGpsLongitudePlg(request.getGpsLongitudePlg());
                 lupaPulang.setFlagApp("0");
-                lupaPulang.setHari(request.getHari());
                 lupaPulang.setJamPlg(request.getJamPlg());
                 lupaPulang.setJarakPlg(request.getJarakPlg());
+                // dari db dan dari server
                 lupaPulang.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
                 lupaPulang.setGpsLatitudeMsk(existingAbsenData.getGpsLatitudeMsk());
+                lupaPulang.setHari(existingAbsenData.getHari());
                 lupaPulang.setGpsLongitudeMsk(existingAbsenData.getGpsLongitudeMsk());
                 lupaPulang.setJamMsk(existingAbsenData.getJamMsk());
                 lupaPulang.setLokasiMsk(existingAbsenData.getLokasiMsk());

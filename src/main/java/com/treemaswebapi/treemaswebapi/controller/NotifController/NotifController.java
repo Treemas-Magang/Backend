@@ -18,6 +18,9 @@ import com.treemaswebapi.treemaswebapi.service.NotifService.NotifService;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/notif")
@@ -62,8 +65,8 @@ public class NotifController {
             case "absen-web":
                 return notifService.getAbsenWebApproval(tokenWithBearer, projectId);
 
-            case "general-param":
-                return notifService.getGeneralParamApproval(tokenWithBearer);
+            // case "general-param":
+            //     return notifService.getGeneralParamApproval(tokenWithBearer);
 
             case "reimburse":
                 return notifService.getReimburseApproval(tokenWithBearer, projectId);
@@ -82,6 +85,95 @@ public class NotifController {
     @GetMapping("/get-data-count")
     public ResponseEntity<Map<String, Object>> getDataCount(@RequestHeader("Authorization") String tokenWithBearer) {
         return notifService.getFullCounter(tokenWithBearer);
+    }
+    
+    @PostMapping("/post-approval")
+    public ResponseEntity<Map<String, Object>> postApprovalBy(
+            @RequestHeader("Authorization") String tokenWithBearer,
+            @RequestParam("by") String by,
+            @RequestParam("id") Long idApproval
+    ) {
+        switch (by.toLowerCase()) {
+
+            // case libur ini adalah dapetin value approval buat orang yang kerja di hari sabtu dan minggu
+            case "libur":
+                return notifService.postLiburApproval(tokenWithBearer, idApproval);
+            
+            case "lembur":
+                return notifService.postLemburApproval(tokenWithBearer, idApproval);
+
+            case "cuti":
+                return notifService.postCutiApproval(tokenWithBearer, idApproval);
+
+            case "cuti-web":
+                return notifService.postCutiWebApproval(tokenWithBearer, idApproval);
+
+            case "absen-pulang":
+                return notifService.postAbsenPulangApproval(tokenWithBearer, idApproval);
+
+            case "absen-web":
+                return notifService.postAbsenWebApproval(tokenWithBearer, idApproval);
+
+            case "general-param":
+                return notifService.postGeneralParamApproval(tokenWithBearer, idApproval);
+
+            case "reimburse":
+                return notifService.postReimburseApproval(tokenWithBearer, idApproval);
+            
+            case "sakit":
+                return notifService.postSakitApproval(tokenWithBearer, idApproval);
+            
+            default:
+                // Handle the case where 'by' is not recognized
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid value for 'by': " + by + "in the" + idApproval);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+    @GetMapping("/get-detail-approval")
+    public ResponseEntity<Map<String, Object>> getDetailApprovalBy(
+            @RequestHeader("Authorization") String tokenWithBearer,
+            @RequestParam("by") String by,
+            @RequestParam("id") Long idApproval
+    ) {
+        switch (by.toLowerCase()) {
+
+            // case libur ini adalah dapetin value approval buat orang yang kerja di hari sabtu dan minggu
+            case "libur":
+                return notifService.getDetailLiburApproval(tokenWithBearer, idApproval);
+            
+            case "lembur":
+                return notifService.getDetailLemburApproval(tokenWithBearer, idApproval);
+
+            case "cuti":
+                return notifService.getDetailCutiApproval(tokenWithBearer, idApproval);
+
+            case "cuti-web":
+                return notifService.getDetailCutiWebApproval(tokenWithBearer, idApproval);
+
+            case "absen-pulang":
+                return notifService.getDetailAbsenPulangApproval(tokenWithBearer, idApproval);
+
+            case "absen-web":
+                return notifService.getDetailAbsenWebApproval(tokenWithBearer, idApproval);
+
+            // case "general-param":
+            //     return notifService.getDetailGeneralParamApproval(tokenWithBearer, idApproval);
+
+            case "reimburse":
+                return notifService.getDetailReimburseApproval(tokenWithBearer, idApproval);
+            
+            case "sakit":
+                return notifService.getDetailSakitApproval(tokenWithBearer, idApproval);
+            
+            default:
+                // Handle the case where 'by' is not recognized
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid value for 'by': " + by + "in the" + idApproval);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
     
 }

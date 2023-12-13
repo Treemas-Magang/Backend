@@ -2,11 +2,11 @@ package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
-import io.opencensus.common.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

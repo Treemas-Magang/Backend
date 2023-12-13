@@ -100,6 +100,7 @@ import lombok.RequiredArgsConstructor;
                     // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
                     .nik(request.getNik())
+                    .email(request.getEmail())//gue benerin siangsiang tanggal 13.12.23
                     .nama(request.getNama())
                     .tempatLahir(request.getTempatLahir())
                     .tanggalLahir(request.getTanggalLahir())
@@ -288,6 +289,7 @@ import lombok.RequiredArgsConstructor;
                  var karyawan = KaryawanEntity.builder()
                     .nik(request.getNik())
                     .nama(request.getNama())
+                    .email(request.getEmail())//gue benerin siangsiang 13.12.23 -Aliy
                     .tempatLahir(request.getTempatLahir())
                     .tanggalLahir(request.getTanggalLahir())
                     .jenisKelamin(request.getJenisKelamin())

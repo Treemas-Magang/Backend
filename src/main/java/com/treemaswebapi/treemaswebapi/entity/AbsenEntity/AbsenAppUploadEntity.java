@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
+import io.opencensus.common.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -142,4 +143,7 @@ public class AbsenAppUploadEntity {
 
     @Column(name = "noteapp2")
     private String noteApp2;
+
+    @Column(name = "dtmcrt")
+    private Timestamp dtmCrt;
 }

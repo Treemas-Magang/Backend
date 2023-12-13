@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.NotifController.request.ApprovalRequest;
 import com.treemaswebapi.treemaswebapi.controller.NotifController.response.ApprovalResponse;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
@@ -576,24 +577,22 @@ public class NotifService {
     }
 
     // INI BAGIIAN POST SERVICE
-    public ResponseEntity<Map<String, Object>> postLiburApproval(String tokenWithBearer, Long idApproval) {
+    public ResponseEntity<Map<String, Object>> postLiburApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
         try {
                 if (tokenWithBearer.startsWith("Bearer ")) {
-                    Long absenApprovalCount = absenAppRepository.count();
-                    Long absenPulangApprovalCount = absenPulangAppRepository.count();
-                    Long absenWebApprovalCount = absenAppUploadRepository.count();
-                    Long cutiApprovalCount = cutiAppRepository.countByFlgKet("cuti");
-                    Long cutiApprovalWebCount = cutiAppUploadRepository.countByFlgKet("cuti");
-                    Long sakitApprovalCount = cutiAppRepository.countByFlgKet("sakit");
-                    Long generalParamApprovalCount = generalParamAppRepository.count();
-                    Long reimburseApprovalCount = reimburseAppRepository.count();
-                    Long fullCounter = absenApprovalCount + absenPulangApprovalCount + cutiApprovalCount + 
-                    cutiApprovalWebCount + sakitApprovalCount + 
-                    generalParamApprovalCount + reimburseApprovalCount + absenWebApprovalCount;
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+                    System.out.println(nik + "ini udah masuk postLiburApproval");
+
+                    Optional<AbsenAppEntity> datanya = absenAppRepository.findById(idApproval);
+
+                    if (request.getIsApprove() == "1") {
+                        datanya.get().setIsApprove("1");
+                    }
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("berhasil menghitung semua data approval", false);
-                    response.put("dataCount", fullCounter);
+                    response.put("dataCount", nik);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid

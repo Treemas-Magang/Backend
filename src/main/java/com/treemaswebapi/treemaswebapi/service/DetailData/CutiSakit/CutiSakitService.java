@@ -501,7 +501,7 @@ public class CutiSakitService {
                 absenData.setHari(getIndonesianDayOfWeek(LocalDate.now().getDayOfWeek()));
                 absenData.setDtmCrt(imageDataReal.getDtmCrt());
                 absenData.setUsrCrt(imageDataReal.getUsrCrt());
-
+                absenData.setIsSakit("1");//gue yang nambahin ini as your request -Aliy
 
                 // kirim image ke tbl cuti entity untuk api get sakit
 

@@ -36,7 +36,8 @@ public class DashboardService {
 
             Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
             String nama = karyawan.get().getNama();
-            int totalMasuk = absenRepository.countByIsAbsenAndNik("1", nik);
+            int masuk = absenRepository.countByJamMskIsNotNullAndNik(nik);// perubahan ini gue lakun tanggal 13.12.2023 -Aliy
+            int totalMasuk = masuk;
             int totalSakit = absenRepository.countByIsSakitAndNik("1", nik);
             int totalTelatMasuk = absenRepository.countByNoteTelatMskIsNotNullAndNik(nik);
             int totalCuti = absenRepository.countByIsCutiAndNik("1", nik);

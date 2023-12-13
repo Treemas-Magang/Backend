@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.treemaswebapi.treemaswebapi.controller.NotifController.request.ApprovalRequest;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.service.NotifService.NotifService;
@@ -91,13 +92,14 @@ public class NotifController {
     public ResponseEntity<Map<String, Object>> postApprovalBy(
             @RequestHeader("Authorization") String tokenWithBearer,
             @RequestParam("by") String by,
-            @RequestParam("id") Long idApproval
+            @RequestParam("id") Long idApproval,
+            @RequestBody ApprovalRequest request
     ) {
         switch (by.toLowerCase()) {
 
             // case libur ini adalah dapetin value approval buat orang yang kerja di hari sabtu dan minggu
             case "libur":
-                return notifService.postLiburApproval(tokenWithBearer, idApproval);
+                return notifService.postLiburApproval(tokenWithBearer, idApproval, request);
             
             case "lembur":
                 return notifService.postLemburApproval(tokenWithBearer, idApproval);

@@ -144,12 +144,12 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .liburApprovals(null)
+                    .liburApprovals(absenAppRepository.findAllByProjectIdAndIsLibur(projectId, "1"))
                     .lemburApprovals(null)
                     .absenPulangApprovals(null)
                     .absenWebApprovals(null)
                     .cutiApprovals(null)
-                    .cutiApprovalWebs(cutiAppUploadRepository.findAll())
+                    .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
                     .dataCounter(cutiAppUploadRepository.count())

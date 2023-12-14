@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.NotifController.request.ApprovalRequest;
 import com.treemaswebapi.treemaswebapi.controller.NotifController.response.ApprovalResponse;
@@ -46,21 +48,20 @@ public class NotifService {
 
 
     // INI BAGIAN GET LIST
-    //  public ResponseEntity<Map<String, Object>> getAllApproval(@RequestHeader String tokenWithBearer) {
-    //         try {
-    //             if (tokenWithBearer.startsWith("Bearer ")) {
-    //                 String token = tokenWithBearer.substring("Bearer ".length());
-    //                 String nik = jwtService.extractUsername(token);
-    //                 System.out.println(nik);
-    //                 ApprovalResponse approvalResponse = ApprovalResponse.builder()
-    //                 .absenApproval(absenAppRepository.findAll())
-    //                 .absenPulangApproval(absenPulangAppRepository.findAll())
-    //                 .absenPulangWebApproval(absenAppUploadRepository.findAll())
-    //                 .cutiApproval(cutiAppRepository.findAll())
-    //                 .cutiApprovalWeb(cutiAppUploadRepository.findAll())
-    //                 .generalParamApproval(generalParamAppRepository.findAll())
-    //                 .reimburseApproval(reimburseAppRepository.findAll())
-    //                 .build();
+      public ResponseEntity<Map<String, Object>> getAllApproval(@RequestHeader String tokenWithBearer) {
+             try {
+                 if (tokenWithBearer.startsWith("Bearer ")) {
+                     String token = tokenWithBearer.substring("Bearer ".length());
+                     String nik = jwtService.extractUsername(token);
+                     System.out.println(nik);
+                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
+                     .liburApprovals(absenAppRepository.findAll())
+                     .absenPulangApprovals(absenPulangAppRepository.findAll())
+                     .absenWebApprovals(absenAppUploadRepository.findAll())
+                     .cutiApprovals(cutiAppRepository.findAll())
+                     .cutiApprovalWebs(cutiAppUploadRepository.findAll())
+                     .reimburseApprovals(reimburseAppRepository.findAll())
+                     .build();
                     /*
                   
 
@@ -68,26 +69,26 @@ public class NotifService {
                     
                     
                     */
-    //                 Map<String, Object> response = new HashMap<>();
-    //                 response.put("success", true);
-    //                 response.put("message","berhasil retrieve semua data approval");
-    //                 response.put("data", approvalResponse);
-    //                 return ResponseEntity.status(HttpStatus.OK).body(response);
-    //                 } else {
-    //                 // Handle the case where the token format is invalid
-    //                 Map<String, Object> response = new HashMap<>();
-    //                 response.put("success", false);
-    //                 response.put("message", "Invalid token format");
-    //                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    //             }
-    //         } catch (Exception e) {
-    //             Map<String, Object> response = new HashMap<>();
-    //             response.put("success", false);
-    //             response.put("message", "Failed to retrieve project details");
-    //             response.put("error", e.getMessage());
-    //             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    //         }
-    //     }
+                     Map<String, Object> response = new HashMap<>();
+                     response.put("success", true);
+                     response.put("message","berhasil retrieve semua data approval");
+                     response.put("data", approvalResponse);
+                     return ResponseEntity.status(HttpStatus.OK).body(response);
+                     } else {
+                      // Handle the case where the token format is invalid
+                     Map<String, Object> response = new HashMap<>();
+                     response.put("success", false);
+                     response.put("message", "Invalid token format");
+                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                 }
+             } catch (Exception e) {
+                 Map<String, Object> response = new HashMap<>();
+                 response.put("success", false);
+                 response.put("message", "Failed to retrieve project details");
+                 response.put("error", e.getMessage());
+                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+             }
+         }
 
     // public ResponseEntity<Map<String, Object>> getAbsenApproval(String tokenWithBearer, String projectIdString) {
     //     try {

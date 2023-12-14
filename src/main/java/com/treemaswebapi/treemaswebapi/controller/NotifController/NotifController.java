@@ -32,12 +32,12 @@ public class NotifController {
     private final ProjectRepository projectRepository;
     private final NotifService notifService;
     
-    // @GetMapping("/get-all-approval")
-    // public ResponseEntity<Map<String, Object>> getAllApproval(
-    //     @RequestHeader("Authorization") String tokenWithBearer
-    // ){
-    //     return notifService.getAllApproval(tokenWithBearer);
-    // }
+    @GetMapping("/get-all-approval")
+    public ResponseEntity<Map<String, Object>> getAllApproval(
+        @RequestHeader("Authorization") String tokenWithBearer
+    ){
+        return notifService.getAllApproval(tokenWithBearer);
+    }
     @GetMapping("/get-approval")
     public ResponseEntity<Map<String, Object>> getApprovalBy(
             @RequestHeader("Authorization") String tokenWithBearer,

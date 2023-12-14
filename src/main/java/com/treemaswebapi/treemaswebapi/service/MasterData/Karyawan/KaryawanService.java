@@ -206,6 +206,34 @@ import lombok.RequiredArgsConstructor;
         }
     }   
 
+    public ResponseEntity<Map<String, Object>> karyawanGetId(
+        String id
+    ) {
+        try {
+            Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(id);
+            Optional<SysUserEntity> sysUser = sysUserRepository.findByUserId(id);
+            Optional<KaryawanImageEntity> karyawanImage = karyawanImageRepository.findByNik(id);
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("karyawan", karyawan);
+            data.put("sysUser", sysUser);
+            data.put("karyawanImage", karyawanImage);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", data);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve karyawan");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }   
+
     public ResponseEntity<Map<String, String>> karyawanDelete(
         String id
     ) {

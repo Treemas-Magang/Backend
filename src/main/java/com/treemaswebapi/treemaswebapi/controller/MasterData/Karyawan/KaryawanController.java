@@ -40,6 +40,15 @@ public class KaryawanController {
         return response;
     }
 
+    @GetMapping("/karyawan-view/{id}")
+    public ResponseEntity<Map<String, Object>> karyawanGetId(
+        @PathVariable String id
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.karyawanGetId(id);
+        return response;
+    }
+
+
     @DeleteMapping("/karyawan-form/delete/{id}")
     public ResponseEntity<Map<String, String>> karyawanDelete(
         @PathVariable String id

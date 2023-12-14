@@ -29,4 +29,10 @@ public class ManagementUser {
         ResponseEntity<Map<String, Object>> response = service.unlockAcc(nik);
         return response;
     }
+
+    @GetMapping("/user-view")
+    public ResponseEntity<Map<String, Object>> userGet() {
+        ResponseEntity<Map<String,Object>> response = service.userGet();
+        return response;
+    }
 }

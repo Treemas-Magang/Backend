@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.Management.User;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.Management.User.request.ManagementUserRequest;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
@@ -73,4 +75,23 @@ public class ManagementUserService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+    public ResponseEntity<Map<String, Object>> userGet() {
+        try {
+            List<SysUserEntity> sysUser = sysUserRepository.findAll();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", sysUser);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve User");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }   
 }

@@ -19,14 +19,15 @@ public class SchedulerService {
     private final KaryawanRepository karyawanRepository;
     private final AbsenRepository absenRepository;
 
-    @Scheduled(cron = "0 40 10 * * ?", zone = "UTC+7")
+    @Scheduled(cron = "0 * * * * ?")
     public void createAbsenEntries() {
-        List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
-        for (KaryawanEntity karyawan : dataKaryawan) {
-            AbsenEntity absenEntity = new AbsenEntity();
-            absenEntity.setNik(karyawan.getNik());
-            absenRepository.save(absenEntity);
-            System.out.println("scheduled job has been executed");
-        }
+        // List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
+        // for (KaryawanEntity karyawan : dataKaryawan) {
+        //     AbsenEntity absenEntity = new AbsenEntity();
+        //     absenEntity.setNik(karyawan.getNik());
+        //     absenRepository.save(absenEntity);
+        //     System.out.println("scheduled job has been executed");
+        // }
+        System.out.println("scheduled job has been executed");
     }
 }

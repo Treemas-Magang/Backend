@@ -49,4 +49,6 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
     @Query("SELECT a FROM AbsenEntity a WHERE a.tglAbsen = :tglAbsen")
     List<Long> findByTglAbsen(@Param("tglAbsen")LocalDate currentDate);
 
+    AbsenEntity findByTglAbsenAndNik(LocalDate tanggalIni, String nik);
+
 }

@@ -20,7 +20,7 @@ public class SchedulerService {
     private final KaryawanRepository karyawanRepository;
     private final AbsenRepository absenRepository;
 
-    @Scheduled(cron = "0 0 5 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void createAbsenEntries() {
         List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
         for (KaryawanEntity karyawan : dataKaryawan) {
@@ -28,7 +28,7 @@ public class SchedulerService {
             absenEntity.setNik(karyawan.getNik());
             absenEntity.setDtmCrt(Timestamp.valueOf(LocalDateTime.now()));
             absenRepository.save(absenEntity);
-            System.out.println("scheduled job has been executed");
+            System.out.println("scheduled job has been executed for nik: " + karyawan.getNik());
         }
     }
 }

@@ -37,4 +37,11 @@ public class AuthController {
         ResponseEntity<Map<String, Object>> response = service.forgetPassword(request);
         return response;
     }
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> login(
+        @RequestHeader("Authentication") String token
+    ) {         
+        return service.logout(token);
+    }
+    
 }

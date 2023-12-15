@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.SchedulerService;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class SchedulerService {
             AbsenEntity absenEntity = new AbsenEntity();
             absenEntity.setNik(karyawan.getNik());
             absenEntity.setDtmCrt(Timestamp.valueOf(LocalDateTime.now()));
+            absenEntity.setTglAbsen(LocalDate.now()); //modified on 15.12.23 -Aliy
             absenRepository.save(absenEntity);
             System.out.println("scheduled job has been executed for nik: " + karyawan.getNik());
         }

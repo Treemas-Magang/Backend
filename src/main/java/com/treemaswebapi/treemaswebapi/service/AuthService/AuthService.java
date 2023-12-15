@@ -173,6 +173,7 @@ import lombok.RequiredArgsConstructor;
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
+            
             } catch (Exception e) {
                 // TODO: handle exception
                 Map<String, Object> response = new HashMap<>();
@@ -183,4 +184,46 @@ import lombok.RequiredArgsConstructor;
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         }
+        public ResponseEntity<Map<String, Object>> logout(String tokenWithBearer) {
+            try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+
+                Optional<SysUserEntity> userOptional = sysUserRepository.findByNik(nik);
+        
+                if (userOptional.isPresent()) {
+                    SysUserEntity sysUser = userOptional.get();
+                    sysUser.setIsLogin("0");
+                    sysUserRepository.save(sysUser);
+        
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "Logout successful");
+        
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "User not found");
+        
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            }else{
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "INVALID TOKEN");
+
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Logout failed");
+                response.put("error", e.getMessage());
+        
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        }
+        
     }

@@ -76,5 +76,5 @@ public class CutiSakitController {
         return response;
     }
 
-    
+        
 }

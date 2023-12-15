@@ -191,6 +191,34 @@ public class ProfileService {
         }
     }
 
+    public ResponseEntity<Map<String, Object>> getUpdateProfile(
+        @RequestHeader("Authorization") String jwtToken
+        ) {
+            Map<String, Object> response = new HashMap<>();
+            try{
+                if(jwtToken.startsWith("Bearer ")){
+                String token = jwtToken.substring(7);
+                String nik = jwtService.extractUsername(token);
+                Optional<KaryawanEntity> dataKaryawan = karyawanRepository.findByNik(nik);
+                response.put("success", true);
+                response.put("message", "berhasil get data sebelum update profile");
+                response.put("data", dataKaryawan);
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+                }else {
+                // Invalid token format
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            }catch (Exception e){
+                response.put("success", false);
+                response.put("message", "error");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        }
+    
+
     // Helper method to convert MultipartFile to Base64
     private String convertToBase64(MultipartFile file) {
         try {

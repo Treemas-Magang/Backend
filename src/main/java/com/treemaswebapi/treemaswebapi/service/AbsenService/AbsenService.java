@@ -292,6 +292,7 @@ public class AbsenService {
         response.put("message", "Unexpected error occurred");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+   
         public ResponseEntity<Map<String, Object>> inputAbsenPulang(@RequestHeader("Authorization") String tokenWithBearer, AbsenRequest request) {
         try {
                 if (tokenWithBearer.startsWith("Bearer ")){

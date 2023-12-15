@@ -51,7 +51,7 @@ public class ClaimService {
                 .keterangan(request.getKeterangan())
                 .usrCrt(nama)
                 .dtmCrt(formattedDtmCrt)
-            .build();
+                .build();
             tipeClaimRepository.save(tipeClaim);
 
             Map<String, Object> response = new HashMap<>();

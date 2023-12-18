@@ -26,9 +26,13 @@ public class SchedulerService {
         List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
         LocalDate currentDate = LocalDate.now();
         System.out.println("jumlah karyawannya segini: "+dataKaryawan.size());
+
         for (KaryawanEntity karyawan : dataKaryawan) {
+
+            boolean entryExists = absenRepository.existsByNikAndTglAbsen(null, currentDate);
+
             // Check if an entry already exists for the same nik and date
-            if (absenRepository.existsByNikAndTglAbsen(karyawan.getNik(), currentDate)) {
+            if (entryExists) {
                 System.out.println("Absen entry already exists for nik: " + karyawan.getNik());
             } else {
                 AbsenEntity absenEntity = new AbsenEntity();

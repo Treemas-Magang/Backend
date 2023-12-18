@@ -21,19 +21,20 @@ public class SchedulerService {
     private final KaryawanRepository karyawanRepository;
     private final AbsenRepository absenRepository;
 
-    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(cron = "0 32 9 * * ?")
     public void createAbsenEntries() {
         List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
-        System.out.println(dataKaryawan.size());
+        LocalDate currentDate = LocalDate.now();
+        System.out.println("jumlah karyawannya segini: "+dataKaryawan.size());
         for (KaryawanEntity karyawan : dataKaryawan) {
             // Check if an entry already exists for the same nik and date
-            if (absenRepository.existsByNikAndTglAbsen(karyawan.getNik(), LocalDate.now())) {
+            if (absenRepository.existsByNikAndTglAbsen(karyawan.getNik(), currentDate)) {
                 System.out.println("Absen entry already exists for nik: " + karyawan.getNik());
             } else {
                 AbsenEntity absenEntity = new AbsenEntity();
                 absenEntity.setNik(karyawan.getNik());
                 absenEntity.setDtmCrt(Timestamp.valueOf(LocalDateTime.now()));
-                absenEntity.setTglAbsen(LocalDate.now());
+                absenEntity.setTglAbsen(currentDate);
                 absenRepository.save(absenEntity);
                 System.out.println("Scheduled job has been executed for nik: " + karyawan.getNik());
             }

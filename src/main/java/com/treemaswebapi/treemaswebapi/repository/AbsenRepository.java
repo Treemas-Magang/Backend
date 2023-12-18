@@ -51,4 +51,6 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
 
     AbsenEntity findByTglAbsenAndNik(LocalDate tanggalIni, String nik);
 
+    boolean existsByNikAndTglAbsen(String nik, LocalDate now);
+
 }

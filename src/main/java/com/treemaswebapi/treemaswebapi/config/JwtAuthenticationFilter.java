@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                Optional<SysUserEntity> sysUser = sysUserRepository.findByNik(userEmail);
+                Optional<SysUserEntity> sysUser = sysUserRepository.findByUserId(userEmail);
                 if (sysUser != null && sysUser.get().getIsLocked() == "1") {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.getWriter().write("Account is locked. Please contact support.");

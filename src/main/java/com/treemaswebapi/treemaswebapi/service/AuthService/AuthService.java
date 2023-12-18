@@ -190,7 +190,7 @@ import lombok.RequiredArgsConstructor;
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
 
-                Optional<SysUserEntity> userOptional = sysUserRepository.findByNik(nik);
+                Optional<SysUserEntity> userOptional = sysUserRepository.findByUserId(nik);
         
                 if (userOptional.isPresent()) {
                     SysUserEntity sysUser = userOptional.get();

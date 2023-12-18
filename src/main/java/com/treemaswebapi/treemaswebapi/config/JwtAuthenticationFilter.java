@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.config;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final SysUserRepository sysUserRepository;
 
     @Override
     protected void doFilterInternal(
@@ -54,6 +59,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                     new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                Optional<SysUserEntity> sysUser = sysUserRepository.findByNik(userEmail);
+                if (sysUser != null && sysUser.get().getIsLocked() == "1") {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter().write("Account is locked. Please contact support.");
+                    return;
+                }
             }
         }   
         filterChain.doFilter(request, response);

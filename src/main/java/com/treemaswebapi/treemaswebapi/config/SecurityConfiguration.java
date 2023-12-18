@@ -15,6 +15,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,7 @@ public class SecurityConfiguration {
     
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final SysUserRepository sysUserRepository;
 
     @Bean
      public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,6 +48,7 @@ public class SecurityConfiguration {
                 })
             )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new AccountLockFilter(sysUserRepository), JwtAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Konfigurasi CORS disini
         return http.build();
     }

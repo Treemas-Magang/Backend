@@ -30,7 +30,7 @@ public class AccountLockFilter extends OncePerRequestFilter {
         String nik = extractUserEmail(request);
 
         if (nik != null) {
-            Optional<SysUserEntity> sysUser = sysUserRepository.findByNik(nik);
+            Optional<SysUserEntity> sysUser = sysUserRepository.findByUserId(nik);
             if (sysUser != null && sysUser.get().getIsLocked() == "1") {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Account is locked. Please contact support.");

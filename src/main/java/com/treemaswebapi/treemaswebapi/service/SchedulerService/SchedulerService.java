@@ -21,7 +21,7 @@ public class SchedulerService {
     private final KaryawanRepository karyawanRepository;
     private final AbsenRepository absenRepository;
 
-    @Scheduled(cron = "0 30 7 * * ?")
+    @Scheduled(cron = "0 30 8 * * ?")
     public void createAbsenEntries() {
         List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
         for (KaryawanEntity karyawan : dataKaryawan) {

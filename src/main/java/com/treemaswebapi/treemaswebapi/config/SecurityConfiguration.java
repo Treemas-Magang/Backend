@@ -47,9 +47,12 @@ public class SecurityConfiguration {
                     response.getWriter().write(authException.getMessage());
                 })
             )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                System.out.println("Added JwtAuthenticationFilter");
+        http
                 .addFilterAfter(new AccountLockFilter(sysUserRepository), JwtAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Konfigurasi CORS disini
+                System.out.println("Added AccountLockFilter");
         return http.build();
     }
 

@@ -8,6 +8,7 @@ import java.util.List;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
@@ -16,6 +17,7 @@ import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
 @RequiredArgsConstructor
 public class CreateAbsenEntriesJob implements Job{
     private final KaryawanRepository karyawanRepository;

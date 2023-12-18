@@ -8,10 +8,16 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 import com.treemaswebapi.treemaswebapi.service.SchedulerService.CreateAbsenEntriesJob;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 public class QuartzConfig {
+    
+    private final CreateAbsenEntriesJob job;
+
      @Bean
-    public JobDetailFactoryBean jobDetail(CreateAbsenEntriesJob job) {
+    public JobDetailFactoryBean jobDetail() {
         JobDetailFactoryBean factory = new JobDetailFactoryBean();
         factory.setJobClass(CreateAbsenEntriesJob.class);
         factory.setDurability(true);
@@ -22,7 +28,7 @@ public class QuartzConfig {
     public CronTriggerFactoryBean cronTrigger(JobDetail jobDetail) {
         CronTriggerFactoryBean factory = new CronTriggerFactoryBean();
         factory.setJobDetail(jobDetail);
-        factory.setCronExpression("0 25 10 * * ?"); // Every day at 9:50 AM
+        factory.setCronExpression("0 40 10 * * ?"); // Every day at 9:50 AM
         return factory;
     }
 }

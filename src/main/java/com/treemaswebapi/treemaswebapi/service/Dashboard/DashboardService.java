@@ -72,16 +72,12 @@ public class DashboardService {
             String nik = jwtService.extractUsername(token);
 
             Optional<KaryawanImageEntity> karyawan = KaryawanImageRepository.findByNik(nik);
-            String nama = karyawan.get().getFoto();
-            
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("nama", nama);
-            responseData.put("message", "Retrieved");
+            String karyawanImg = karyawan.get().getFoto();
             
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Retrieved");
-            response.put("data", responseData);
+            response.put("data", karyawanImg);
             
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {

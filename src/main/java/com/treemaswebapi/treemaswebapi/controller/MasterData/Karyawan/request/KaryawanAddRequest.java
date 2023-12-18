@@ -40,7 +40,6 @@ public class KaryawanAddRequest {
     private String statusEmergency;
     private String alamatEmergency;
     private String telpEmergency;
-    private String projectId;
     private String divisi;
     private String nikLeader;
     private String isLeader;
@@ -66,7 +65,6 @@ public class KaryawanAddRequest {
     private String fotoAsuransiPath;
 
     // different table
-    private Role role;
     private String sql_password;
     private String isLogin;
 

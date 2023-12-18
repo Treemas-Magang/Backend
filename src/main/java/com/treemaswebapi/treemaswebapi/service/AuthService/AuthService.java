@@ -54,7 +54,7 @@ import lombok.RequiredArgsConstructor;
             Map<String, Object> response = new HashMap<>();
             response.put("status", "error");
             response.put("message", "Account is Locked!");
-
+                
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
      
             }

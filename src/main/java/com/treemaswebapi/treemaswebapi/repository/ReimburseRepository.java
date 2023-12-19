@@ -13,4 +13,5 @@ import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
 public interface ReimburseRepository extends JpaRepository<ReimburseEntity, Long> {
      List<ReimburseEntity> findByNikAndNamaAndTanggalAndProjectIdAndTotalJamKerja(
             String nik, String nama, Date tanggal, String project, BigDecimal totalJam);
+     List<ReimburseEntity> findAllByNik(String nik);
 }

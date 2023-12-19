@@ -38,8 +38,8 @@ public class AuthController {
         return response;
     }
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, Object>> login(
-        @RequestHeader("Authentication") String token
+    public ResponseEntity<Map<String, Object>> logout(
+        @RequestHeader("Authorization") String token
     ) {         
         return service.logout(token);
     }

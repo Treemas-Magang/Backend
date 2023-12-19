@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.SchedulerService;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
@@ -19,30 +22,43 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CreateAbsenEntriesJob implements Job{
+public class CreateAbsenEntriesJob implements Job {
     private final KaryawanRepository karyawanRepository;
     private final AbsenRepository absenRepository;
+    private final Logger logger = LoggerFactory.getLogger(CreateAbsenEntriesJob.class);
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException{
-        List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
-        LocalDate currentDate = LocalDate.now();
-        System.out.println("jumlah karyawannya segini: " + dataKaryawan.size());
-    
-        for (KaryawanEntity karyawan : dataKaryawan){
-            boolean entryExists = absenRepository.existsByNikAndTglAbsen(karyawan.getNik(), currentDate);
-            Timestamp dtmSekarang = Timestamp.valueOf(LocalDateTime.now());
-            if (entryExists) {
-                System.out.println("Absen entry already exists for nik: "+karyawan.getNik());
-            }else{
-                AbsenEntity absenEntity = new AbsenEntity();
-                absenEntity.setNik(karyawan.getNik());
-                absenEntity.setDtmCrt(dtmSekarang);
-                absenEntity.setTglAbsen(currentDate);
-                absenRepository.save(absenEntity);
-                System.out.println("Scheduled job has been executed for nik: "+karyawan.getNik());
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        LocalDateTime jobStartTimestamp = LocalDateTime.now();
+        logger.info("Job execution started at: {}", jobStartTimestamp);
+
+        try {
+            List<KaryawanEntity> dataKaryawan = karyawanRepository.findAll();
+            LocalDate currentDate = LocalDate.now();
+            logger.info("Number of employees: {}", dataKaryawan.size());
+
+            for (KaryawanEntity karyawan : dataKaryawan) {
+                boolean entryExists = absenRepository.existsByNikAndTglAbsen(karyawan.getNik(), currentDate);
+                Timestamp dtmSekarang = Timestamp.valueOf(LocalDateTime.now());
+                if (entryExists) {
+                    logger.info("Absen entry already exists for nik: {}", karyawan.getNik());
+                } else {
+                    AbsenEntity absenEntity = new AbsenEntity();
+                    absenEntity.setNik(karyawan.getNik());
+                    absenEntity.setDtmCrt(dtmSekarang);
+                    absenEntity.setTglAbsen(currentDate);
+                    absenRepository.save(absenEntity);
+                    logger.info("Scheduled job has been executed for nik: {}", karyawan.getNik());
+                }
             }
+        } catch (Exception e) {
+            logger.error("An error occurred during job execution", e);
+            // Handle the exception appropriately, e.g., notify, retry, etc.
         }
-    
+
+        LocalDateTime jobEndTimestamp = LocalDateTime.now();
+        logger.info("Job execution completed at: {}", jobEndTimestamp);
+        Duration executionTime = Duration.between(jobStartTimestamp, jobEndTimestamp);
+        logger.info("Total execution time: {} seconds", executionTime.getSeconds());
     }
 }

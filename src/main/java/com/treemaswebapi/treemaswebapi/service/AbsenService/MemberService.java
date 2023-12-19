@@ -302,7 +302,7 @@ public class MemberService {
 
                     AbsenResponse absenResponse = new AbsenResponse();
                     absenResponse.setAbsenTrackingData(absenTrackingData);
-                    absenResponse.setAbsenImg(dataAbsenImg);
+                    absenResponse.setAbsenImg(dataAbsenImg != null ? dataAbsenImg : null);
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "BERHASIL MENDAPATKAN DATA SEORANG MEMBER");

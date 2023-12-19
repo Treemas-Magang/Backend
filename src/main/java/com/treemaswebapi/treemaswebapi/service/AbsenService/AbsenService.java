@@ -238,11 +238,10 @@ public class AbsenService {
     
                             Long idAbsen = absenEntity.getId();
                             AbsenImgEntity absenImgEntity = new AbsenImgEntity();
-                            absenImgEntity.setId(absenEntity.getId());
                             absenImgEntity.setNik(nik);
                             absenImgEntity.setId(idAbsen);
                             absenImgEntity.setTglAbsen(LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
-                            absenImgEntity.setImage64(request.getPhotoAbsen());
+                            absenImgEntity.setImage64(request.getPhotoAbsen()!= null ? request.getPhotoAbsen() : null);
                             absenImgEntity.setUsrUpd(nama);
                             absenImgEntity.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
     

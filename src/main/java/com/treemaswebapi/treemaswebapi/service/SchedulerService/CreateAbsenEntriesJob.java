@@ -31,13 +31,13 @@ public class CreateAbsenEntriesJob implements Job{
     
         for (KaryawanEntity karyawan : dataKaryawan){
             boolean entryExists = absenRepository.existsByNikAndTglAbsen(karyawan.getNik(), currentDate);
-
+            Timestamp dtmSekarang = Timestamp.valueOf(LocalDateTime.now());
             if (entryExists) {
                 System.out.println("Absen entry already exists for nik: "+karyawan.getNik());
             }else{
                 AbsenEntity absenEntity = new AbsenEntity();
                 absenEntity.setNik(karyawan.getNik());
-                absenEntity.setDtmCrt(Timestamp.valueOf(LocalDateTime.now()));
+                absenEntity.setDtmCrt(dtmSekarang);
                 absenEntity.setTglAbsen(currentDate);
                 absenRepository.save(absenEntity);
                 System.out.println("Scheduled job has been executed for nik: "+karyawan.getNik());

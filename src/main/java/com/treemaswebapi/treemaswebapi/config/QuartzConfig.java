@@ -28,7 +28,7 @@ public class QuartzConfig {
     public CronTriggerFactoryBean cronTrigger(JobDetail jobDetail) {
         CronTriggerFactoryBean factory = new CronTriggerFactoryBean();
         factory.setJobDetail(jobDetail);
-        factory.setCronExpression("0 0 4 * * ?"); // Every day at 4:00 AM UTC
+        factory.setCronExpression("0 10 5 * * ?"); // Every day at 4:00 AM UTC
         return factory;
     }
 }

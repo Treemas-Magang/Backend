@@ -55,4 +55,6 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
 
     List<AbsenEntity> findAllByNik(String nik);
 
+    Optional<AbsenEntity> findByNik(String nik);
+
 }

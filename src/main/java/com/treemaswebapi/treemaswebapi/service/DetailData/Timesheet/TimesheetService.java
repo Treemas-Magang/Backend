@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.DetailData.Timesheet;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,7 +31,10 @@ public class TimesheetService {
     private final KaryawanRepository karyawanRepository;
     private final JwtService jwtService;
     
-    public ResponseEntity<Map<String, Object>> timesheetGet(@RequestHeader("Authorization") String jwtToken, TimesheetResponse timesheetResponse) {
+    public ResponseEntity<Map<String, Object>> timesheetGet(
+        @RequestHeader("Authorization") String jwtToken, 
+        TimesheetResponse timesheetResponse
+        ) {
         try {
             // Cari siapa yang akses api ini
             String token = jwtToken.substring(7);
@@ -46,13 +50,18 @@ public class TimesheetService {
             LocalTime jamMsk = absenUser.get().getJamMsk();
             LocalTime jamPlg = absenUser.get().getJamPlg();
             BigDecimal totalJamKerja = absenUser.get().getTotalJamKerja();
-            BigDecimal overtime = BigDecimal.ZERO; // Inisialisasi BigDecimal dengan nilai nol
+            // Menentukan jam kerja normal
+            BigDecimal jamKerjaNormal = BigDecimal.valueOf(9);
 
-            BigDecimal jamKerja = BigDecimal.valueOf(9);
-
-            if (totalJamKerja.compareTo(jamKerja) > 0) {
-                overtime = totalJamKerja.subtract(jamKerja);
+            // Menghitung jam lembur (overtime)
+            BigDecimal overtime = BigDecimal.ZERO;
+            if (totalJamKerja != null) {
+                // Only perform subtraction if totalJamKerja is not null
+                overtime = totalJamKerja.subtract(jamKerjaNormal).max(BigDecimal.ZERO);
             }
+
+            // Mengatur nilai overtime sebagai jam lembur (dibulatkan ke atas)
+            int jamLembur = overtime.setScale(0, RoundingMode.CEILING).intValue();
 
             String notePekerjaan = absenUser.get().getNotePekerjaan();
 
@@ -64,7 +73,7 @@ public class TimesheetService {
             timesheetResponse.setJamMsk(jamMsk);
             timesheetResponse.setJamPlg(jamPlg);
             timesheetResponse.setTotalJamKerja(totalJamKerja);
-            timesheetResponse.setOvertime(overtime);
+            timesheetResponse.setOvertime(jamLembur);
             timesheetResponse.setNotePekerjaan(notePekerjaan);
 
             Map<String, Object> response = new HashMap<>();

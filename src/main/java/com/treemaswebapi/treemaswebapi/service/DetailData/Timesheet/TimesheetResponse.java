@@ -26,6 +26,6 @@ public class TimesheetResponse {
     LocalTime jamMsk;
     LocalTime jamPlg;
     BigDecimal totalJamKerja;
-    BigDecimal overtime;
+    int overtime;
     String notePekerjaan;
 }

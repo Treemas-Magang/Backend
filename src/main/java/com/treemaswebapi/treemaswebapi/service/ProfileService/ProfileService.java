@@ -175,6 +175,8 @@ public class ProfileService {
                     karyawanImageRepository.save(nikKI);
                     sysUserRepository.save(userId);
 
+            }
+
             Map<String, String> response = new HashMap<>();
             response.put("status", "success");
             response.put("message", "Update Success!");

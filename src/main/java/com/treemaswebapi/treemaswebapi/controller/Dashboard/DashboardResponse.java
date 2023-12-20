@@ -17,4 +17,5 @@ public class DashboardResponse {
     int totalTelatMasuk;
     int totalTidakMasuk;
     String nama;
+    String isLocked;
 }

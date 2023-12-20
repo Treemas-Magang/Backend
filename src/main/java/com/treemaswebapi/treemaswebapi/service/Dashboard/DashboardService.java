@@ -13,9 +13,11 @@ import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +29,7 @@ public class DashboardService {
     private final JwtService jwtService;
     private final KaryawanRepository karyawanRepository;
     private final KaryawanImageRepository KaryawanImageRepository;
+    private final SysUserRepository sysUserRepository;
 
     public ResponseEntity<Map<String, Object>> dashboardGet(@RequestHeader("Authorization") String jwtToken, DashboardResponse dashboardResponse) {
         try {
@@ -35,7 +38,9 @@ public class DashboardService {
             String nik = jwtService.extractUsername(token);
 
             Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
+            Optional<SysUserEntity> sysUser = sysUserRepository.findByUserId(nik);
             String nama = karyawan.get().getNama();
+            String isLocked = sysUser.get().getIsLocked();
             int masuk = absenRepository.countByJamMskIsNotNullAndNik(nik);// perubahan ini gue lakiun tanggal 13.12.2023 -Aliy
             int totalMasuk = masuk;
             int totalSakit = absenRepository.countByIsSakitAndNik("1", nik);
@@ -43,6 +48,7 @@ public class DashboardService {
             int totalCuti = absenRepository.countByIsCutiAndNik("1", nik);
             int totalTidakMasuk = absenRepository.countByJamMskIsNullAndJamPlgIsNullAndNik(nik);
             dashboardResponse.setNama(nama);
+            dashboardResponse.setIsLocked(isLocked);
             dashboardResponse.setTotalMasuk(totalMasuk);
             dashboardResponse.setTotalSakit(totalSakit);
             dashboardResponse.setTotalTelatMasuk(totalTelatMasuk);

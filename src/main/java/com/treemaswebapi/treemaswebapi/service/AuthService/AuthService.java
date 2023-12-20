@@ -192,12 +192,14 @@ import lombok.RequiredArgsConstructor;
                     String nik = jwtService.extractUsername(token);
 
                 Optional<SysUserEntity> userOptional = sysUserRepository.findByUserId(nik);
-        
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp lastLogin = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
                 if (userOptional.isPresent()) {
                     SysUserEntity sysUser = userOptional.get();
                     sysUser.setIsLogin("0");
+                    sysUser.setLastLogin(lastLogin);
                     sysUserRepository.save(sysUser);
-        
+                    
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Logout successful");

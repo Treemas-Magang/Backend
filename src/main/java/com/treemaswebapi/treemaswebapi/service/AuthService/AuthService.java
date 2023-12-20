@@ -86,6 +86,7 @@ import lombok.RequiredArgsConstructor;
             }
             Optional<SysUserEntity> userOptional = sysUserRepository.findByUserId(request.getNik());
             SysUserEntity sysUser = userOptional.get();
+            sysUser.setWrongPassCount((short) 0);
             sysUser.setActive("1");
             sysUser.setIsLogin("1");
             sysUserRepository.save(sysUser);

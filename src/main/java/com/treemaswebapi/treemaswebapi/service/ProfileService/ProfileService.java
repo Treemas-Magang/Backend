@@ -76,8 +76,8 @@ public class ProfileService {
                         .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
             }
 
+            KaryawanEntity nikK = nikKOptional.get();
             if (nikKOptional.isPresent()) {
-                KaryawanEntity nikK = nikKOptional.get();
                 nikK.setNama(request.getNama());
                 nikK.setTempatLahir(request.getTempatLahir());
                 nikK.setTanggalLahir(request.getTanggalLahir());
@@ -110,13 +110,13 @@ public class ProfileService {
                 nikK.setHakCuti(request.getHakCuti());
                 nikK.setIsKaryawan(request.getIsKaryawan());
 
-                karyawanRepository.save(nikK);
+                
             }
 
             Optional<KaryawanImageEntity> nikKIOptional = karyawanImageRepository.findByNik(userToken);
-            
-            if(nikKIOptional.isPresent()) {
                 KaryawanImageEntity nikKI = nikKIOptional.get();
+            if(nikKIOptional.isPresent()) {
+                
                 nikKI.setFoto(request.getFoto() != null ? request.getFoto() : null);
                 nikKI.setFotoKtp(request.getFotoKtp() != null ? request.getFotoKtp() : null);
                 nikKI.setFotoNpwp(request.getFotoNpwp() != null ? request.getFotoNpwp() : null);
@@ -128,7 +128,7 @@ public class ProfileService {
                 nikKI.setFotoKkPath(request.getFotoKkPath() != null ? request.getFotoKkPath() : null);
                 nikKI.setFotoAsuransiPath(request.getFotoAsuransiPath() != null ? request.getFotoAsuransiPath() : null);;
                                 
-                karyawanImageRepository.save(nikKI);
+                
             }
             Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
             String nama = user.get().getNama();
@@ -170,10 +170,10 @@ public class ProfileService {
                     response.put("message", "Old password is incorrect.");
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                 }
-            }
+            }       
+                    karyawanRepository.save(nikK);
+                    karyawanImageRepository.save(nikKI);
                     sysUserRepository.save(userId);
-
-            }
 
             Map<String, String> response = new HashMap<>();
             response.put("status", "success");

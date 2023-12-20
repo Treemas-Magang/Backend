@@ -1,5 +1,7 @@
 package com.treemaswebapi.treemaswebapi.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,6 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
     int countByNotePlgCepatIsNotNullAndNik(String nik);
     int countByIsCutiAndNik(String isCuti, String nik);
     int countByJamMskIsNullAndJamPlgIsNullAndNik(String nik);
+
+    Optional<AbsenEntity> findByNik(String nik);
 }

@@ -15,6 +15,9 @@ import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 public interface SysUserRepository extends JpaRepository<SysUserEntity, String> {
     Optional<SysUserEntity> findByUserId(String userid);
     Optional<SysUserEntity> findByEmail(String email);
+    List<SysUserEntity> findAllByUserIdNot(String userId);
+    // Find all users with role "LEAD" or "HEAD"
+    List<SysUserEntity> findAllByRole_JabatanIdIn(List<String> jabatanIds);
 
     @Query("SELECT u FROM SysUserEntity u WHERE u.role.jabatanId = :jabatanId")
     List<SysUserEntity> findByRole(@Param("jabatanId") String jabatanId);

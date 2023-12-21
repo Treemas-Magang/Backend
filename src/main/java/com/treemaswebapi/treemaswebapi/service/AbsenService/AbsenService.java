@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.request.AbsenRequest;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
@@ -37,7 +38,9 @@ import com.treemaswebapi.treemaswebapi.repository.AbsenTrackingRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
+import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 
+import jakarta.persistence.Temporal;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -52,6 +55,7 @@ public class AbsenService {
     private final AbsenImgRepository absenImgRepository;
     private final KaryawanRepository karyawanRepository;
     private final AbsenPulangAppRepository absenPulangAppRepository;
+    private final TimesheetRepository timesheetRepository;
 
     private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
         Map<String,String> indonesianDayMap = new HashMap<>();
@@ -361,10 +365,44 @@ public class AbsenService {
 
                     absenTrackingEntity = absenTrackingRepository.save(absenTrackingEntity);
 
+                    TimesheetEntity timesheetEntity = new TimesheetEntity();
+
+                    timesheetEntity.setDtmCrt(null);
+                    timesheetEntity.setFlgKet(tokenWithBearer);
+                    timesheetEntity.setHari(tokenWithBearer);
+                    timesheetEntity.setJamKeluar(request.getJamPlg());
+                    timesheetEntity.setJamMasuk(request.getJamMsk());
+                    timesheetEntity.setNama(nama);
+                    timesheetEntity.setNik(nik);
+                    timesheetEntity.setNote(request.getNotePekerjaan());
+                    timesheetEntity.setProjectId(request.getProjectId());
+                    timesheetEntity.setTglMsk(null);
+                    timesheetEntity.setUsrCrt(nama);
+
+                    LocalTime jamMashook = request.getJamMsk().toLocalTime();
+                    LocalTime jamPoelang = request.getJamPlg().toLocalTime();
+
+                    Duration duration = Duration.between(jamMashook, jamPoelang);
+
+                    long totalHoursLong = duration.toHours();
+
+                    BigDecimal totalHours = BigDecimal.valueOf(totalHoursLong);
+
+                    BigDecimal jamLembur = BigDecimal.valueOf(totalHoursLong-9);
+
+                    timesheetEntity.setTotalJamKerja(totalHours);
+
+                    if (totalHoursLong > 9) {
+                        timesheetEntity.setOvertime(jamLembur);
+                    }else{
+                        timesheetEntity.setOvertime(BigDecimal.valueOf(0));
+                    }
+
+                    timesheetRepository.save(timesheetEntity);
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
-                    response.put("message", "Absen data inserted successfully");
+                    response.put("message", "Absen data inserted successfully + timesheet");
                     response.put("data", existingAbsenEntity);
     
                     return ResponseEntity.status(HttpStatus.OK).body(response);

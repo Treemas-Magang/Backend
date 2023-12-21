@@ -11,6 +11,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+
 // project_id FK dari tbl_project
 
 @Builder
@@ -49,8 +51,9 @@ public class TimesheetEntity {
     @Column(name = "total_jam_kerja")
     private BigDecimal totalJamKerja;
 
-    @Column(name = "project_id")
-    private String projectId;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private ProjectEntity projectId;
 
     @Column(name = "note")
     private String note;

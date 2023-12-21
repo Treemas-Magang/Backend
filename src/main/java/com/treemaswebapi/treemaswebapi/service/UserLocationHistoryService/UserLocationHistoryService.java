@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.http.HttpStatus;
 
@@ -25,7 +26,7 @@ public class UserLocationHistoryService {
     private final JwtService jwtService;
     private final UserLocationHistoryRepository userLocationHistoryRepository;
 
-    public ResponseEntity<Map<String, Object>> postLocationHistory(@RequestHeader("Authorization") String tokenWithBearer, TrackingKaryawanRequest trackingKaryawanRequest){
+    public ResponseEntity<Map<String, Object>> postLocationHistory(@RequestHeader("Authorization") String tokenWithBearer, @RequestBody TrackingKaryawanRequest trackingKaryawanRequest){
         try{
             Map<String, Object> response = new HashMap<>();
             if (tokenWithBearer.startsWith("Bearer ")) {

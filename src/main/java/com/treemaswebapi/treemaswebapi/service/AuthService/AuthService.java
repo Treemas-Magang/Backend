@@ -12,9 +12,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.AuthController.ChangePasswordRequest;
+import com.treemaswebapi.treemaswebapi.controller.AuthController.ForgotPasswordRequest;
 import com.treemaswebapi.treemaswebapi.controller.AuthController.LoginRequest;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
@@ -152,7 +154,7 @@ import lombok.RequiredArgsConstructor;
         }
 
         public ResponseEntity<Map<String, Object>> forgetPassword(
-            ChangePasswordRequest request) {
+            ForgotPasswordRequest request) {
             try {            
                 Optional<SysUserEntity> existingEmail = sysUserRepository.findByEmail(request.getEmail());
                 // Check jika email dari token sama dengan email dari request maka akan do something...
@@ -229,4 +231,66 @@ import lombok.RequiredArgsConstructor;
             }
         }
         
+
+        public ResponseEntity<Map<String, Object>> changePassword(
+            @RequestHeader("Authorization") String jwtToken,
+            ChangePasswordRequest request
+            ) {
+            try {          
+                // Cari siapa yang akses api ini
+                String token = jwtToken.substring(7);
+                String nik = jwtService.extractUsername(token);  
+
+                Optional<SysUserEntity> sysUser = sysUserRepository.findByUserId(nik);
+                String nama = sysUser.get().getFullName();
+                // Check jika email dari token sama dengan email dari request maka akan do something...
+                if (sysUser.isPresent()) {
+                    SysUserEntity user = sysUser.get();
+                    String dbPassword = user.getPassword();
+                    if (passwordEncoder.matches("123456", dbPassword)) {
+                        if (request.getNewPassword() != null && request.getNewPassword().equals(request.getConfPassword())) {
+                             user.setSqlPassword(passwordEncoder.encode(request.getConfPassword()));
+                             user.setIsPassChg("1");
+                             user.setLastPasschg(new Timestamp(System.currentTimeMillis()));
+                             user.setDtmUpd(new Timestamp(System.currentTimeMillis()));
+                             user.setUsrUpd(nama);
+                                sysUserRepository.save(user);
+                                Map<String, Object> response = new HashMap<>();
+                                response.put("success", true);
+                                response.put("message", "Password Changed");
+                                response.put("data", user);
+
+                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                        } else {
+                                Map<String, Object> response = new HashMap<>();
+                                response.put("success", false);
+                                response.put("message", "New Password and Confirm Password Must Be Same!");
+
+                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                        }
+                    } else {
+                                Map<String, Object> response = new HashMap<>();
+                                response.put("success", true);
+                                response.put("message", "Password Isn't Default!");
+
+                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                    }
+                } else {
+                    // TODO: handle exception
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "error");
+                response.put("message", "No User found!");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "error");
+                response.put("message", "Set Password to default failed!");
+                response.put("error", e.getMessage());
+
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        }
     }

@@ -25,6 +25,7 @@ public class ReimburseResponse {
     BigDecimal transport;
     Long uangMakan;
     String status;
+    BigDecimal totalJamKerja;
     // buat response unprocessedAbsenEntity
     
 }

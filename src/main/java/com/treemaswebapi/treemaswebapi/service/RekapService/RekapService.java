@@ -1,5 +1,8 @@
 package com.treemaswebapi.treemaswebapi.service.RekapService;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +63,13 @@ public class RekapService {
                     reimburseResponse.setNamaProject(dataReimbursenya.getProjectId().getNamaProject());
                     reimburseResponse.setTanggal(dataReimbursenya.getTglAbsen());
                     reimburseResponse.setTransport(dataReimbursenya.getProjectId().getBiayaReimburse());
+                    
+                    LocalTime jamMasuk = dataReimbursenya.getJamMsk();
+                    LocalTime jamPulang = dataReimbursenya.getJamPlg();
+                    Duration duration = Duration.between(jamMasuk, jamPulang);
+                    Double hours = duration.getSeconds() / 3600.0;
+                    BigDecimal totalHours = BigDecimal.valueOf(hours);
+                    reimburseResponse.setTotalJamKerja(totalHours);
 
                     long uangMakanValue = "1".equals(dataReimbursenya.getIsLembur()) ? 20000L : 0L;
                     reimburseResponse.setUangMakan(uangMakanValue);

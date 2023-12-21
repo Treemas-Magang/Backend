@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
-import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.AbsenEntity
-import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;;
+import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;

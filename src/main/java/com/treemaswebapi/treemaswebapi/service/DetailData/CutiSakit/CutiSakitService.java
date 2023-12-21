@@ -50,7 +50,7 @@ public class CutiSakitService {
     private final CutiImageRepository cutiImageRepository;
     private final CutiImageAppRepository cutiImageAppRepository;
     private final AbsenRepository absenRepository;
-
+    
      private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
         Map<String,String> indonesianDayMap = new HashMap<>();
         indonesianDayMap.put("MONDAY", "Senin");

@@ -74,6 +74,13 @@ public class RekapService {
                     long uangMakanValue = "1".equals(dataReimbursenya.getIsLembur()) ? 20000L : 0L;
                     reimburseResponse.setUangMakan(uangMakanValue);
                     
+                    BigDecimal regularHours = BigDecimal.valueOf(9);
+                    BigDecimal overtimeHours = BigDecimal.valueOf(0);
+                    if(totalHours.compareTo(regularHours) > 0){
+                     overtimeHours = totalHours.subtract(regularHours);
+                    }
+                    reimburseResponse.setOvertime(overtimeHours);
+                    
 
                     String status = "1".equals(dataReimbursenya.getIsApprove()) ? "Approved" :
                     "0".equals(dataReimbursenya.getIsApprove()) ? "Not Approved" : "Waiting for Approval";

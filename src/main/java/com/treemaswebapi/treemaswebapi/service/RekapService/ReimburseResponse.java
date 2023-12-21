@@ -26,6 +26,7 @@ public class ReimburseResponse {
     Long uangMakan;
     String status;
     BigDecimal totalJamKerja;
+    BigDecimal overtime;
     // buat response unprocessedAbsenEntity
     
 }

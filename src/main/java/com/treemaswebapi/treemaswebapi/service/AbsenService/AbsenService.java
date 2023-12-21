@@ -182,8 +182,26 @@ public class AbsenService {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
                 System.out.println(nik);
+                String nama = karyawanRepository.findNamaByNik(nik);
                 if (nik != null) {
-                    String nama = karyawanRepository.findNamaByNik(nik);
+                    LocalDate tanggalIni = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-mm-dd")));
+                    Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
+                    if("1".equals(request.getIsOther())){
+                        AbsenEntity absenEntity = new AbsenEntity();
+                        absenEntity.setNik(nik);
+                        absenEntity.setTglAbsen(tanggalIni);
+                        absenEntity.setNoteOther(request.getNoteOther());
+                        absenEntity.setUsrCrt(nama); 
+                        absenEntity.setDtmCrt(currentTimestamp);
+                        absenRepository.save(absenEntity);
+
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "Special absen data inserted successfully");
+                    response.put("data", absenEntity);
+
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    }
                     System.out.println(nama);
                     if (nama.isEmpty()) {
                         // NIK not found in KaryawanEntity
@@ -208,7 +226,6 @@ public class AbsenService {
                         ProjectEntity project = projectRepository.findByProjectId(projectRequest);
                         if (project != null) {
                             // Save to absen Entity
-                            LocalDate tanggalIni = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                             LocalTime jamSekarang = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
                             AbsenEntity absenEntity = absenRepository.findByTglAbsenAndNik(tanggalIni, nik);
                             absenEntity.setProjectId(project);

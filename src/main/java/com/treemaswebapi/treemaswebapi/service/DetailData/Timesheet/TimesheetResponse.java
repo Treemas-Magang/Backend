@@ -1,10 +1,9 @@
 package com.treemaswebapi.treemaswebapi.service.DetailData.Timesheet;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Date;
+
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
@@ -21,10 +20,10 @@ public class TimesheetResponse {
     String nik;
     String namaKaryawan;
     String hari;
-    LocalDate tglAbsen;
+    Date tglAbsen;
     ProjectEntity projectId;
-    LocalTime jamMsk;
-    LocalTime jamPlg;
+    Time jamMsk;
+    Time jamPlg;
     BigDecimal totalJamKerja;
     int overtime;
     String notePekerjaan;

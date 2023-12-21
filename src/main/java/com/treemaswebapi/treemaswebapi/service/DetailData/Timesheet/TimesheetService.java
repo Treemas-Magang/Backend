@@ -2,6 +2,7 @@ package com.treemaswebapi.treemaswebapi.service.DetailData.Timesheet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,18 +17,20 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
-import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
+import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.AbsenEntity
+import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class TimesheetService {
-    private final AbsenRepository absenRepository;
+    private final TimesheetRepository timesheetRepository;
     private final KaryawanRepository karyawanRepository;
     private final JwtService jwtService;
     
@@ -43,13 +46,13 @@ public class TimesheetService {
             Optional<KaryawanEntity> karyawan = karyawanRepository.findById(nik);
             String namaKaryawan = karyawan.get().getNama();
 
-            Optional<AbsenEntity> absenUser = absenRepository.findByNik(nik);
-            String hari = absenUser.get().getHari();
-            LocalDate tglAbsen = absenUser.get().getTglAbsen();
-            ProjectEntity projectId = absenUser.get().getProjectId();
-            LocalTime jamMsk = absenUser.get().getJamMsk();
-            LocalTime jamPlg = absenUser.get().getJamPlg();
-            BigDecimal totalJamKerja = absenUser.get().getTotalJamKerja();
+            Optional<TimesheetEntity> timesheet = timesheetRepository.findByNik(nik);
+            String hari = timesheet.get().getHari();
+            Date tglAbsen = timesheet.get().getTglMsk();
+            ProjectEntity projectId = timesheet.get().getProjectId();
+            Time jamMsk = timesheet.get().getJamMasuk();
+            Time jamPlg = timesheet.get().getJamKeluar();
+            BigDecimal totalJamKerja = timesheet.get().getTotalJamKerja();
             // Menentukan jam kerja normal
             BigDecimal jamKerjaNormal = BigDecimal.valueOf(9);
 
@@ -63,7 +66,7 @@ public class TimesheetService {
             // Mengatur nilai overtime sebagai jam lembur (dibulatkan ke atas)
             int jamLembur = overtime.setScale(0, RoundingMode.CEILING).intValue();
 
-            String notePekerjaan = absenUser.get().getNotePekerjaan();
+            String notePekerjaan = timesheet.get().getNote();
 
             timesheetResponse.setNik(nik);
             timesheetResponse.setNamaKaryawan(namaKaryawan);

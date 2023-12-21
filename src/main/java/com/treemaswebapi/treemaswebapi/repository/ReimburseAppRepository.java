@@ -13,4 +13,6 @@ import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity
 public interface ReimburseAppRepository extends JpaRepository<ReimburseAppEntity, Long> {
 
     List<ReimburseAppEntity> findAllByProjectId(ProjectEntity projectId);
+
+    List<ReimburseAppEntity> findAllByNik(String nik);
 }

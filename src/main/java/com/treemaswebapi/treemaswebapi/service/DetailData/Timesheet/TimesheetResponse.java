@@ -3,7 +3,7 @@ package com.treemaswebapi.treemaswebapi.service.DetailData.Timesheet;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
-
+import java.time.LocalDate;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
@@ -20,7 +20,7 @@ public class TimesheetResponse {
     String nik;
     String namaKaryawan;
     String hari;
-    Date tglAbsen;
+    LocalDate tglAbsen;
     ProjectEntity projectId;
     Time jamMsk;
     Time jamPlg;

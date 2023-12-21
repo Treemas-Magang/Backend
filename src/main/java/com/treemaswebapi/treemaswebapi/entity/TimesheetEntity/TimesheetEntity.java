@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
@@ -37,7 +38,7 @@ public class TimesheetEntity {
     private String hari;
 
     @Column(name = "tgl_msk")
-    private Date tglMsk;
+    private LocalDate tglMsk;
 
     @Column(name = "jam_masuk")
     private Time jamMasuk;

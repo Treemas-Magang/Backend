@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.service.RekapService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +16,13 @@ import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
+import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseRepository;
 import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 
@@ -31,55 +34,78 @@ public class RekapService {
     private final AbsenRepository absenRepository;
     private final JwtService jwtService;
 
-    private final ReimburseRepository reimburseRepository;
+    private final ReimburseAppRepository reimburseAppRepository;
     private final TimesheetRepository timesheetRepository;
     private final CutiRepository cutiRepository;
     private final ClaimRepository claimRepository;
 
     /* --------------------------------------------BAGIAN REIMBURSE------------------------------------------------ */
     public ResponseEntity<Map<String, Object>> rekapReimburse(@RequestHeader String tokenWithBearer) {
-        try {
-            if (tokenWithBearer.startsWith("Bearer ")) {
-                String token = tokenWithBearer.substring("Bearer ".length());
-                String nik = jwtService.extractUsername(token);
-    
-                List<ReimburseEntity> dataReimbursenya = reimburseRepository.findAllByNik(nik);
-    
-                if (!dataReimbursenya.isEmpty()) {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", true);
-                    response.put("message", "Data Reimburse for nik: "+nik+" retrieved successfully");
-                    response.put("data", dataReimbursenya);
-                    return ResponseEntity.status(HttpStatus.OK).body(response);
-                } else {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", false);
-                    response.put("message", "No Data Reimburse found for nik :" + nik);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    try {
+        if (tokenWithBearer.startsWith("Bearer ")) {
+            String token = tokenWithBearer.substring("Bearer ".length());
+            String nik = jwtService.extractUsername(token);
+
+            List<ReimburseAppEntity> data2Reimbursenya = reimburseAppRepository.findAllByNik(nik);
+
+            if (!data2Reimbursenya.isEmpty()) {
+                List<ReimburseResponse> reimburseResponses = new ArrayList<>();
+                for (ReimburseAppEntity dataReimbursenya : data2Reimbursenya) {
+                    ReimburseResponse reimburseResponse = new ReimburseResponse();
+                    reimburseResponse.setFlgKet(dataReimbursenya.getKeterangan());
+                    reimburseResponse.setHari(dataReimbursenya.getHari());
+                    reimburseResponse.setJamMsk(dataReimbursenya.getJamMsk());
+                    reimburseResponse.setJamPlg(dataReimbursenya.getJamPlg());
+                    reimburseResponse.setLokasi(dataReimbursenya.getProjectId().getLokasi());
+                    reimburseResponse.setNamaProject(dataReimbursenya.getProjectId().getNamaProject());
+                    reimburseResponse.setTanggal(dataReimbursenya.getTglAbsen());
+                    reimburseResponse.setTransport(dataReimbursenya.getProjectId().getBiayaReimburse());
+
+                    long uangMakanValue = "1".equals(dataReimbursenya.getIsLembur()) ? 20000L : 0L;
+                    reimburseResponse.setUangMakan(uangMakanValue);
+                    
+
+                    String status = "1".equals(dataReimbursenya.getIsApprove()) ? "Approved" :
+                    "0".equals(dataReimbursenya.getIsApprove()) ? "Not Approved" : "Waiting for Approval";
+                    reimburseResponse.setStatus(status);
+
+
+                    reimburseResponses.add(reimburseResponse);
                 }
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("message", "Data Reimburse for nik: " + nik + " retrieved successfully");
+                response.put("data", reimburseResponses);
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+
             } else {
-                // Handle the case where the token format is invalid
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Invalid token format");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                response.put("message", "No Data Reimburse found for nik: " + nik);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-        } catch (Exception e) {
+        } else {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Failed to retrieve Data Reimburse");
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            response.put("message", "Invalid token format");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    } catch (Exception e) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "Failed to retrieve Data Reimburse");
+        response.put("error", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-
+}
     public ResponseEntity<Map<String, Object>> rekapReimburseDetail (@RequestHeader String tokenWithBearer, @RequestParam Long id) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
     
-                Optional<ReimburseEntity> dataReimbursenya = reimburseRepository.findById(id);
+                Optional<ReimburseAppEntity> dataReimbursenya = reimburseAppRepository.findById(id);
     
                 if (!dataReimbursenya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();

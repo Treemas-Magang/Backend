@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.request.AbsenRequest;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
+import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
@@ -38,6 +39,8 @@ import com.treemaswebapi.treemaswebapi.repository.AbsenTrackingRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
+import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.ReimburseRepository;
 import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 
 import jakarta.persistence.Temporal;
@@ -56,6 +59,7 @@ public class AbsenService {
     private final KaryawanRepository karyawanRepository;
     private final AbsenPulangAppRepository absenPulangAppRepository;
     private final TimesheetRepository timesheetRepository;
+    private final ReimburseAppRepository reimburseAppRepository;
 
     private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
         Map<String,String> indonesianDayMap = new HashMap<>();
@@ -309,7 +313,8 @@ public class AbsenService {
                 if (!existingAbsenRecords.isEmpty()) {
                     // User has already done the input-absen for the day
                     LocalTime jamSekarang = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                    
+                    LocalDateTime sekarangBanget = LocalDateTime.now();
+                    Timestamp jamIni = Timestamp.valueOf(sekarangBanget);
                     AbsenEntity existingAbsenEntity = existingAbsenRecords.get(0);
                     // Make separate response
                     // save ke absenEntity
@@ -367,16 +372,24 @@ public class AbsenService {
 
                     TimesheetEntity timesheetEntity = new TimesheetEntity();
 
-                    timesheetEntity.setDtmCrt(null);
-                    timesheetEntity.setFlgKet(tokenWithBearer);
-                    timesheetEntity.setHari(tokenWithBearer);
+                    timesheetEntity.setDtmCrt(jamIni);
+                    String flgKetValue = "-"; // Default value
+
+                        if ("1".equals(existingAbsenEntity.getIsSakit())) {
+                            flgKetValue = "sakit";
+                        } else if ("1".equals(existingAbsenEntity.getIsCuti())) {
+                            flgKetValue = "cuti";
+                        }
+
+                    timesheetEntity.setFlgKet(flgKetValue);
+                    timesheetEntity.setHari(existingAbsenEntity.getHari());
                     timesheetEntity.setJamKeluar(request.getJamPlg());
                     timesheetEntity.setJamMasuk(request.getJamMsk());
                     timesheetEntity.setNama(nama);
                     timesheetEntity.setNik(nik);
                     timesheetEntity.setNote(request.getNotePekerjaan());
                     timesheetEntity.setProjectId(request.getProjectId());
-                    timesheetEntity.setTglMsk(null);
+                    timesheetEntity.setTglMsk(existingAbsenEntity.getTglAbsen());
                     timesheetEntity.setUsrCrt(nama);
 
                     LocalTime jamMashook = request.getJamMsk().toLocalTime();
@@ -398,11 +411,42 @@ public class AbsenService {
                         timesheetEntity.setOvertime(BigDecimal.valueOf(0));
                     }
 
+                    timesheetEntity.setProjectId(existingAbsenEntity.getProjectId());
+                    timesheetEntity.setDtmCrt(jamIni);
                     timesheetRepository.save(timesheetEntity);
 
+                    ReimburseAppEntity reimburseApp = new ReimburseAppEntity();
+                    reimburseApp.setIsAbsen(existingAbsenEntity.getIsAbsen());
+                    reimburseApp.setNik(nik);
+                    reimburseApp.setNotePekerjaan(existingAbsenEntity.getNotePekerjaan());
+                    reimburseApp.setIsLembur(existingAbsenEntity.getIsLembur());
+                    reimburseApp.setIsLibur(existingAbsenEntity.getIsLibur());
+                    reimburseApp.setIsSakit(existingAbsenEntity.getIsSakit());
+                    reimburseApp.setDtmUpd(existingAbsenEntity.getDtmCrt());
+                    reimburseApp.setGpsLatitudeMsk(existingAbsenEntity.getGpsLatitudeMsk());
+                    reimburseApp.setGpsLongitudePlg(existingAbsenEntity.getGpsLongitudePlg());
+                    reimburseApp.setGpsLongitudeMsk(existingAbsenEntity.getGpsLongitudeMsk());
+                    reimburseApp.setGpsLatitudePlg(existingAbsenEntity.getGpsLatitudePlg());
+                    reimburseApp.setIsOther(existingAbsenEntity.getIsOther());
+                    reimburseApp.setIsWfh(existingAbsenEntity.getIsWfh());
+                    reimburseApp.setJamMsk(existingAbsenEntity.getJamMsk());
+                    reimburseApp.setJamPlg(existingAbsenEntity.getJamPlg());
+                    reimburseApp.setJarakMsk(existingAbsenEntity.getJarakMsk());
+                    reimburseApp.setLokasiMsk(existingAbsenEntity.getLokasiMsk());
+                    reimburseApp.setLokasiPlg(existingAbsenEntity.getLokasiPlg());
+                    reimburseApp.setNama(nama);
+                    reimburseApp.setNoteOther(existingAbsenEntity.getNoteOther());
+                    reimburseApp.setNotePekerjaan(existingAbsenEntity.getNotePekerjaan());
+                    reimburseApp.setNotePlgCepat(existingAbsenEntity.getNotePlgCepat());
+                    reimburseApp.setNoteTelatMsk(existingAbsenEntity.getNoteTelatMsk());
+                    reimburseApp.setProjectId(existingAbsenEntity.getProjectId());
+                    reimburseApp.setTglAbsen(existingAbsenEntity.getTglAbsen());
+                    reimburseApp.setTotalJamKerja(totalHours);
+                    reimburseApp.setUsrUpd(nama);
+                    reimburseAppRepository.save(reimburseApp);
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
-                    response.put("message", "Absen data inserted successfully + timesheet");
+                    response.put("message", "Absen data inserted successfully + timesheet + reimburse");
                     response.put("data", existingAbsenEntity);
     
                     return ResponseEntity.status(HttpStatus.OK).body(response);

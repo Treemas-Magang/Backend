@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -16,12 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
-import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
-import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.AbsenEntity
-import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;;
+import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
-import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 
@@ -48,7 +44,7 @@ public class TimesheetService {
 
             Optional<TimesheetEntity> timesheet = timesheetRepository.findByNik(nik);
             String hari = timesheet.get().getHari();
-            Date tglAbsen = timesheet.get().getTglMsk();
+            LocalDate tglAbsen = timesheet.get().getTglMsk();
             ProjectEntity projectId = timesheet.get().getProjectId();
             Time jamMsk = timesheet.get().getJamMasuk();
             Time jamPlg = timesheet.get().getJamKeluar();

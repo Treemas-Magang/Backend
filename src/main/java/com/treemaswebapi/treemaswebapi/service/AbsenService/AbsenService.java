@@ -184,7 +184,7 @@ public class AbsenService {
                 System.out.println(nik);
                 String nama = karyawanRepository.findNamaByNik(nik);
                 if (nik != null) {
-                    LocalDate tanggalIni = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-mm-dd")));
+                    LocalDate tanggalIni = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                     Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
                     if("1".equals(request.getIsOther())){
                         AbsenEntity absenEntity = new AbsenEntity();

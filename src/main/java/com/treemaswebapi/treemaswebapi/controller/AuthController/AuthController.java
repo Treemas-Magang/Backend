@@ -32,7 +32,7 @@ public class AuthController {
 
     @PutMapping("/forgot-password")
     public ResponseEntity<Map<String, Object>> forgetPassword(
-        @RequestBody ChangePasswordRequest request
+        @RequestBody ForgotPasswordRequest request
     ) {
         ResponseEntity<Map<String, Object>> response = service.forgetPassword(request);
         return response;
@@ -44,4 +44,13 @@ public class AuthController {
         return service.logout(token);
     }
     
+
+    @PutMapping("/change-password")
+    public ResponseEntity<Map<String, Object>> changePassword(
+        @RequestHeader("Authorization") String jwtToken,
+        @RequestBody ChangePasswordRequest request
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.changePassword(jwtToken, request);
+        return response;
+    }
 }

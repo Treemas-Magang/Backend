@@ -101,8 +101,6 @@ public class CutiSakitService {
             
             for (CutiAppEntity cutiApp : cutiAppList) {
                 Map<String, Object> cutiDataApp = new HashMap<>();
-                Date dtmAppDate = new Date(cutiApp.getDtmApp().getTime());
-                String formattedDtmApp = dateFormat.format(dtmAppDate);
                 cutiDataApp.put("nik", cutiApp.getNik());
                 cutiDataApp.put("namaKaryawan", cutiApp.getNama());
                 cutiDataApp.put("tglMulai", cutiApp.getTglMulai());
@@ -115,7 +113,7 @@ public class CutiSakitService {
                 cutiDataApp.put("status", cutiApp.getIsApproved());
                 cutiDataApp.put("noteApp", cutiApp.getNoteApp());
                 cutiDataApp.put("usrapp", cutiApp.getUsrApp());
-                cutiDataApp.put("dtmapp", formattedDtmApp);
+                cutiDataApp.put("dtmapp", cutiApp.getDtmApp());
                 
                 responseDataApp.add(cutiDataApp);
             }

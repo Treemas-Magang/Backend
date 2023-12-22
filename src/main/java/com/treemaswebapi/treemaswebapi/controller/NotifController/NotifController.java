@@ -102,7 +102,7 @@ public class NotifController {
                 return notifService.postLiburApproval(tokenWithBearer, idApproval, request);
             
             case "lembur":
-                return notifService.postLemburApproval(tokenWithBearer, idApproval);
+                return notifService.postLemburApproval(tokenWithBearer, idApproval, request);
 
             case "cuti":
                 return notifService.postCutiApproval(tokenWithBearer, idApproval);

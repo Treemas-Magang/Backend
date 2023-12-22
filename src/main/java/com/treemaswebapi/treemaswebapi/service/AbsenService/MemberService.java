@@ -213,17 +213,32 @@ public class MemberService {
                     System.out.println(nik);
                     LocalDate date = LocalDate.now();
                     //mau narik data yang ada di penempatanEntity, cari by projectId
+                    List<PenempatanEntity> listMember = penempatanRepository.findByProjectId(projectId);
                     List<AbsenEntity> listAbsen = absenRepository.findAllByProjectIdAndTglAbsen(projectId, date);
+                    List<Object> responseList = new ArrayList<>();
+
+                    for (PenempatanEntity member : listMember){
+                        boolean found = false;
+                        for (AbsenEntity absen : listAbsen){
+                            if (absen.getNik().equals(member.getNik())){
+                                responseList.add(absen);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            responseList.add("dataAbsen nik "+member.getNik()+" cannot be found");
+                        }
+                    }
                     Map<String, Object> response = new HashMap<>();
-                    if (listAbsen.isEmpty()) {
+                    if (responseList.isEmpty()) {
                         response.put("success", true);
                         response.put("message", "belum ada member yang absen");
-                        response.put("data", listAbsen);
-                    }else{
-                    response.put("success", true);
-                    response.put("message", "berhasil mendapatkan member by projectId");
-                    response.put("data", listAbsen);
+                    } else {
+                        response.put("success", true);
+                        response.put("message", "belum ada member yang absen");
                     }
+                    response.put("data", responseList);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     // Handle the case where the token format is invalid

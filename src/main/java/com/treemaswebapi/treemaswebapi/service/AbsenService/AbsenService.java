@@ -189,10 +189,12 @@ public class AbsenService {
                     if("1".equals(request.getIsOther())){
                         AbsenEntity absenEntity = new AbsenEntity();
                         absenEntity.setNik(nik);
+                        absenEntity.setNama(nama);
                         absenEntity.setTglAbsen(tanggalIni);
                         absenEntity.setNoteOther(request.getNoteOther());
                         absenEntity.setUsrCrt(nama); 
                         absenEntity.setDtmCrt(currentTimestamp);
+                        absenEntity.setIsOther(request.getIsOther());
                         absenRepository.save(absenEntity);
 
                     Map<String, Object> response = new HashMap<>();
@@ -675,15 +677,19 @@ public class AbsenService {
                 List<AbsenBelumPulangResponse> listAbsenResponse = new ArrayList<>();
                 for(AbsenEntity absenEntity : unprocessedAbsenList){
                     ProjectEntity projectId = absenEntity.getProjectId();
-                    String projectName = projectId.getNamaProject();
-                    String noteTelatMsk = absenEntity.getNoteTelatMsk();
-                    LocalTime jamMsk = absenEntity.getJamMsk();
-                    String lokasiProject = absenEntity.getLokasiMsk();
-                    LocalDate tglAbsen = absenEntity.getTglAbsen();
-                    Long idAbsen = absenEntity.getId();
 
-                    AbsenBelumPulangResponse response = new AbsenBelumPulangResponse(projectName, noteTelatMsk, jamMsk, lokasiProject, tglAbsen, idAbsen);
-                    listAbsenResponse.add(response);
+                // Check if projectId is null
+                String projectName = (projectId != null) ? projectId.getNamaProject() : "Unknown Project";
+
+                // Handle other potential null values in a similar manner
+                String noteTelatMsk = absenEntity.getNoteTelatMsk() != null ? absenEntity.getNoteTelatMsk() : "No Note";
+                LocalTime jamMsk = absenEntity.getJamMsk() != null ? absenEntity.getJamMsk() : LocalTime.MIN;
+                String lokasiProject = absenEntity.getLokasiMsk() != null ? absenEntity.getLokasiMsk() : "Unknown Location";
+                LocalDate tglAbsen = absenEntity.getTglAbsen() != null ? absenEntity.getTglAbsen() : LocalDate.MIN;
+                Long idAbsen = absenEntity.getId();  // Assuming ID is always non-null
+
+                AbsenBelumPulangResponse response = new AbsenBelumPulangResponse(projectName, noteTelatMsk, jamMsk, lokasiProject, tglAbsen, idAbsen);
+                listAbsenResponse.add(response);
                 }
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", true);
@@ -823,6 +829,7 @@ public class AbsenService {
         try{
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
+                // keluarin isOther, 
                 String nik = jwtService.extractUsername(token);
                 LocalDate hariIniBanget = hariIni.now();
                 Map<String, Object> response = new HashMap<>();

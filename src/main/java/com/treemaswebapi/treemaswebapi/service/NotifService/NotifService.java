@@ -1,5 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.NotifService;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +20,11 @@ import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity
 import com.treemaswebapi.treemaswebapi.repository.AbsenAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenAppUploadRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenPulangAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppUploadRepository;
 import com.treemaswebapi.treemaswebapi.repository.GeneralParamApprovalRepository;
+import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenAppEntity;
@@ -29,6 +33,7 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppUploadEntity;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +43,7 @@ public class NotifService {
 
     private final JwtService jwtService;
     private final AbsenAppRepository absenAppRepository;
+    private final AbsenRepository absenRepository;
     private final CutiAppRepository cutiAppRepository;
     private final CutiAppUploadRepository cutiAppUploadRepository;
     private final AbsenAppUploadRepository absenAppUploadRepository;
@@ -45,6 +51,7 @@ public class NotifService {
     private final GeneralParamApprovalRepository generalParamAppRepository;
     private final ReimburseAppRepository reimburseAppRepository;
     private final ProjectRepository projectRepository;
+    private final KaryawanRepository karyawanRepository;
 
 
     // INI BAGIAN GET LIST
@@ -583,12 +590,164 @@ public class NotifService {
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
+                    String nama = karyawan.get().getNama();
                     System.out.println(nik + "ini udah masuk postLiburApproval");
 
                     Optional<AbsenAppEntity> datanya = absenAppRepository.findById(idApproval);
-
+                    AbsenEntity dataAbsen = new AbsenEntity();
                     if (request.getIsApprove() == "1") {
                         datanya.get().setIsApprove("1");
+                        datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.get().setUsrApp(nama);
+                        datanya.get().setNoteApp(request.getNoteApp());
+                        absenAppRepository.save(datanya.get());
+
+                        dataAbsen = AbsenEntity.builder()
+                        .dtmApp(null)
+                        .dtmCrt(null)
+                        .gpsLatitudeMsk(null)
+                        .gpsLatitudePlg(null)
+                        .gpsLongitudeMsk(null)
+                        .gpsLongitudePlg(null)
+                        .hari(nama)
+                        .isAbsen(nama)
+                        .isCuti(nama)
+                        .isLembur(nama)
+                        .isLibur(nama)
+                        .isOther(nama)
+                        .isSakit(nama)
+                        .isWfh(nama)
+                        .jamMsk(null)
+                        .jamPlg(null)
+                        .jarakMsk(nama)
+                        .jarakPlg(nama)
+                        .lokasiMsk(nama)
+                        .lokasiPlg(nama)
+                        .nama(nama)
+                        .nik(nik)
+                        .projectId(null)
+                        .tglAbsen(null)
+                        .totalJamKerja(null)
+                        .usrApp(nama)
+                        .usrCrt(nama)
+                        .build();
+                        absenRepository.save(dataAbsen);
+                    }else if (request.getIsApprove() == "0") {
+                        datanya.get().setIsApprove("0");
+                        datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.get().setUsrApp(nama);
+                        datanya.get().setNoteApp(request.getNoteApp());
+                        absenAppRepository.save(datanya.get());
+                    }
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("berhasil post ke AbsenEntity dan SetValue di AbsenApp", false);
+                    response.put("dataCount", datanya);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+    }
+
+    public ResponseEntity<Map<String, Object>> postLemburApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
+        try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nik = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
+                    String nama = karyawan.get().getNama();
+                    System.out.println(nik + "ini udah masuk postLiburApproval");
+
+                    Optional<AbsenAppEntity> datanya = absenAppRepository.findById(idApproval);
+                    AbsenEntity dataAbsen = new AbsenEntity();
+                    if (request.getIsApprove() == "1") {
+                        datanya.get().setIsApprove("1");
+                        datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.get().setUsrApp(nama);
+                        datanya.get().setNoteApp(request.getNoteApp());
+                        absenAppRepository.save(datanya.get());
+
+                        dataAbsen = AbsenEntity.builder()
+                        .dtmApp(null)
+                        .dtmCrt(null)
+                        .gpsLatitudeMsk(null)
+                        .gpsLatitudePlg(null)
+                        .gpsLongitudeMsk(null)
+                        .gpsLongitudePlg(null)
+                        .hari(nama)
+                        .isAbsen(nama)
+                        .isCuti(nama)
+                        .isLembur(nama)
+                        .isLibur(nama)
+                        .isOther(nama)
+                        .isSakit(nama)
+                        .isWfh(nama)
+                        .jamMsk(null)
+                        .jamPlg(null)
+                        .jarakMsk(nama)
+                        .jarakPlg(nama)
+                        .lokasiMsk(nama)
+                        .lokasiPlg(nama)
+                        .nama(nama)
+                        .nik(nik)
+                        .projectId(null)
+                        .tglAbsen(null)
+                        .totalJamKerja(null)
+                        .usrApp(nama)
+                        .usrCrt(nama)
+                        .build();
+                        absenRepository.save(dataAbsen);
+
+                        dataAbsen = AbsenEntity.builder()
+                        .dtmApp(null)
+                        .dtmCrt(null)
+                        .gpsLatitudeMsk(null)
+                        .gpsLatitudePlg(null)
+                        .gpsLongitudeMsk(null)
+                        .gpsLongitudePlg(null)
+                        .hari(nama)
+                        .isAbsen(nama)
+                        .isCuti(nama)
+                        .isLembur(nama)
+                        .isLibur(nama)
+                        .isOther(nama)
+                        .isSakit(nama)
+                        .isWfh(nama)
+                        .jamMsk(null)
+                        .jamPlg(null)
+                        .jarakMsk(nama)
+                        .jarakPlg(nama)
+                        .lokasiMsk(nama)
+                        .lokasiPlg(nama)
+                        .nama(nama)
+                        .nik(nik)
+                        .projectId(null)
+                        .tglAbsen(null)
+                        .totalJamKerja(null)
+                        .usrApp(nama)
+                        .usrCrt(nama)
+                        .build();
+                        absenRepository.save(dataAbsen);
+
+
+                    }else if (request.getIsApprove() == "0") {
+                        datanya.get().setIsApprove("0");
+                        datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.get().setUsrApp(nama);
+                        datanya.get().setNoteApp(request.getNoteApp());
+                        absenAppRepository.save(datanya.get());
                     }
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
@@ -609,10 +768,6 @@ public class NotifService {
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
-    }
-
-    public ResponseEntity<Map<String, Object>> postLemburApproval(String tokenWithBearer, Long idApproval) {
-        return null;
     }
 
     public ResponseEntity<Map<String, Object>> postCutiApproval(String tokenWithBearer, Long idApproval) {

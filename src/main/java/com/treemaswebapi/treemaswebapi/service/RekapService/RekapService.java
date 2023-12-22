@@ -1,7 +1,9 @@
 package com.treemaswebapi.treemaswebapi.service.RekapService;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,13 +20,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
+import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseRepository;
 import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
@@ -40,7 +45,10 @@ public class RekapService {
     private final ReimburseAppRepository reimburseAppRepository;
     private final TimesheetRepository timesheetRepository;
     private final CutiRepository cutiRepository;
+    private final CutiAppRepository cutiAppRepository;
     private final ClaimRepository claimRepository;
+    private final KaryawanRepository karyawanRepository;
+    
 
     /* --------------------------------------------BAGIAN REIMBURSE------------------------------------------------ */
     public ResponseEntity<Map<String, Object>> rekapReimburse(@RequestHeader String tokenWithBearer) {
@@ -298,38 +306,66 @@ public class RekapService {
     /* --------------------------------------------BAGIAN CUTI------------------------------------------------ */
     public ResponseEntity<Map<String, Object>> rekapCuti(@RequestHeader String tokenWithBearer) {
         try {
-            if (tokenWithBearer.startsWith("Bearer ")) {
-                String token = tokenWithBearer.substring("Bearer ".length());
-                String nik = jwtService.extractUsername(token);
-    
-                List<CutiEntity> dataCutinya = cutiRepository.findAllByNikAndFlgKet(nik, "cuti");
-    
-                if (!dataCutinya.isEmpty()) {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", true);
-                    response.put("message", "Data Cuti for nik: "+nik+" retrieved successfully");
-                    response.put("data", dataCutinya);
-                    return ResponseEntity.status(HttpStatus.OK).body(response);
-                } else {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("success", false);
-                    response.put("message", "No Data Cuti found for nik :" + nik);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        if (tokenWithBearer.startsWith("Bearer ")) {
+            String token = tokenWithBearer.substring("Bearer ".length());
+            String nik = jwtService.extractUsername(token);
+
+            List<CutiAppEntity> data2Cutinya = cutiAppRepository.findAllByNik(nik);
+
+            if (!data2Cutinya.isEmpty()) {
+                for (CutiAppEntity dataCutinya : data2Cutinya) {
+                    CutiResponse cutiResponse = new CutiResponse();
+                    cutiResponse = CutiResponse.builder()
+                    .alamatCuti(nik)
+                    .isApproved(nik)
+                    .jenisCuti(nik)
+                    .jmlCuti(null)                    
+                    .jenisCuti(nik)
+                    .jmlCuti(null)
+                    .jmlCutiBersama(null)
+                    .jmlCutiKhusus(null)
+                    .keperluanCuti(nik)
+                    .nama(nik)
+                    .nik(nik)
+                    .sisaCuti(null)
+                    .tglKembaliKerja(null)
+                    .tglMulai(null)
+                    .tglSelesai(null)
+                    .build();
+                    
+                    String status = "1".equals(dataCutinya.getIsApproved()) ? "Approved" :
+                    "0".equals(dataCutinya.getIsApproved()) ? "Not Approved" : "Waiting for Approval";
+                    cutiResponse.setStatus(status);
+
+
+                    data2Cutinya.add(dataCutinya);
                 }
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("message", "Data Cuti for nik: " + nik + " retrieved successfully");
+                response.put("data", data2Cutinya);
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+
             } else {
-                // Handle the case where the token format is invalid
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Invalid token format");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                response.put("message", "No Data Cuti found for nik: " + nik);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-        } catch (Exception e) {
+        } else {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Failed to retrieve Data Cuti");
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            response.put("message", "Invalid token format");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    } catch (Exception e) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "Failed to retrieve Data Cuti");
+        response.put("error", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
     }
 
     public ResponseEntity<Map<String, Object>> rekapCutiDetail (@RequestHeader String tokenWithBearer, @RequestParam Long id) {
@@ -337,10 +373,31 @@ public class RekapService {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
-    
-                Optional<CutiEntity> dataCutinya = cutiRepository.findById(id);
+                String nama = karyawanRepository.findNamaByNik(nik);
+                Optional<CutiAppEntity> dataCutinya = cutiAppRepository.findById(id);
     
                 if (!dataCutinya.isEmpty()) {
+                    CutiResponse cutiResponse = new CutiResponse();
+                    cutiResponse = CutiResponse.builder()
+                    .alamatCuti(nik)
+                    .isApproved(nik)
+                    .jenisCuti(nik)
+                    .jmlCuti(null)
+                    .jmlCutiBersama(null)
+                    .jmlCutiKhusus(null)
+                    .keperluanCuti(nik)
+                    .nama(nama)
+                    .nik(nik)
+                    .sisaCuti(null)
+                    .tglKembaliKerja(null)
+                    .tglMulai(null)
+                    .tglSelesai(null)
+                    .build();
+
+                    String status = "1".equals(dataCutinya.get().getIsApproved()) ? "Approved" :
+                    "0".equals(dataCutinya.get().getIsApproved()) ? "Not Approved" : "Waiting for Approval";
+                    cutiResponse.setStatus(status);
+
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Data Cuti for nik: "+nik+" with idCuti "+id+" retrieved successfully");
@@ -510,5 +567,17 @@ public class RekapService {
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+    private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
+        Map<String,String> indonesianDayMap = new HashMap<>();
+        indonesianDayMap.put("MONDAY", "Senin");
+        indonesianDayMap.put("TUESDAY", "Selasa");
+        indonesianDayMap.put("WEDNESDAY", "Rabu");
+        indonesianDayMap.put("THURSDAY", "Kamis");
+        indonesianDayMap.put("FRIDAY", "Jumat");
+        indonesianDayMap.put("SATURDAY", "Sabtu");
+        indonesianDayMap.put("SUNDAY", "Minggu");
+
+        return indonesianDayMap.get(dayOfWeek.toString());
     }
 }

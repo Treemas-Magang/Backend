@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.service.ProfileService;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
@@ -75,6 +76,32 @@ public class ProfileService {
                 project = projectRepository.findById(request.getSelectedProject())
                         .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
             }
+
+            // Check if other fields are null or empty (including whitespace)
+            if (
+            request.getFullName() == null || 
+            request.getEmail() == null || 
+            request.getTanggalLahir() == null || 
+            request.getJenisKelamin() == null || 
+            request.getSelectedRole() == null || 
+            request.getTanggalBergabung() == null || 
+            request.getHakCuti() == null || 
+            request.getIsLeader() == null || 
+            request.getIsKaryawan() == null ||
+            request.getNik().isEmpty() || 
+            request.getFullName().isEmpty() || 
+            request.getEmail().isEmpty() || 
+            request.getJenisKelamin().isEmpty() || 
+            request.getSelectedRole().isEmpty() || 
+            request.getHakCuti().compareTo(BigDecimal.ZERO) == 0 || 
+            request.getIsLeader().isEmpty() || 
+            request.getIsKaryawan().isEmpty()) 
+            {
+            throw new RuntimeException("Fields * cannot be null or empty");
+            }
+
+
+
 
             KaryawanEntity nikK = nikKOptional.get();
             if (nikKOptional.isPresent()) {

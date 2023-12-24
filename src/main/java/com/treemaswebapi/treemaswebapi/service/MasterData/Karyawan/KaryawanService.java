@@ -87,6 +87,28 @@ import lombok.RequiredArgsConstructor;
                     throw new RuntimeException("Selected Role cannot be null or empty");
                 }
 
+                if (
+                    request.getFullName() == null || 
+                    request.getEmail() == null || 
+                    request.getTanggalLahir() == null || 
+                    request.getJenisKelamin() == null || 
+                    request.getSelectedRole() == null || 
+                    request.getTanggalBergabung() == null || 
+                    request.getHakCuti() == null || 
+                    request.getIsLeader() == null || 
+                    request.getIsKaryawan() == null ||
+                    request.getNik().isEmpty() || 
+                    request.getFullName().isEmpty() || 
+                    request.getEmail().isEmpty() || 
+                    request.getJenisKelamin().isEmpty() || 
+                    request.getHakCuti().compareTo(BigDecimal.ZERO) == 0 || 
+                    request.getIsLeader().isEmpty() || 
+                    request.getIsKaryawan().isEmpty()) 
+                    {
+                    throw new RuntimeException("Fields * cannot be null or empty");
+                    }
+
+
                 // Check if projectId is present in the request
                 ProjectEntity project = null;
                 if (request.getSelectedProject() != null && !request.getSelectedProject().isEmpty()) {
@@ -94,9 +116,9 @@ import lombok.RequiredArgsConstructor;
                             .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
                 }
                 // Harus Head
-                Optional<SysUserEntity> roleSysUser = sysUserRepository.findByUserId(userToken);
+                Optional<SysUserEntity> optionalSysUser = sysUserRepository.findByUserId(userToken);
 
-                if (roleSysUser.get().getRole() != null && roleSysUser.get().getRole().getJabatanId().equals("HEAD")) {
+                if (optionalSysUser.get().getRole() != null && optionalSysUser.get().getRole().getJabatanId().equals("HEAD")) {
                     // Mengirim ke table Karyawan
                  var karyawan = KaryawanEntity.builder()
                     .nik(request.getNik())
@@ -277,13 +299,17 @@ import lombok.RequiredArgsConstructor;
 
                 // Cari nik dari token
                 String userToken = jwtService.extractUsername(token);
-                // Cari nama dari token
-                Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
-                Optional<SysUserEntity> roleSysUser = sysUserRepository.findByUserId(userToken);
 
-                if (roleSysUser.get().getRole() != null && roleSysUser.get().getRole().getJabatanId().equals("HEAD")) {
-                    if (user.isPresent()) {
-                    String nama = user.get().getNama();
+                // Cari nama dari token
+                Optional<KaryawanEntity> optionalNikToken = karyawanRepository.findByNik(userToken);
+                // Cari data dari id
+                Optional<KaryawanEntity> optionalNik = karyawanRepository.findByNik(id);
+                Optional<SysUserEntity> optionalSysUser = sysUserRepository.findByUserId(id);
+                Optional<KaryawanImageEntity> optionalKaryawanImage = karyawanImageRepository.findByNik(id);
+
+                if (optionalSysUser.get().getRole() != null && optionalSysUser.get().getRole().getJabatanId().equals("HEAD")) {
+                    if (optionalNik.isPresent()) {
+                    String nama = optionalNikToken.get().getNama();
 
                 long currentTimeMillis = System.currentTimeMillis();
                 Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
@@ -306,6 +332,28 @@ import lombok.RequiredArgsConstructor;
                     throw new RuntimeException("Selected Role cannot be null or empty");
                 }
 
+                 // Check if other fields are null or empty (including whitespace)
+                    if (
+                    request.getFullName() == null || 
+                    request.getEmail() == null || 
+                    request.getTanggalLahir() == null || 
+                    request.getJenisKelamin() == null || 
+                    request.getSelectedRole() == null || 
+                    request.getTanggalBergabung() == null || 
+                    request.getHakCuti() == null || 
+                    request.getIsLeader() == null || 
+                    request.getIsKaryawan() == null ||
+                    request.getNik().isEmpty() || 
+                    request.getFullName().isEmpty() || 
+                    request.getEmail().isEmpty() || 
+                    request.getJenisKelamin().isEmpty() || 
+                    request.getHakCuti().compareTo(BigDecimal.ZERO) == 0 || 
+                    request.getIsLeader().isEmpty() || 
+                    request.getIsKaryawan().isEmpty()) 
+                    {
+                    throw new RuntimeException("Fields * cannot be null or empty");
+                    }
+
                 // Check if projectId is present in the request
                 ProjectEntity project = null;
                 if (request.getSelectedProject() != null && !request.getSelectedProject().isEmpty()) {
@@ -313,77 +361,75 @@ import lombok.RequiredArgsConstructor;
                             .orElseThrow(() -> new RuntimeException("Project not found for id: " + request.getSelectedProject()));
                 }
 
-                // Mengirim ke table Karyawan
-                 var karyawan = KaryawanEntity.builder()
-                    .nik(request.getNik())
-                    .nama(request.getNama())
-                    .email(request.getEmail())//gue benerin siangsiang 13.12.23 -Aliy
-                    .tempatLahir(request.getTempatLahir())
-                    .tanggalLahir(request.getTanggalLahir())
-                    .jenisKelamin(request.getJenisKelamin())
-                    .agama(request.getAgama())
-                    .kewarganegaraan(request.getKewarganegaraan())
-                    .kodePos(request.getKodePos())
-                    .alamatKtp(request.getAlamatKtp())
-                    .noHp(request.getNoHp())
-                    .noRek(request.getNoRek())
-                    .noNpwp(request.getNoNpwp())
-                    .jenjangPendidikan(request.getJenjangPendidikan())
-                    .tanggalBergabung(request.getTanggalBergabung())
-                    .alamatSekarang(request.getAlamatSekarang())
-                    .statusPerkawinan(request.getStatusPerkawinan())
-                    .golonganDarah(request.getGolonganDarah())
-                    .nomorKtp(request.getNomorKtp())
-                    .emergencyContact(request.getEmergencyContact())
-                    .statusEmergency(request.getStatusEmergency())
-                    .alamatEmergency(request.getAlamatEmergency())
-                    .telpEmergency(request.getTelpEmergency())
-                    .projectId(project)
-                    .divisi(request.getDivisi())
-                    .nikLeader(request.getNikLeader())
-                    .isLeader(request.getIsLeader())
-                    .usrUpd(request.getUsrUpd())
-                    .handsetImei(request.getHandsetImei())
-                    .hakCuti(defaultCuti)
-                    .isKaryawan(request.getIsKaryawan())
-                    .handsetImei(null)
-                .build();
-                karyawanRepository.save(karyawan);
+                    KaryawanEntity karyawan = optionalNik.get();
+                    karyawan.setNama(request.getNama());
+                    karyawan.setEmail(request.getEmail());
+                    karyawan.setTempatLahir(request.getTempatLahir());
+                    karyawan.setTanggalLahir(request.getTanggalLahir());
+                    karyawan.setJenisKelamin(request.getJenisKelamin());
+                    karyawan.setAgama(request.getAgama());
+                    karyawan.setKewarganegaraan(request.getKewarganegaraan());
+                    karyawan.setKodePos(request.getKodePos());
+                    karyawan.setAlamatKtp(request.getAlamatKtp());
+                    karyawan.setNoHp(request.getNoHp());
+                    karyawan.setNoRek(request.getNoRek());
+                    karyawan.setNoNpwp(request.getNoNpwp());
+                    karyawan.setJenjangPendidikan(request.getJenjangPendidikan());
+                    karyawan.setTanggalBergabung(request.getTanggalBergabung());
+                    karyawan.setAlamatSekarang(request.getAlamatSekarang());
+                    karyawan.setStatusPerkawinan(request.getStatusPerkawinan());
+                    karyawan.setGolonganDarah(request.getGolonganDarah());
+                    karyawan.setNomorKtp(request.getNomorKtp());
+                    karyawan.setEmergencyContact(request.getEmergencyContact());
+                    karyawan.setStatusEmergency(request.getStatusEmergency());
+                    karyawan.setAlamatEmergency(request.getAlamatEmergency());
+                    karyawan.setTelpEmergency(request.getTelpEmergency());
+                    karyawan.setProjectId(project);
+                    karyawan.setDivisi(request.getDivisi());
+                    karyawan.setNikLeader(request.getNikLeader());
+                    karyawan.setIsLeader(request.getIsLeader());
+                    karyawan.setUsrUpd(request.getUsrUpd());
+                    karyawan.setHandsetImei(request.getHandsetImei());
+                    karyawan.setHakCuti(defaultCuti);
+                    karyawan.setIsKaryawan(request.getIsKaryawan());
+
+                    karyawanRepository.save(karyawan);
                 
                 String isLeader = request.getIsLeader();
-                System.out.println("LEADER : "+isLeader);
                 // Mengirim ke table Sys_User
-                    System.out.println("MASUK DIA LEADER");
-                    var sysUser = SysUserEntity.builder()
-                        .userId(request.getNik())
-                        .email(request.getEmail())
-                        .fullName(request.getNama())
-                        .role(jabatan)
-                        .isLogin("0") // set ke 0 karena di table ini tidak boleh null
-                        .wrongPassCount((short) 0)
-                        .timesLocked(0)
-                        .sqlPassword(passwordEncoder.encode("123456"))
-                        .usrCrt(nama)
-                        .dtmCrt(dtmCrt)
-                    .build();
+                    SysUserEntity sysUser = optionalSysUser.get();
+                    sysUser.setUserId(request.getNik());
+                    sysUser.setEmail(request.getEmail());
+                    sysUser.setFullName(request.getFullName());
+                    sysUser.setRole(jabatan);
+                    sysUser.setIsLogin(sysUser.getIsLogin());
+                    sysUser.setWrongPassCount(sysUser.getWrongPassCount());
+                    sysUser.setTimesLocked(sysUser.getTimesLocked());
+                    sysUser.setSqlPassword(sysUser.getSqlPassword());
+                    sysUser.setUsrCrt(nama);
+                    if (sysUser.getDtmCrt() != null) {
+                        sysUser.setDtmCrt(dtmCrt);
+                    }
+                    sysUser.setDtmUpd(dtmCrt);
+                    sysUser.setUsrUpd(nama);
+
                     sysUserRepository.save(sysUser);
                 
 
                 // Mengirim ke table Karyawan Image
-                var karyawanImage = KaryawanImageEntity.builder()
-                    .nik(request.getNik())
-                    .foto(request.getFoto() != null ? request.getFoto() : null)
-                    .fotoKtp(request.getFotoKtp() != null ? request.getFotoKtp() : null)
-                    .fotoNpwp(request.getFotoNpwp() != null ? request.getFotoNpwp() : null)
-                    .fotoKk(request.getFotoKk() != null ? request.getFotoKk() : null)
-                    .fotoAsuransi(request.getFotoAsuransi() != null ? request.getFotoAsuransi() : null)
-                    .fotoPath(request.getFotoPath() != null ? request.getFotoPath() : null)
-                    .fotoKtpPath(request.getFotoKtpPath() != null ? request.getFotoKtpPath() : null)
-                    .fotoNpwpPath(request.getFotoNpwpPath() != null ? request.getFotoNpwpPath() : null)
-                    .fotoKkPath(request.getFotoKkPath() != null ? request.getFotoKkPath() : null)
-                    .fotoAsuransiPath(request.getFotoAsuransiPath() != null ? request.getFotoAsuransiPath() : null)
-                .build();
-                karyawanImageRepository.save(karyawanImage);
+                    KaryawanImageEntity karyawanImage = optionalKaryawanImage.get();
+                    karyawanImage.setFoto(request.getFoto() != null ? request.getFoto() : null);
+                    karyawanImage.setFotoKtp(request.getFotoKtp() != null ? request.getFotoKtp() : null);
+                    karyawanImage.setFotoNpwp(request.getFotoNpwp() != null ? request.getFotoNpwp() : null);
+                    karyawanImage.setFotoKk(request.getFotoKk() != null ? request.getFotoKk() : null);
+                    karyawanImage.setFotoAsuransi(request.getFotoAsuransi() != null ? request.getFotoAsuransi() : null);
+                    karyawanImage.setFotoPath(request.getFotoPath() != null ? request.getFotoPath() : null);
+                    karyawanImage.setFotoKtpPath(request.getFotoKtpPath() != null ? request.getFotoKtpPath() : null);
+                    karyawanImage.setFotoNpwpPath(request.getFotoNpwpPath() != null ? request.getFotoNpwpPath() : null);
+                    karyawanImage.setFotoKkPath(request.getFotoKkPath() != null ? request.getFotoKkPath() : null);
+                    karyawanImage.setFotoAsuransiPath(request.getFotoAsuransiPath() != null ? request.getFotoAsuransiPath() : null);
+
+                    karyawanImageRepository.save(karyawanImage);
 
             Map<String, String> response = new HashMap<>();
             response.put("status", "Success");

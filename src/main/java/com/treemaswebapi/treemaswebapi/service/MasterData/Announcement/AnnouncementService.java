@@ -130,7 +130,6 @@ public class AnnouncementService {
             response.put("status", "Failed");
             response.put("message", "Failed!");
             response.put("error", e.getMessage());
-            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
@@ -177,7 +176,6 @@ public class AnnouncementService {
             response.put("status", "Failed");
             response.put("message", "Failed!");
             response.put("error", e.getMessage());
-            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }

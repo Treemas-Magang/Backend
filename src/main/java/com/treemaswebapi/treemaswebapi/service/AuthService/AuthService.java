@@ -266,14 +266,14 @@ import lombok.RequiredArgsConstructor;
                                 response.put("success", false);
                                 response.put("message", "New Password and Confirm Password Must Be Same!");
 
-                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                         }
                     } else {
                                 Map<String, Object> response = new HashMap<>();
                                 response.put("success", true);
                                 response.put("message", "Password Isn't Default!");
 
-                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
                     }
                 } else {
                     // TODO: handle exception

@@ -91,7 +91,6 @@ public class DashboardService {
             response.put("status", "Failed");
             response.put("message", "Failed to retrieve absen");
             response.put("error", e.getMessage());
-            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }

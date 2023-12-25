@@ -20,5 +20,7 @@ public class AbsenBelumPulangResponse {
     private String lokasiProject;
     private LocalDate tglAbsen;
     private Long idAbsen;
+    private Double longitudeProject;
+    private Double latitudeProject;
 
 }

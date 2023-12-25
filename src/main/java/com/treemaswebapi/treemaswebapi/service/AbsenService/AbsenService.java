@@ -677,6 +677,8 @@ public class AbsenService {
                 List<AbsenBelumPulangResponse> listAbsenResponse = new ArrayList<>();
                 for(AbsenEntity absenEntity : unprocessedAbsenList){
                     ProjectEntity projectId = absenEntity.getProjectId();
+                    Double longitudeProject = projectId.getGpsLongitude();
+                    Double latitudeProject = projectId.getGpsLatitude();
 
                 // Check if projectId is null
                 String projectName = (projectId != null) ? projectId.getNamaProject() : "Unknown Project";
@@ -688,7 +690,7 @@ public class AbsenService {
                 LocalDate tglAbsen = absenEntity.getTglAbsen() != null ? absenEntity.getTglAbsen() : LocalDate.MIN;
                 Long idAbsen = absenEntity.getId();  // Assuming ID is always non-null
 
-                AbsenBelumPulangResponse response = new AbsenBelumPulangResponse(projectName, noteTelatMsk, jamMsk, lokasiProject, tglAbsen, idAbsen);
+                AbsenBelumPulangResponse response = new AbsenBelumPulangResponse(projectName, noteTelatMsk, jamMsk, lokasiProject, tglAbsen, idAbsen, longitudeProject, latitudeProject);
                 listAbsenResponse.add(response);
                 }
                 Map<String, Object> response = new HashMap<>();

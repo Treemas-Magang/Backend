@@ -87,26 +87,42 @@ import lombok.RequiredArgsConstructor;
                     throw new RuntimeException("Selected Role cannot be null or empty");
                 }
 
-                if (
-                    request.getFullName() == null || 
-                    request.getEmail() == null || 
-                    request.getTanggalLahir() == null || 
-                    request.getJenisKelamin() == null || 
-                    request.getSelectedRole() == null || 
-                    request.getTanggalBergabung() == null || 
-                    request.getHakCuti() == null || 
-                    request.getIsLeader() == null || 
-                    request.getIsKaryawan() == null ||
-                    request.getNik().isEmpty() || 
-                    request.getFullName().isEmpty() || 
-                    request.getEmail().isEmpty() || 
-                    request.getJenisKelamin().isEmpty() || 
-                    request.getHakCuti().compareTo(BigDecimal.ZERO) == 0 || 
-                    request.getIsLeader().isEmpty() || 
-                    request.getIsKaryawan().isEmpty()) 
-                    {
-                    throw new RuntimeException("Fields * cannot be null or empty");
-                    }
+                // Check if individual fields are null or empty
+            if (request.getNama() == null || request.getNama().isEmpty()) {
+                throw new RuntimeException("Full Name cannot be null or empty");
+            }
+
+            if (request.getNomorKtp() == null || request.getNomorKtp().isEmpty()) {
+                throw new RuntimeException("Nomor KTP cannot be null or empty");
+            }
+
+            if (request.getEmail() == null || request.getEmail().isEmpty()) {
+                throw new RuntimeException("Email cannot be null or empty");
+            }
+
+            if (request.getTanggalLahir() == null) {
+                throw new RuntimeException("Tanggal Lahir cannot be null");
+            }
+
+            if (request.getJenisKelamin() == null || request.getJenisKelamin().isEmpty()) {
+                throw new RuntimeException("Jenis Kelamin cannot be null or empty");
+            }
+
+            if (request.getTanggalBergabung() == null) {
+                throw new RuntimeException("Tanggal Bergabung cannot be null");
+            }
+
+            if (request.getHakCuti() == null) {
+                throw new RuntimeException("Hak Cuti cannot be null");
+            }
+
+            if (request.getIsLeader() == null || request.getIsLeader().isEmpty()) {
+                throw new RuntimeException("Is Leader cannot be null or empty");
+            }
+            
+            if (request.getIsKaryawan() == null || request.getIsKaryawan().isEmpty()) {
+                throw new RuntimeException("Is Karyawan cannot be null or empty");
+            }
 
 
                 // Check if projectId is present in the request
@@ -332,27 +348,42 @@ import lombok.RequiredArgsConstructor;
                     throw new RuntimeException("Selected Role cannot be null or empty");
                 }
 
-                 // Check if other fields are null or empty (including whitespace)
-                    if (
-                    request.getFullName() == null || 
-                    request.getEmail() == null || 
-                    request.getTanggalLahir() == null || 
-                    request.getJenisKelamin() == null || 
-                    request.getSelectedRole() == null || 
-                    request.getTanggalBergabung() == null || 
-                    request.getHakCuti() == null || 
-                    request.getIsLeader() == null || 
-                    request.getIsKaryawan() == null ||
-                    request.getNik().isEmpty() || 
-                    request.getFullName().isEmpty() || 
-                    request.getEmail().isEmpty() || 
-                    request.getJenisKelamin().isEmpty() || 
-                    request.getHakCuti().compareTo(BigDecimal.ZERO) == 0 || 
-                    request.getIsLeader().isEmpty() || 
-                    request.getIsKaryawan().isEmpty()) 
-                    {
-                    throw new RuntimeException("Fields * cannot be null or empty");
-                    }
+                // Check if individual fields are null or empty
+            if (request.getNama() == null || request.getNama().isEmpty()) {
+                throw new RuntimeException("Full Name cannot be null or empty");
+            }
+
+            if (request.getNomorKtp() == null || request.getNomorKtp().isEmpty()) {
+                throw new RuntimeException("Nomor KTP cannot be null or empty");
+            }
+
+            if (request.getEmail() == null || request.getEmail().isEmpty()) {
+                throw new RuntimeException("Email cannot be null or empty");
+            }
+
+            if (request.getTanggalLahir() == null) {
+                throw new RuntimeException("Tanggal Lahir cannot be null");
+            }
+
+            if (request.getJenisKelamin() == null || request.getJenisKelamin().isEmpty()) {
+                throw new RuntimeException("Jenis Kelamin cannot be null or empty");
+            }
+
+            if (request.getTanggalBergabung() == null) {
+                throw new RuntimeException("Tanggal Bergabung cannot be null");
+            }
+
+            if (request.getHakCuti() == null) {
+                throw new RuntimeException("Hak Cuti cannot be null");
+            }
+
+            if (request.getIsLeader() == null || request.getIsLeader().isEmpty()) {
+                throw new RuntimeException("Is Leader cannot be null or empty");
+            }
+            
+            if (request.getIsKaryawan() == null || request.getIsKaryawan().isEmpty()) {
+                throw new RuntimeException("Is Karyawan cannot be null or empty");
+            }
 
                 // Check if projectId is present in the request
                 ProjectEntity project = null;

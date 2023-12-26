@@ -1,8 +1,12 @@
 package com.treemaswebapi.treemaswebapi.service.Management.UserMember;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.Management.UserMember.request.UserMemberRequest;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserMemberEntity;
+import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.SysUserMemberRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class UserMemberService {
     private final SysUserRepository sysUserRepository;
     private final JwtService jwtService;
+    private final SysUserMemberRepository sysUserMemberRepository;
+    private final KaryawanRepository karyawanRepository;
     
     public ResponseEntity<Map<String, Object>> userMemberAllUser(
         @RequestHeader("Authorization") String jwtToken
@@ -70,5 +81,55 @@ public class UserMemberService {
         }
     }
 
+    public ResponseEntity<Map<String, Object>> userMemberAdd(
+        @RequestHeader("Authorization") String jwtToken,
+        UserMemberRequest request
+    ) {
+        try {
+            // Cari siapa yang akses api ini
+            String token = jwtToken.substring(7);
+            String nik = jwtService.extractUsername(token); 
+            // Harus Head
+            Optional<SysUserEntity> optionalSysUser = sysUserRepository.findByUserId(nik);
+            Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
+            // Cari siapa yang melakukan aksi
+            String namaUser = karyawan.get().getNama();
+            // Cari kapan di update
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp dtmUpd = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+
+            if (optionalSysUser.get().getRole() != null && optionalSysUser.get().getRole().getJabatanId().equals("HEAD") || optionalSysUser.get().getRole().getJabatanId().equals("LEAD")) {
+                // Buat Entity baru di table sys_user_member
+            var sysUserMember = SysUserMemberEntity.builder()
+                .nikLeader(request.getNikLeader())
+                .nikUser(request.getNikUser())
+                .usrUpd(namaUser)
+                .dtmUpd(dtmUpd)
+            .build();
+
+            sysUserMemberRepository.save(sysUserMember);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "User Added");
+            response.put("data", sysUserMember);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Not Allowed");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+ 
+        } catch (Exception e) {
+            // TODO: handle exception
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to add User");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 
 }

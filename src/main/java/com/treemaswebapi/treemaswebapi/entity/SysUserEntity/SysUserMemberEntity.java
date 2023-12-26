@@ -1,9 +1,12 @@
 package com.treemaswebapi.treemaswebapi.entity.SysUserEntity;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -19,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "sys_user_member", schema = "public")
 public class SysUserMemberEntity {
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "nik_leader")
@@ -32,5 +35,5 @@ public class SysUserMemberEntity {
     private String usrUpd;
 
     @Column(name = "dtmupd")
-    private Instant dtmUpd;
+    private Timestamp dtmUpd;
 }

@@ -4,11 +4,14 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
+import com.treemaswebapi.treemaswebapi.controller.Management.UserMember.request.UserMemberRequest;
 import com.treemaswebapi.treemaswebapi.service.Management.UserMember.UserMemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,15 @@ public class UserMemberController {
     @GetMapping("/user-member-view/dropdown")
     public ResponseEntity<Map<String, Object>> dropdownUser() {
         ResponseEntity<Map<String, Object>> response = service.dropdownUser();
+        return response;
+    }
+
+    @PostMapping("/user-member-view/add")
+    public ResponseEntity<Map<String, Object>> dropdownUser(
+        @RequestHeader("Authorization") String jwtToken,
+        @RequestBody UserMemberRequest request
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.userMemberAdd(jwtToken, request);
         return response;
     }
 

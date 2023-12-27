@@ -12,6 +12,6 @@ import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiPenggantiEntity;
 @Repository
 public interface CutiPenggantiRepository extends JpaRepository<CutiPenggantiEntity, Long> {
 
-    @Query("SELECT c.nik, SUM(c.jmlCuti) FROM CutiPengganti c GROUP BY c.nik")
-    List<Object> countJmlCutiPerNik(String nik);
+    @Query("SELECT c.nik, SUM(c.jmlCuti) FROM CutiPenggantiEntity c GROUP BY c.nik")
+    Long countJmlCutiPerNik(String nik);
 }

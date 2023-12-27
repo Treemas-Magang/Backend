@@ -214,29 +214,30 @@ public class MemberService {
                     LocalDate date = LocalDate.now();
                     //mau narik data yang ada di penempatanEntity, cari by projectId
                     List<PenempatanEntity> listMember = penempatanRepository.findByProjectId(projectId);
-                    List<AbsenEntity> listAbsen = absenRepository.findAllByProjectIdAndTglAbsen(projectId, date);
+                    List<AbsenEntity> listAbsen = absenRepository.findByTglAbsen(date);
                     List<Object> responseList = new ArrayList<>();
-
-                    for (PenempatanEntity member : listMember){
-                        boolean found = false;
-                        for (AbsenEntity absen : listAbsen){
-                            if (absen.getNik().equals(member.getNik())){
-                                responseList.add(absen);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            responseList.add("dataAbsen nik "+member.getNik()+" cannot be found");
+                    System.out.println(listMember);
+                    System.out.println(listAbsen);
+                    for (PenempatanEntity member : listMember) {
+                        AbsenEntity absenData = listAbsen.stream()
+                                                         .filter(absen -> absen.getNik().equals(member.getNik()))
+                                                         .findFirst()
+                                                         .orElse(null);
+            
+                        if (absenData != null) {
+                            responseList.add(absenData);
+                        } else {
+                            // Placeholder or handling for members without fully filled absence data
+                            responseList.add("Absent data not fully filled for member with NIK: " + member.getNik());
                         }
                     }
                     Map<String, Object> response = new HashMap<>();
                     if (responseList.isEmpty()) {
-                        response.put("success", true);
-                        response.put("message", "belum ada member yang absen");
+                        response.put("success", false);
+                        response.put("message", "belum ada member");
                     } else {
                         response.put("success", true);
-                        response.put("message", "belum ada member yang absen");
+                        response.put("message", "berhasil retrieve data member");
                     }
                     response.put("data", responseList);
                     return ResponseEntity.status(HttpStatus.OK).body(response);

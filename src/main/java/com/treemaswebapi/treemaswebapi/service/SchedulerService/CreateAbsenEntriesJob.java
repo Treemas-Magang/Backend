@@ -45,6 +45,7 @@ public class CreateAbsenEntriesJob implements Job {
                 } else {
                     AbsenEntity absenEntity = new AbsenEntity();
                     absenEntity.setNik(karyawan.getNik());
+                    absenEntity.setNama(karyawan.getNama());
                     absenEntity.setDtmCrt(dtmSekarang);
                     absenEntity.setTglAbsen(currentDate);
                     absenRepository.save(absenEntity);

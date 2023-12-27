@@ -559,7 +559,8 @@ public class CutiSakitService {
             //cari data sisaCuti
             Optional<KaryawanEntity> dataKaryawan = karyawanRepository.findByNik(nik);
             BigDecimal sisaCuti = dataKaryawan.get().getHakCuti(); 
-            List<Object> jmlCutiPengganti = cutiPenggantiRepository.countJmlCutiPerNik(nik);
+            Long jmlCutiPengganti = cutiPenggantiRepository.countJmlCutiPerNik(nik);
+            jmlCutiPengganti = jmlCutiPengganti != null ? jmlCutiPengganti : 0; 
             Long jmlCutiBersama = liburRepository.countIsCutiBersama();
 
             Map<String, Object> data = new HashMap<>();

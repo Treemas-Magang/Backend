@@ -953,4 +953,16 @@ public class AbsenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    public ResponseEntity<Map<String, Object>> masukinNama(String tokenWithBearer) {
+        List<AbsenEntity> dataSemuaAbsen = absenRepository.findAll();
+        for (AbsenEntity dataAbsen : dataSemuaAbsen){
+            String nik = dataAbsen.getNik();
+            String nama = karyawanRepository.findNamaByNik(nik);
+            dataAbsen.setNama(nama);
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", "yoi");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

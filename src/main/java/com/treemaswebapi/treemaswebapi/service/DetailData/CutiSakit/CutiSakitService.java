@@ -564,10 +564,10 @@ public class CutiSakitService {
             Long jmlCutiBersama = liburRepository.countIsCutiBersama();
 
             Map<String, Object> data = new HashMap<>();
-            data.put("nama karyawan : ", nama);
-            data.put("sisa cuti : ", sisaCuti);
-            data.put("sisa cuti pengganti : ", jmlCutiPengganti);
-            data.put("jumlah cuti bersama : ", jmlCutiBersama);
+            data.put("namaKaryawan", nama);
+            data.put("sisaCuti", sisaCuti);
+            data.put("sisaCutiPengganti", jmlCutiPengganti);
+            data.put("jumlahCutiBersama", jmlCutiBersama);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);

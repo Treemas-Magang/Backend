@@ -21,6 +21,9 @@ import com.treemaswebapi.treemaswebapi.service.UpdateListProjectService.UpdateLi
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 // api awal buat absen
@@ -147,4 +150,11 @@ public class AbsenController {
     // ){
     //     return memberService.head
     // }
+
+    @PutMapping("/masukinnamakeabsen")
+    public ResponseEntity<Map<String, Object>> masukinNama(@RequestHeader("Authorization") String tokenWithBearer) {
+        //TODO: process PUT request
+        
+        return absenService.masukinNama(tokenWithBearer);
+    }
 }   

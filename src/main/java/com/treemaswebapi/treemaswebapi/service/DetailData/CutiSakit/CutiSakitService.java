@@ -560,7 +560,7 @@ public class CutiSakitService {
             Optional<KaryawanEntity> dataKaryawan = karyawanRepository.findByNik(nik);
             BigDecimal sisaCuti = dataKaryawan.get().getHakCuti(); 
             List<Object> jmlCutiPengganti = cutiPenggantiRepository.countJmlCutiPerNik(nik);
-            Long jmlCutiBersama = liburRepository.countIsCutibersama();
+            Long jmlCutiBersama = liburRepository.countIsCutiBersama();
 
             Map<String, Object> data = new HashMap<>();
             data.put("nama karyawan : ", nama);

@@ -9,6 +9,6 @@ import com.treemaswebapi.treemaswebapi.entity.LiburEntity.LiburEntity;
 @Repository
 public interface LiburRepository extends JpaRepository<LiburEntity, Long> {
 
-    @Query("SELECT COUNT(l) FROM Libur l WHERE l.isCutibersama = '1'")
-    Long countIsCutibersama();
+    @Query("SELECT COUNT(l) FROM Libur l WHERE l.isCutiBersama = '1'")
+    Long countIsCutiBersama();
 }

@@ -51,7 +51,7 @@ public class CutiSakitController {
     public ResponseEntity<Map<String, Object>> getMyCuti(
         @RequestHeader("Authorization") String tokenWithBearer
     ){
-        ResponseEntity<Map<String, Object>> response = service.getMyCuti();
+        ResponseEntity<Map<String, Object>> response = service.getMyCuti(tokenWithBearer);
         return response;
     }
 

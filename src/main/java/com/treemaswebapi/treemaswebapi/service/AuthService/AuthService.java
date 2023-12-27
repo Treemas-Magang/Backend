@@ -161,6 +161,7 @@ import lombok.RequiredArgsConstructor;
                 if (existingEmail.isPresent()) {
                     SysUserEntity user = existingEmail.get();
                     user.setSqlPassword(passwordEncoder.encode("123456"));
+                    user.setIsPassChg("0");
                     sysUserRepository.save(user);
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
@@ -187,6 +188,7 @@ import lombok.RequiredArgsConstructor;
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         }
+
         public ResponseEntity<Map<String, Object>> logout(String tokenWithBearer) {
             try {
                 if (tokenWithBearer.startsWith("Bearer ")) {

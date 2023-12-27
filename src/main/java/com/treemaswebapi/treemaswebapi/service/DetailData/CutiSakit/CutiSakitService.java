@@ -26,14 +26,17 @@ import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiPenggantiEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiImageAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiImageRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiPenggantiRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.LiburRepository;
 import com.treemaswebapi.treemaswebapi.repository.MasterCutiRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -50,6 +53,8 @@ public class CutiSakitService {
     private final CutiImageRepository cutiImageRepository;
     private final CutiImageAppRepository cutiImageAppRepository;
     private final AbsenRepository absenRepository;
+    private final CutiPenggantiRepository cutiPenggantiRepository;
+    private final LiburRepository liburRepository;
     
      private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
         Map<String,String> indonesianDayMap = new HashMap<>();
@@ -534,5 +539,49 @@ public class CutiSakitService {
         }
     }
 
+    public ResponseEntity<Map<String, Object>> getMyCuti(@RequestHeader("Authorization") String tokenWithBearer) {
+        try {
+            // Cari siapa yang akses api ini
+            String token = tokenWithBearer.substring(7);
+            String nik = jwtService.extractUsername(token);
+            Optional<KaryawanEntity> userOptional = karyawanRepository.findByNik(nik);
+            if (!userOptional.isPresent()) {
+                // Handle case where user is not found
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "User with NIK " + nik + " not found.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
+            Optional<KaryawanEntity> user = karyawanRepository.findByNik(nik);
+            String nama = user.get().getNama();
+
+            //cari data sisaCuti
+            Optional<KaryawanEntity> dataKaryawan = karyawanRepository.findByNik(nik);
+            BigDecimal sisaCuti = dataKaryawan.get().getHakCuti(); 
+            List<Object> jmlCutiPengganti = cutiPenggantiRepository.countJmlCutiPerNik(nik);
+            Long jmlCutiBersama = liburRepository.countIsCutibersama();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("nama karyawan : ", nama);
+            data.put("sisa cuti : ", sisaCuti);
+            data.put("sisa cuti pengganti : ", jmlCutiPengganti);
+            data.put("jumlah cuti bersama : ", jmlCutiBersama);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "berhasil mendapatkan jumlah semua jenis cuti");
+            response.put("data", data);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e){
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed To Approve Sakit");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
     
 }

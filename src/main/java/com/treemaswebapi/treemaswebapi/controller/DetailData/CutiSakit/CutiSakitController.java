@@ -46,6 +46,14 @@ public class CutiSakitController {
         ResponseEntity<Map<String, Object>> response = service.userCutiAdd(jwtToken, request);
         return response;
     }
+    
+    @GetMapping("/cuti-get")
+    public ResponseEntity<Map<String, Object>> getMyCuti(
+        @RequestHeader("Authorization") String tokenWithBearer
+    ){
+        ResponseEntity<Map<String, Object>> response = service.getMyCuti();
+        return response;
+    }
 
     @PutMapping("/cuti-form/approve/{id}")
     public ResponseEntity<Map<String, Object>> cutiApprove(

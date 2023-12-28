@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class ReimburseResponse {
+    Long id;
     String hari;
     LocalDate tanggal;
     String flgKet;

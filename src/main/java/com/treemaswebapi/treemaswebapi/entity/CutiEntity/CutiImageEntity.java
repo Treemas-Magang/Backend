@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -25,7 +26,7 @@ public class CutiImageEntity {
     private String nik;
 
     @Column(name = "tgl_mulai")
-    private Date tglMulai;
+    private LocalDate tglMulai;
 
     @Column(name = "flg_ket")
     private String flgKet;

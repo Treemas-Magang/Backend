@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.entity.CutiEntity;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,13 +36,13 @@ public class CutiAppEntity {
     private String nama;
 
     @Column(name = "tgl_mulai")
-    private Date tglMulai;
+    private LocalDate tglMulai;
 
     @Column(name = "tgl_selesai")
-    private Date tglSelesai;
+    private LocalDate tglSelesai;
 
     @Column(name = "tgl_kembali_kerja")
-    private Date tglKembaliKerja;
+    private LocalDate tglKembaliKerja;
 
     @Column(name = "keperluan_cuti")
     private String keperluanCuti;

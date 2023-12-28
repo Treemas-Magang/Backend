@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -63,6 +64,7 @@ public class RekapService {
                 List<ReimburseResponse> reimburseResponses = new ArrayList<>();
                 for (ReimburseAppEntity dataReimbursenya : data2Reimbursenya) {
                     ReimburseResponse reimburseResponse = new ReimburseResponse();
+                    reimburseResponse.setId(dataReimbursenya.getId());
                     reimburseResponse.setFlgKet(dataReimbursenya.getKeterangan());
                     reimburseResponse.setHari(dataReimbursenya.getHari());
                     reimburseResponse.setJamMsk(dataReimbursenya.getJamMsk());
@@ -108,7 +110,7 @@ public class RekapService {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "No Data Reimburse found for nik: " + nik);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
             }
         } else {
             Map<String, Object> response = new HashMap<>();
@@ -142,7 +144,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Reimburse found for nik :" + nik + "and idReimburse " + id);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -178,7 +180,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Timesheet found for nik :" + nik);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -214,7 +216,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Timesheet found for nik :" + nik + "and idTimesheet " + id);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -231,6 +233,52 @@ public class RekapService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    public ResponseEntity<Map<String, Object>> rekapTimesheetUpdate (
+        @RequestHeader String tokenWithBearer, 
+        @RequestParam Long id,
+        @RequestBody String keteranganTimesheet
+    ){
+        try {
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                String token = tokenWithBearer.substring("Bearer ".length());
+                String nik = jwtService.extractUsername(token);
+    
+                Optional<TimesheetEntity> dataTimesheetnya = timesheetRepository.findById(id);
+    
+                if (!dataTimesheetnya.isEmpty()) {
+                    // ambil datanya, karena Optional
+                    TimesheetEntity datanya = dataTimesheetnya.get();
+                    // ubah data keterangannnya
+                    datanya.setNote(keteranganTimesheet);
+                    timesheetRepository.save(datanya);
+
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "Note Timesheet for nik: "+nik+" with idTimesheet "+id+" has been put successfully");
+                    response.put("data", datanya);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } else {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "No Data Timesheet found for nik :" + nik + "and idTimesheet " + id);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                }
+            } else {
+                // Handle the case where the token format is invalid
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to retrieve Data Timesheet");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     /* --------------------------------------------BAGIAN ABSEN------------------------------------------------ */
      public ResponseEntity<Map<String, Object>> rekapAbsen(@RequestHeader String tokenWithBearer) {
         try {
@@ -250,7 +298,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Absen found for nik :" + nik);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -286,7 +334,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Absen found for nik :" + nik + "and idAbsen " + id);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -309,28 +357,29 @@ public class RekapService {
         if (tokenWithBearer.startsWith("Bearer ")) {
             String token = tokenWithBearer.substring("Bearer ".length());
             String nik = jwtService.extractUsername(token);
-
+            System.out.println("ini masuk area rekap cuti");
             List<CutiAppEntity> data2Cutinya = cutiAppRepository.findAllByNik(nik);
-
+            System.out.println("ini data2cutinya:"+data2Cutinya);
+            
             if (!data2Cutinya.isEmpty()) {
+                List<CutiResponse> response2Cutinya = new ArrayList<>();
                 for (CutiAppEntity dataCutinya : data2Cutinya) {
                     CutiResponse cutiResponse = new CutiResponse();
                     cutiResponse = CutiResponse.builder()
-                    .alamatCuti(nik)
-                    .isApproved(nik)
-                    .jenisCuti(nik)
-                    .jmlCuti(null)                    
-                    .jenisCuti(nik)
-                    .jmlCuti(null)
-                    .jmlCutiBersama(null)
-                    .jmlCutiKhusus(null)
-                    .keperluanCuti(nik)
-                    .nama(nik)
-                    .nik(nik)
-                    .sisaCuti(null)
-                    .tglKembaliKerja(null)
-                    .tglMulai(null)
-                    .tglSelesai(null)
+                    .id(dataCutinya.getId())
+                    .alamatCuti(dataCutinya.getAlamatCuti())
+                    .isApproved(dataCutinya.getIsApproved())
+                    .jenisCuti(dataCutinya.getJenisCuti())
+                    .jmlCuti(dataCutinya.getJmlCuti())
+                    .jmlCutiBersama(dataCutinya.getJmlCutiBersama())
+                    .jmlCutiKhusus(dataCutinya.getJmlCutiKhusus())
+                    .keperluanCuti(dataCutinya.getKeperluanCuti())
+                    .nama(dataCutinya.getNama())
+                    .nik(dataCutinya.getNik())
+                    .sisaCuti(dataCutinya.getSisaCuti())
+                    .tglKembaliKerja(dataCutinya.getTglKembaliKerja())
+                    .tglMulai(dataCutinya.getTglMulai())
+                    .tglSelesai(dataCutinya.getTglSelesai())
                     .build();
                     
                     String status = "1".equals(dataCutinya.getIsApproved()) ? "Approved" :
@@ -338,7 +387,7 @@ public class RekapService {
                     cutiResponse.setStatus(status);
 
 
-                    data2Cutinya.add(dataCutinya);
+                    response2Cutinya.add(cutiResponse);
                 }
 
                 Map<String, Object> response = new HashMap<>();
@@ -351,7 +400,7 @@ public class RekapService {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "No Data Cuti found for nik: " + nik);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
             }
         } else {
             Map<String, Object> response = new HashMap<>();
@@ -364,6 +413,7 @@ public class RekapService {
         response.put("success", false);
         response.put("message", "Failed to retrieve Data Cuti");
         response.put("error", e.getMessage());
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
     }
@@ -379,19 +429,20 @@ public class RekapService {
                 if (!dataCutinya.isEmpty()) {
                     CutiResponse cutiResponse = new CutiResponse();
                     cutiResponse = CutiResponse.builder()
-                    .alamatCuti(nik)
-                    .isApproved(nik)
-                    .jenisCuti(nik)
-                    .jmlCuti(null)
-                    .jmlCutiBersama(null)
-                    .jmlCutiKhusus(null)
-                    .keperluanCuti(nik)
-                    .nama(nama)
-                    .nik(nik)
-                    .sisaCuti(null)
-                    .tglKembaliKerja(null)
-                    .tglMulai(null)
-                    .tglSelesai(null)
+                    .id(dataCutinya.get().getId())
+                    .alamatCuti(dataCutinya.get().getAlamatCuti())
+                    .isApproved(dataCutinya.get().getIsApproved())
+                    .jenisCuti(dataCutinya.get().getJenisCuti())
+                    .jmlCuti(dataCutinya.get().getJmlCuti())
+                    .jmlCutiBersama(dataCutinya.get().getJmlCutiBersama())
+                    .jmlCutiKhusus(dataCutinya.get().getJmlCutiKhusus())
+                    .keperluanCuti(dataCutinya.get().getKeperluanCuti())
+                    .nama(dataCutinya.get().getNama())
+                    .nik(dataCutinya.get().getNik())
+                    .sisaCuti(dataCutinya.get().getSisaCuti())
+                    .tglKembaliKerja(dataCutinya.get().getTglKembaliKerja())
+                    .tglMulai(dataCutinya.get().getTglMulai())
+                    .tglSelesai(dataCutinya.get().getTglSelesai())
                     .build();
 
                     String status = "1".equals(dataCutinya.get().getIsApproved()) ? "Approved" :

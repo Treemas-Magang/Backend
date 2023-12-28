@@ -2,6 +2,8 @@ package com.treemaswebapi.treemaswebapi.service.RekapService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.MasterCutiEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +28,6 @@ public class CutiResponse {
     private BigDecimal jmlCutiKhusus;
     private BigDecimal sisaCuti;
     private BigDecimal jmlCuti;
-    private String jenisCuti;
+    private MasterCutiEntity jenisCuti;
     private String status;
 }

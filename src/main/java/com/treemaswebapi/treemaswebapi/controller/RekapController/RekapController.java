@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.treemaswebapi.treemaswebapi.service.RekapService.RekapService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/rekap")
@@ -46,6 +50,15 @@ public class RekapController {
         @RequestParam Long id
     ){
         return rekapService.rekapTimesheetDetail(tokenWithBearer, id);
+    }
+
+    @PutMapping("/update-timesheet")
+    public ResponseEntity<Map<String, Object>> updateTimesheet(
+        @RequestHeader("Authorization") String tokenWithBearer, 
+        @RequestParam Long id,
+        @RequestBody String keteranganTimesheet
+    ){        
+        return rekapService.rekapTimesheetUpdate(tokenWithBearer, id, keteranganTimesheet);
     }
     /*---------------------------INI BAGIAN ABSEN---------------------------- */
     @GetMapping("/get-rekap-absen")

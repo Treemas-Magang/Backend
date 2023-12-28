@@ -2,6 +2,7 @@ package com.treemaswebapi.treemaswebapi.entity.CutiEntity;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +29,7 @@ public class CutiImageAppEntity {
     private String nik;
 
     @Column(name = "tgl_mulai")
-    private Date tglMulai;
+    private LocalDate tglMulai;
 
     @Column(name = "flg_ket")
     private String flgKet;

@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -29,13 +29,13 @@ public class CutiEntity {
     private String nama;
 
     @Column(name = "tgl_mulai")
-    private Date tglMulai;
+    private LocalDate tglMulai;
 
     @Column(name = "tgl_selesai")
-    private Date tglSelesai;
+    private LocalDate tglSelesai;
 
     @Column(name = "tgl_kembali_kerja")
-    private Date tglKembaliKerja;
+    private LocalDate tglKembaliKerja;
 
     @Column(name = "jml_cuti")
     private BigDecimal jmlCuti;

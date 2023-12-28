@@ -18,6 +18,7 @@ import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenResponse;
 import com.treemaswebapi.treemaswebapi.controller.MemberController.request.MemberRequest;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
+import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingData.AbsenTrackingData;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
@@ -271,11 +272,18 @@ public class MemberService {
                     List<AbsenTrackingEntity> dataAbsenTrackingDb = absenTrackingRepository.findByTglAbsenAndNik(currentDate, nik);
                     System.out.println("ini data absen Tracking-nya"+dataAbsenTrackingDb);
                     
-                    String dataAbsenImg = absenImgRepository.findById(idAbsenLong).get().getImage64();
+                    String dataAbsenImg = null;
+                    Optional<AbsenImgEntity> optionalImage = absenImgRepository.findById(idAbsenLong);
+                    if (optionalImage.isPresent()) {
+                        dataAbsenImg = optionalImage.get().getImage64();
+                    }
                     System.out.println("ini data gambarnya"+absenImgRepository.findAll().get(0).getId());
 
                     AbsenTrackingData absenTrackingData = new AbsenTrackingData();
-                    if (!dataAbsenTrackingDb.isEmpty()){
+                    if (dataAbsenTrackingDb.isEmpty()){
+                        absenTrackingData.setNik(dataAbsenDb.get(0).getNik());
+                        absenTrackingData.setNama(dataAbsenDb.get(0).getNama());
+                        }else{
                         AbsenTrackingEntity firstAbsenTrackingEntity = dataAbsenTrackingDb.get(0);
                         AbsenTrackingEntity secondAbsenTrackingEntity = dataAbsenTrackingDb.size() > 1 ? dataAbsenTrackingDb.get(1) : null;
                         AbsenTrackingEntity thirdAbsenTrackingEntity = dataAbsenTrackingDb.size() > 2 ? dataAbsenTrackingDb.get(2) : null;
@@ -296,26 +304,19 @@ public class MemberService {
                         gpsLongitudeMskList.add(thirdAbsenTrackingEntity.getGpsLongitudeMsk());    
                         }
                         
-                    absenTrackingData.setGpsLatitudeMsk(gpsLatitudeMskList);
-                    absenTrackingData.setGpsLongitudeMsk(gpsLongitudeMskList);
-                    }else{
-                        System.out.println("data longlat gaada");
-                        Map<String, Object> response = new HashMap<>();
-                        response.put("success", false);
-                        response.put("message", "data long lat tidak ada");
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-                    }
-                    absenTrackingData.setGpsLatitudePlg(dataAbsenDb.get(0).getGpsLatitudePlg());
-                    absenTrackingData.setGpsLongitudePlg(dataAbsenDb.get(0).getGpsLongitudePlg());
-                    absenTrackingData.setJamMsk(dataAbsenDb.get(0).getJamMsk());
-                    absenTrackingData.setCatatanPlgCpt(dataAbsenDb.get(0).getNotePlgCepat());
-                    absenTrackingData.setJamPlg(dataAbsenDb.get(0).getJamPlg());
-                    absenTrackingData.setNama(dataAbsenDb.get(0).getNama());
-                    absenTrackingData.setNamaProject(dataAbsenDb.get(0).getProjectId().getNamaProject());
-                    absenTrackingData.setNik(dataAbsenDb.get(0).getNik());
-                    absenTrackingData.setNotePekerjaan(dataAbsenDb.get(0).getNotePekerjaan());
-                    absenTrackingData.setCatatanTelat(dataAbsenDb.get(0).getNoteTelatMsk());
-
+                        absenTrackingData.setGpsLatitudeMsk(gpsLatitudeMskList);
+                        absenTrackingData.setGpsLongitudeMsk(gpsLongitudeMskList);
+                        absenTrackingData.setGpsLatitudePlg(dataAbsenDb.get(0).getGpsLatitudePlg());
+                        absenTrackingData.setGpsLongitudePlg(dataAbsenDb.get(0).getGpsLongitudePlg());
+                        absenTrackingData.setJamMsk(dataAbsenDb.get(0).getJamMsk());
+                        absenTrackingData.setCatatanPlgCpt(dataAbsenDb.get(0).getNotePlgCepat());
+                        absenTrackingData.setJamPlg(dataAbsenDb.get(0).getJamPlg());
+                        absenTrackingData.setNama(dataAbsenDb.get(0).getNama());
+                        absenTrackingData.setNamaProject(dataAbsenDb.get(0).getProjectId().getNamaProject());
+                        absenTrackingData.setNik(dataAbsenDb.get(0).getNik());
+                        absenTrackingData.setNotePekerjaan(dataAbsenDb.get(0).getNotePekerjaan());
+                        absenTrackingData.setCatatanTelat(dataAbsenDb.get(0).getNoteTelatMsk());
+                        }
                     AbsenResponse absenResponse = new AbsenResponse();
                     absenResponse.setAbsenTrackingData(absenTrackingData);
                     absenResponse.setAbsenImg(dataAbsenImg != null ? dataAbsenImg : null);

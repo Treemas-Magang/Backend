@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 
 // project_id FK dari tbl_project
 
@@ -53,7 +54,7 @@ public class CancelCutiEntity {
     private String jarakMsk;
 
     @Column(name = "jam_msk")
-    private Time jamMsk;
+    private LocalTime jamMsk;
 
     @Column(name = "gps_latitude_plg")
     private Double gpsLatitudePlg;
@@ -68,7 +69,7 @@ public class CancelCutiEntity {
     private String jarakPlg;
 
     @Column(name = "jam_plg")
-    private Time jamPlg;
+    private LocalTime jamPlg;
 
     @Column(name = "note_pekerjaan")
     private String notePekerjaan;

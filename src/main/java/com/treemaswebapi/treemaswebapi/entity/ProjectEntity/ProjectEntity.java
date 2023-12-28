@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 
 @Data
 @Builder
@@ -32,10 +33,10 @@ public class ProjectEntity {
     private BigDecimal jamKerja;
 
     @Column(name = "jam_masuk")
-    private Time jamMasuk;
+    private LocalTime jamMasuk;
 
     @Column(name = "jam_keluar")
-    private Time jamKeluar;
+    private LocalTime jamKeluar;
 
     @Column(name = "no_tlpn")
     private String noTlpn;

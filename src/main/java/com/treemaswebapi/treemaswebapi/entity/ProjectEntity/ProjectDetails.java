@@ -1,6 +1,7 @@
 package com.treemaswebapi.treemaswebapi.entity.ProjectEntity;
 
 import java.sql.Time;
+import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +20,8 @@ import lombok.NoArgsConstructor;
         private String jrkMax;
         private Double gpsLongitude;
         private Double gpsLatitude;
-        private Time jamMasuk;
-        private Time jamKeluar;
+        private LocalTime jamMasuk;
+        private LocalTime jamKeluar;
 
         // Getters and setters
     }

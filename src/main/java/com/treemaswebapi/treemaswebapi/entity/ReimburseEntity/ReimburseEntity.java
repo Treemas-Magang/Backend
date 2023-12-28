@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 
 // project_id FK dari tbl_project
 
@@ -41,10 +42,10 @@ public class ReimburseEntity {
     private String projectId;
 
     @Column(name = "jam_masuk")
-    private Time jamMasuk;
+    private LocalTime jamMasuk;
 
     @Column(name = "jam_keluar")
-    private Time jamKeluar;
+    private LocalTime jamKeluar;
 
     @Column(name = "total_jam_kerja")
     private BigDecimal totalJamKerja;

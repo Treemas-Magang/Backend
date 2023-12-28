@@ -28,12 +28,12 @@ public class AbsenRequest {
     private Double gpsLongitudeMsk;
     private String lokasiMsk;
     private String jarakMsk;
-    private Time jamMsk;
+    private LocalTime jamMsk;
     private Double gpsLatitudePlg;
     private Double gpsLongitudePlg;
     private String lokasiPlg;
     private String jarakPlg;
-    private Time jamPlg;
+    private LocalTime jamPlg;
     private String notePekerjaan;
     private String noteTelatMsk;
     private String notePlgCepat;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
@@ -22,8 +23,8 @@ public class TimesheetResponse {
     String hari;
     LocalDate tglAbsen;
     ProjectEntity projectId;
-    Time jamMsk;
-    Time jamPlg;
+    LocalTime jamMsk;
+    LocalTime jamPlg;
     BigDecimal totalJamKerja;
     int overtime;
     String notePekerjaan;

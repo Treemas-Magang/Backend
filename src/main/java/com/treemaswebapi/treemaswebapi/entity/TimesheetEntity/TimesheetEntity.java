@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
@@ -41,10 +42,10 @@ public class TimesheetEntity {
     private LocalDate tglMsk;
 
     @Column(name = "jam_masuk")
-    private Time jamMasuk;
+    private LocalTime jamMasuk;
 
     @Column(name = "jam_keluar")
-    private Time jamKeluar;
+    private LocalTime jamKeluar;
 
     @Column(name = "overtime")
     private BigDecimal overtime;

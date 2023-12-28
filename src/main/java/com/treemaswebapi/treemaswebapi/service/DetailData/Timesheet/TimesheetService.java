@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -46,8 +47,8 @@ public class TimesheetService {
             String hari = timesheet.get().getHari();
             LocalDate tglAbsen = timesheet.get().getTglMsk();
             ProjectEntity projectId = timesheet.get().getProjectId();
-            Time jamMsk = timesheet.get().getJamMasuk();
-            Time jamPlg = timesheet.get().getJamKeluar();
+            LocalTime jamMsk = timesheet.get().getJamMasuk();
+            LocalTime jamPlg = timesheet.get().getJamKeluar();
             BigDecimal totalJamKerja = timesheet.get().getTotalJamKerja();
             // Menentukan jam kerja normal
             BigDecimal jamKerjaNormal = BigDecimal.valueOf(9);

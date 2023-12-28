@@ -411,25 +411,23 @@ public class AbsenService {
                     timesheetEntity.setTglMsk(existingAbsenEntity.getTglAbsen());
                     timesheetEntity.setUsrCrt(nama);
 
-                    LocalTime jamMashook = request.getJamMsk().toLocalTime();
-                    LocalTime jamPoelang = request.getJamPlg().toLocalTime();
+                    LocalTime jamMashook = request.getJamMsk();
+                    LocalTime jamPoelang = request.getJamPlg();
+                    
+                    BigDecimal totalHours = BigDecimal.ZERO;
+                    BigDecimal jamLembur = BigDecimal.ZERO;
 
+                    if (jamMashook != null && jamPoelang != null){
                     Duration duration = Duration.between(jamMashook, jamPoelang);
-
                     long totalHoursLong = duration.toHours();
-
-                    BigDecimal totalHours = BigDecimal.valueOf(totalHoursLong);
-
-                    BigDecimal jamLembur = BigDecimal.valueOf(totalHoursLong-9);
-
-                    timesheetEntity.setTotalJamKerja(totalHours);
-
-                    if (totalHoursLong > 9) {
-                        timesheetEntity.setOvertime(jamLembur);
-                    }else{
-                        timesheetEntity.setOvertime(BigDecimal.valueOf(0));
+                    totalHours = BigDecimal.valueOf(totalHoursLong);
+                        if (totalHoursLong > 9){
+                            jamLembur = BigDecimal.valueOf(totalHoursLong-9);
+                        }
                     }
 
+                    timesheetEntity.setOvertime(jamLembur);
+                    timesheetEntity.setTotalJamKerja(totalHours);
                     timesheetEntity.setProjectId(existingAbsenEntity.getProjectId());
                     timesheetEntity.setDtmCrt(jamIni);
                     timesheetRepository.save(timesheetEntity);
@@ -673,13 +671,16 @@ public class AbsenService {
 
                 // Search for idAbsen that has no Plg data`
                 List<AbsenEntity> unprocessedAbsenList = absenRepository.findIdAbsenByNikAndIsAbsenIsNull(nik);
-
+                System.out.println("ini data belom absennya: "+unprocessedAbsenList);
                 List<AbsenBelumPulangResponse> listAbsenResponse = new ArrayList<>();
                 for(AbsenEntity absenEntity : unprocessedAbsenList){
                     ProjectEntity projectId = absenEntity.getProjectId();
-                    Double longitudeProject = projectId.getGpsLongitude();
-                    Double latitudeProject = projectId.getGpsLatitude();
-
+                    Double longitudeProject = null;
+                    Double latitudeProject = null;
+                    if (projectId != null){
+                        longitudeProject = projectId.getGpsLongitude();
+                        latitudeProject = projectId.getGpsLatitude();
+                    }
                 // Check if projectId is null
                 String projectName = (projectId != null) ? projectId.getNamaProject() : "Unknown Project";
 

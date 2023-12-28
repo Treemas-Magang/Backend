@@ -79,7 +79,7 @@ public class AbsenPulangAppEntity {
     private String jarakPlg;
 
     @Column(name = "jam_plg")
-    private Time jamPlg;
+    private LocalTime jamPlg;
 
     @Column(name = "note_pekerjaan")
     private String notePekerjaan;

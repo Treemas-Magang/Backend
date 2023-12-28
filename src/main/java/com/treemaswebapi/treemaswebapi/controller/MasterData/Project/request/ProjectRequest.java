@@ -2,6 +2,7 @@ package com.treemaswebapi.treemaswebapi.controller.MasterData.Project.request;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ public class ProjectRequest {
     private BigDecimal biayaReimburse;
     private String jrkMax;
     private BigDecimal jamKerja;
-    private Time jamMasuk;
-    private Time jamKeluar;
+    private LocalTime jamMasuk;
+    private LocalTime jamKeluar;
 
 }

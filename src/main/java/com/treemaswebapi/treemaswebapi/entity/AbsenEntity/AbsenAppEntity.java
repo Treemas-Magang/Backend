@@ -3,6 +3,7 @@ package com.treemaswebapi.treemaswebapi.entity.AbsenEntity;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 
@@ -64,7 +65,7 @@ public class AbsenAppEntity {
     private String jarakMsk;
 
     @Column(name = "jam_msk")
-    private Time jamMsk;
+    private LocalTime jamMsk;
 
     @Column(name = "gps_latitude_plg")
     private Double gpsLatitudePlg;
@@ -79,7 +80,7 @@ public class AbsenAppEntity {
     private String jarakPlg;
 
     @Column(name = "jam_plg")
-    private Time jamPlg;
+    private LocalTime jamPlg;
 
     @Column(name = "note_pekerjaan")
     private String notePekerjaan;

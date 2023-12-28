@@ -35,4 +35,6 @@ public interface PenempatanRepository extends JpaRepository<PenempatanEntity, Lo
 
     List<PenempatanEntity> findByProjectId(ProjectEntity projectId);
 
+    List<PenempatanEntity> findByProjectIdAndIsActive(ProjectEntity projectId, String string);
+
 }

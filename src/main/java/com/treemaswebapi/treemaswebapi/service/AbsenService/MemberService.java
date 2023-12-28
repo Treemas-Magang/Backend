@@ -213,7 +213,7 @@ public class MemberService {
                     System.out.println(nik);
                     LocalDate date = LocalDate.now();
                     //mau narik data yang ada di penempatanEntity, cari by projectId
-                    List<PenempatanEntity> listMember = penempatanRepository.findByProjectId(projectId);
+                    List<PenempatanEntity> listMember = penempatanRepository.findByProjectIdAndIsActive(projectId, "1");
                     List<AbsenEntity> listAbsen = absenRepository.findByTglAbsen(date);
                     List<Object> responseList = new ArrayList<>();
                     System.out.println(listMember);

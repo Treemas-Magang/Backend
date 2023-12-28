@@ -589,61 +589,61 @@ public class NotifService {
         try {
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
-                    String nik = jwtService.extractUsername(token);
-                    Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
-                    String nama = karyawan.get().getNama();
-                    System.out.println(nik + "ini udah masuk postLiburApproval");
+                    String nikUser = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
+                    String namaUser = dataUser.get().getNama();
+                    System.out.println(nikUser + "ini udah masuk postLiburApproval");
 
                     Optional<AbsenAppEntity> datanya = absenAppRepository.findById(idApproval);
                     AbsenEntity dataAbsen = new AbsenEntity();
                     if (request.getIsApprove() == "1") {
                         datanya.get().setIsApprove("1");
                         datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
-                        datanya.get().setUsrApp(nama);
+                        datanya.get().setUsrApp(namaUser);
                         datanya.get().setNoteApp(request.getNoteApp());
                         absenAppRepository.save(datanya.get());
 
                         dataAbsen = AbsenEntity.builder()
-                        .dtmApp(null)
-                        .dtmCrt(null)
-                        .gpsLatitudeMsk(null)
-                        .gpsLatitudePlg(null)
-                        .gpsLongitudeMsk(null)
-                        .gpsLongitudePlg(null)
-                        .hari(nama)
-                        .isAbsen(nama)
-                        .isCuti(nama)
-                        .isLembur(nama)
-                        .isLibur(nama)
-                        .isOther(nama)
-                        .isSakit(nama)
-                        .isWfh(nama)
-                        .jamMsk(null)
-                        .jamPlg(null)
-                        .jarakMsk(nama)
-                        .jarakPlg(nama)
-                        .lokasiMsk(nama)
-                        .lokasiPlg(nama)
-                        .nama(nama)
-                        .nik(nik)
-                        .projectId(null)
-                        .tglAbsen(null)
-                        .totalJamKerja(null)
-                        .usrApp(nama)
-                        .usrCrt(nama)
+                        .dtmApp(Timestamp.valueOf(LocalDateTime.now()))
+                        .dtmCrt(datanya.get().getDtmCrt())
+                        .gpsLatitudeMsk(datanya.get().getGpsLatitudeMsk())
+                        .gpsLatitudePlg(datanya.get().getGpsLatitudePlg())
+                        .gpsLongitudeMsk(datanya.get().getGpsLongitudeMsk())
+                        .gpsLongitudePlg(datanya.get().getGpsLongitudePlg())
+                        .hari(datanya.get().getHari())
+                        .isAbsen("1")
+                        .isCuti("0")
+                        .isLembur(datanya.get().getIsLembur())
+                        .isLibur(datanya.get().getIsLibur())
+                        .isOther(datanya.get().getIsOther())
+                        .isSakit(datanya.get().getIsSakit())
+                        .isWfh(datanya.get().getIsWfh())
+                        .jamMsk(datanya.get().getJamMsk())
+                        .jamPlg(datanya.get().getJamPlg())
+                        .jarakMsk(datanya.get().getJarakMsk())
+                        .jarakPlg(datanya.get().getJarakPlg())
+                        .lokasiMsk(datanya.get().getLokasiMsk())
+                        .lokasiPlg(datanya.get().getLokasiPlg())
+                        .nama(datanya.get().getNama())
+                        .nik(datanya.get().getNik())
+                        .projectId(datanya.get().getProjectId())
+                        .tglAbsen(datanya.get().getTglAbsen())
+                        .totalJamKerja(datanya.get().getTotalJamKerja())
+                        .usrApp(namaUser)
+                        .usrCrt(datanya.get().getUsrCrt())
                         .build();
                         absenRepository.save(dataAbsen);
                     }else if (request.getIsApprove() == "0") {
                         datanya.get().setIsApprove("0");
                         datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
-                        datanya.get().setUsrApp(nama);
+                        datanya.get().setUsrApp(namaUser);
                         datanya.get().setNoteApp(request.getNoteApp());
                         absenAppRepository.save(datanya.get());
                     }
                     Map<String, Object> response = new HashMap<>();
-                    response.put("success", false);
-                    response.put("berhasil post ke AbsenEntity dan SetValue di AbsenApp", false);
-                    response.put("dataCount", datanya);
+                    response.put("success", true);
+                    response.put("message", "berhasil post ke AbsenEntity dan SetValue di AbsenApp");
+                    response.put("data", datanya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -665,94 +665,61 @@ public class NotifService {
         try {
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
-                    String nik = jwtService.extractUsername(token);
-                    Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
-                    String nama = karyawan.get().getNama();
-                    System.out.println(nik + "ini udah masuk postLiburApproval");
+                    String nikUser = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
+                    String namaUser = dataUser.get().getNama();
+                    System.out.println(nikUser + "ini udah masuk postLemburApproval");
 
                     Optional<AbsenAppEntity> datanya = absenAppRepository.findById(idApproval);
                     AbsenEntity dataAbsen = new AbsenEntity();
                     if (request.getIsApprove() == "1") {
                         datanya.get().setIsApprove("1");
                         datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
-                        datanya.get().setUsrApp(nama);
+                        datanya.get().setUsrApp(namaUser);
                         datanya.get().setNoteApp(request.getNoteApp());
                         absenAppRepository.save(datanya.get());
 
                         dataAbsen = AbsenEntity.builder()
-                        .dtmApp(null)
-                        .dtmCrt(null)
-                        .gpsLatitudeMsk(null)
-                        .gpsLatitudePlg(null)
-                        .gpsLongitudeMsk(null)
-                        .gpsLongitudePlg(null)
-                        .hari(nama)
-                        .isAbsen(nama)
-                        .isCuti(nama)
-                        .isLembur(nama)
-                        .isLibur(nama)
-                        .isOther(nama)
-                        .isSakit(nama)
-                        .isWfh(nama)
-                        .jamMsk(null)
-                        .jamPlg(null)
-                        .jarakMsk(nama)
-                        .jarakPlg(nama)
-                        .lokasiMsk(nama)
-                        .lokasiPlg(nama)
-                        .nama(nama)
-                        .nik(nik)
-                        .projectId(null)
-                        .tglAbsen(null)
-                        .totalJamKerja(null)
-                        .usrApp(nama)
-                        .usrCrt(nama)
+                        .dtmApp(Timestamp.valueOf(LocalDateTime.now()))
+                        .dtmCrt(datanya.get().getDtmCrt())
+                        .gpsLatitudeMsk(datanya.get().getGpsLatitudeMsk())
+                        .gpsLatitudePlg(datanya.get().getGpsLatitudePlg())
+                        .gpsLongitudeMsk(datanya.get().getGpsLongitudeMsk())
+                        .gpsLongitudePlg(datanya.get().getGpsLongitudePlg())
+                        .hari(datanya.get().getHari())
+                        .isAbsen("1")
+                        .isCuti("0")
+                        .isLembur(datanya.get().getIsLembur())
+                        .isLibur(datanya.get().getIsLibur())
+                        .isOther(datanya.get().getIsOther())
+                        .isSakit(datanya.get().getIsSakit())
+                        .isWfh(datanya.get().getIsWfh())
+                        .jamMsk(datanya.get().getJamMsk())
+                        .jamPlg(datanya.get().getJamPlg())
+                        .jarakMsk(datanya.get().getJarakMsk())
+                        .jarakPlg(datanya.get().getJarakPlg())
+                        .lokasiMsk(datanya.get().getLokasiMsk())
+                        .lokasiPlg(datanya.get().getLokasiPlg())
+                        .nama(datanya.get().getNama())
+                        .nik(datanya.get().getNik())
+                        .projectId(datanya.get().getProjectId())
+                        .tglAbsen(datanya.get().getTglAbsen())
+                        .totalJamKerja(datanya.get().getTotalJamKerja())
+                        .usrApp(namaUser)
+                        .usrCrt(datanya.get().getUsrCrt())
                         .build();
                         absenRepository.save(dataAbsen);
-
-                        dataAbsen = AbsenEntity.builder()
-                        .dtmApp(null)
-                        .dtmCrt(null)
-                        .gpsLatitudeMsk(null)
-                        .gpsLatitudePlg(null)
-                        .gpsLongitudeMsk(null)
-                        .gpsLongitudePlg(null)
-                        .hari(nama)
-                        .isAbsen(nama)
-                        .isCuti(nama)
-                        .isLembur(nama)
-                        .isLibur(nama)
-                        .isOther(nama)
-                        .isSakit(nama)
-                        .isWfh(nama)
-                        .jamMsk(null)
-                        .jamPlg(null)
-                        .jarakMsk(nama)
-                        .jarakPlg(nama)
-                        .lokasiMsk(nama)
-                        .lokasiPlg(nama)
-                        .nama(nama)
-                        .nik(nik)
-                        .projectId(null)
-                        .tglAbsen(null)
-                        .totalJamKerja(null)
-                        .usrApp(nama)
-                        .usrCrt(nama)
-                        .build();
-                        absenRepository.save(dataAbsen);
-
-
                     }else if (request.getIsApprove() == "0") {
                         datanya.get().setIsApprove("0");
                         datanya.get().setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
-                        datanya.get().setUsrApp(nama);
+                        datanya.get().setUsrApp(namaUser);
                         datanya.get().setNoteApp(request.getNoteApp());
                         absenAppRepository.save(datanya.get());
                     }
                     Map<String, Object> response = new HashMap<>();
-                    response.put("success", false);
-                    response.put("berhasil menghitung semua data approval", false);
-                    response.put("dataCount", nik);
+                    response.put("success", true);
+                    response.put("message", "berhasil post ke AbsenEntity dan SetValue di AbsenApp");
+                    response.put("data", datanya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid

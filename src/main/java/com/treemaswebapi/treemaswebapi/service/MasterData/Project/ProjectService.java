@@ -31,6 +31,31 @@ public class ProjectService {
         ProjectRequest request
     ) {
         try {
+
+            // Check if individual fields are null or empty
+            if (request.getProjectId() == null || request.getProjectId().isEmpty()) {
+                throw new RuntimeException("Project ID cannot be null or empty");
+            }
+
+            if (request.getNamaProject() == null || request.getNamaProject().isEmpty()) {
+                throw new RuntimeException("Nama Project cannot be null or empty");
+            }
+
+            if (request.getLokasi() == null || request.getLokasi().isEmpty()) {
+                throw new RuntimeException("Lokasi cannot be null or empty");
+            }
+
+            if (request.getGpsLatitude() == null) {
+                throw new RuntimeException("Latitude cannot be null");
+            }
+
+            if (request.getGpsLongitude() == null) {
+                throw new RuntimeException("Longitude cannot be null or empty");
+            }
+
+            if (request.getBiayaReimburse() == null) {
+                throw new RuntimeException("Biaya Reimburse cannot be null or empty");
+            }
             // Check if project with the given projectId already exists
         if (projectRepository.existsById(request.getProjectId())) {
             Map<String, Object> response = new HashMap<>();

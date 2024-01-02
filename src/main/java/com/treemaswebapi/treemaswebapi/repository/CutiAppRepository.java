@@ -15,4 +15,6 @@ public interface CutiAppRepository extends JpaRepository<CutiAppEntity, Long> {
 
     List<CutiAppEntity> findAllByNik(String nik);
 
+    List<CutiAppEntity> findByIsApprovedIsNull();
+
 }

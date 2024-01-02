@@ -23,6 +23,7 @@ import com.treemaswebapi.treemaswebapi.repository.AbsenPulangAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppUploadRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.GeneralParamApprovalRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
@@ -33,6 +34,7 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppUploadEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,7 @@ public class NotifService {
     private final AbsenAppRepository absenAppRepository;
     private final AbsenRepository absenRepository;
     private final CutiAppRepository cutiAppRepository;
+    private final CutiRepository cutiRepository;
     private final CutiAppUploadRepository cutiAppUploadRepository;
     private final AbsenAppUploadRepository absenAppUploadRepository;
     private final AbsenPulangAppRepository absenPulangAppRepository;
@@ -250,7 +253,7 @@ public class NotifService {
                     .lemburApprovals(null)
                     .absenPulangApprovals(null)
                     .absenWebApprovals(null)
-                    .cutiApprovals(cutiAppRepository.findAll())
+                    .cutiApprovals(cutiAppRepository.findByIsApprovedIsNull())
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
@@ -761,55 +764,44 @@ public class NotifService {
                     String namaUser = dataUser.get().getNama();
                     System.out.println(nikUser + "ini udah masuk postLemburApproval");
 
-                    AbsenAppEntity datanya = absenAppRepository.findById(idApproval).get();
-                    AbsenEntity dataAbsen = new AbsenEntity();
+                    CutiAppEntity datanya = cutiAppRepository.findById(idApproval).get();
+                    CutiEntity dataCuti = new CutiEntity();
                     if ("1".equals(request.getIsApprove())) {
-                        datanya.setIsApprove("1");
+                        datanya.setIsApproved("1");
                         datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
                         datanya.setUsrApp(namaUser);
                         datanya.setNoteApp(request.getNoteApp());
-                        absenAppRepository.save(datanya);
+                        cutiAppRepository.save(datanya);
 
-                        dataAbsen = AbsenEntity.builder()
-                        .dtmApp(Timestamp.valueOf(LocalDateTime.now()))
-                        .dtmCrt(datanya.getDtmCrt())
-                        .gpsLatitudeMsk(datanya.getGpsLatitudeMsk())
-                        .gpsLatitudePlg(datanya.getGpsLatitudePlg())
-                        .gpsLongitudeMsk(datanya.getGpsLongitudeMsk())
-                        .gpsLongitudePlg(datanya.getGpsLongitudePlg())
-                        .hari(datanya.getHari())
-                        .isAbsen("1")
-                        .isCuti("0")
-                        .isLembur(datanya.getIsLembur())
-                        .isLibur(datanya.getIsLibur())
-                        .isOther(datanya.getIsOther())
-                        .isSakit(datanya.getIsSakit())
-                        .isWfh(datanya.getIsWfh())
-                        .jamMsk(datanya.getJamMsk())
-                        .jamPlg(datanya.getJamPlg())
-                        .jarakMsk(datanya.getJarakMsk())
-                        .jarakPlg(datanya.getJarakPlg())
-                        .lokasiMsk(datanya.getLokasiMsk())
-                        .lokasiPlg(datanya.getLokasiPlg())
-                        .nama(datanya.getNama())
-                        .nik(datanya.getNik())
-                        .projectId(datanya.getProjectId())
-                        .tglAbsen(datanya.getTglAbsen())
-                        .totalJamKerja(datanya.getTotalJamKerja())
-                        .usrApp(namaUser)
-                        .usrCrt(datanya.getUsrCrt())
+                        dataCuti = CutiEntity.builder()
+                        .alamatCuti(tokenWithBearer)
+                        .dtmApp(null)
+                        .dtmCrt(null)
+                        .flagApp(namaUser)
+                        .flgKet(namaUser)
+                        .isApproved(namaUser)
+                        .jmlCuti(null)
+                        .jmlCutiBersama(null)
+                        .jmlCutiKhusus(null)
+                        .keperluanCuti(namaUser)
+                        .nama(namaUser)
+                        .nik(nikUser)
+                        .sisaCuti(null)
+                        .tglKembaliKerja(null)
+                        .tglMulai(null)
+                        .tglSelesai(null)
                         .build();
-                        absenRepository.save(dataAbsen);
+                        cutiRepository.save(dataCuti);
                     }else if ("0".equals(request.getIsApprove())) {
-                        datanya.setIsApprove("0");
+                        datanya.setIsApproved("0");
                         datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
                         datanya.setUsrApp(namaUser);
                         datanya.setNoteApp(request.getNoteApp());
-                        absenAppRepository.save(datanya);
+                        cutiAppRepository.save(datanya);
                     }
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
-                    response.put("message", "berhasil post ke AbsenEntity dan SetValue di AbsenApp");
+                    response.put("message", "berhasil post ke CutiEntity dan SetValue di CutiApp");
                     response.put("data", datanya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {

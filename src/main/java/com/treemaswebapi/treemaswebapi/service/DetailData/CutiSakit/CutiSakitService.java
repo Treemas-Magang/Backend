@@ -233,8 +233,10 @@ public class CutiSakitService {
 
             // Cari hakcuti dari table karyawan dan tempatkan ke tbl cuti di sisa cuti
             BigDecimal hakCuti = karyawanRepository.findByNik(userToken)
-                .orElseThrow(() -> new RuntimeException("LEAVE not found"))
+                .orElseThrow(() -> new RuntimeException("hakCuti not found"))
                 .getHakCuti();
+
+            BigDecimal jmlCuti = request.getJmlCuti();
 
             // Ke tbl_cuti_app
             var cutiApp = CutiAppEntity.builder()
@@ -250,12 +252,18 @@ public class CutiSakitService {
                 .flgKet("cuti")
                 .dtmCrt(dtmCrt)
                 .usrCrt(nama)
-                .jmlCuti(request.getJmlCuti())//ambil dari table, bukan dari req
+                .jmlCuti(jmlCuti)//ambil dari table, bukan dari req
                 .jenisCuti(jenisCuti)
                 .sisaCuti(hakCuti)
                 .build();
 
             cutiAppRepository.save(cutiApp);
+
+            // kurangin angka di karyawanEntity
+            BigDecimal hasilCuti = hakCuti.subtract(jmlCuti);
+            KaryawanEntity dataKaryawan = karyawanRepository.findByNik(userToken).get();
+            dataKaryawan.setHakCuti(hasilCuti);
+            karyawanRepository.save(dataKaryawan);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");

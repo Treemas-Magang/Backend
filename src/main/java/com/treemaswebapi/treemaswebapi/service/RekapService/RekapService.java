@@ -23,12 +23,14 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
@@ -49,6 +51,7 @@ public class RekapService {
     private final CutiAppRepository cutiAppRepository;
     private final ClaimRepository claimRepository;
     private final KaryawanRepository karyawanRepository;
+    private final CutiImageRepository cutiImageRepository;
     
 
     /* --------------------------------------------BAGIAN REIMBURSE------------------------------------------------ */
@@ -476,6 +479,7 @@ public class RekapService {
         }
     }
     /* --------------------------------------------BAGIAN SAKIT------------------------------------------------ */
+    // bagian ini masih rusak, gabisa kepanggil datanya
     public ResponseEntity<Map<String, Object>> rekapSakit(@RequestHeader String tokenWithBearer) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
@@ -518,19 +522,19 @@ public class RekapService {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
     
-                Optional<CutiEntity> dataSakitnya = cutiRepository.findById(id);
+                Optional<CutiImageEntity> gambarSakitnya = cutiImageRepository.findById(id);
     
-                if (!dataSakitnya.isEmpty()) {
+                if (!gambarSakitnya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
-                    response.put("message", "Data Sakit for nik: "+nik+" with idSakit "+id+" retrieved successfully");
-                    response.put("data", dataSakitnya);
+                    response.put("message", "Data Gambar Sakit for nik: "+nik+" with idSakit "+id+" retrieved successfully");
+                    response.put("data", gambarSakitnya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Sakit found for nik :" + nik + "and idSakit " + id);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid

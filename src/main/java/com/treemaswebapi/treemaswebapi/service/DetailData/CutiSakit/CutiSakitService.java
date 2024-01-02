@@ -259,7 +259,7 @@ public class CutiSakitService {
 
             cutiAppRepository.save(cutiApp);
 
-            // kurangin angka di karyawanEntity
+            // kurangin angka di karyawanEntity, yang mana nantinya si SisaCuti tuh auto keganti
             BigDecimal hasilCuti = hakCuti.subtract(jmlCuti);
             KaryawanEntity dataKaryawan = karyawanRepository.findByNik(userToken).get();
             dataKaryawan.setHakCuti(hasilCuti);

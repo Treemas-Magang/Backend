@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.pbkdf2.RuntimeCryptoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.treemaswebapi.treemaswebapi.controller.NotifController.request.Approv
 import com.treemaswebapi.treemaswebapi.controller.NotifController.response.ApprovalResponse;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenAppUploadRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenPulangAppRepository;
@@ -28,6 +30,7 @@ import com.treemaswebapi.treemaswebapi.repository.GeneralParamApprovalRepository
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenAppUploadEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
@@ -35,6 +38,7 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppUploadEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -55,7 +59,7 @@ public class NotifService {
     private final ReimburseAppRepository reimburseAppRepository;
     private final ProjectRepository projectRepository;
     private final KaryawanRepository karyawanRepository;
-
+    private final SysUserRepository sysUserRepository;
 
     // INI BAGIAN GET LIST
       public ResponseEntity<Map<String, Object>> getAllApproval(@RequestHeader String tokenWithBearer) {
@@ -155,7 +159,7 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                    .liburApprovals(absenAppRepository.findAllByProjectIdAndIsLibur(projectId, "1"))
+                    .liburApprovals(absenAppRepository.findAllByProjectIdAndIsLiburAndIsApproveIsNull(projectId, "1"))
                     .lemburApprovals(null)
                     .absenPulangApprovals(null)
                     .absenWebApprovals(null)
@@ -211,7 +215,7 @@ public class NotifService {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenApproval");
-                    List<AbsenAppEntity> lemburApproval = absenAppRepository.findAllByProjectIdAndIsLembur(projectId, "1");
+                    List<AbsenAppEntity> lemburApproval = absenAppRepository.findAllByProjectIdAndIsLemburAndIsApproveIsNull(projectId, "1");
                     Long counter = absenAppRepository.countByProjectIdAndIsLembur(projectId, "1");
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
@@ -299,7 +303,7 @@ public class NotifService {
                     .absenPulangApprovals(null)
                     .absenWebApprovals(null)
                     .cutiApprovals(null)
-                    .cutiApprovalWebs(cutiAppUploadRepository.findAll())
+                    .cutiApprovalWebs(cutiAppUploadRepository.findByIsApprovedIsNull())
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
                     .dataCounter(cutiAppUploadRepository.count())
@@ -339,7 +343,7 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenPulangApproval");
                     ApprovalResponse approvalResponse = new ApprovalResponse();
-                    approvalResponse.setAbsenPulangApprovals(absenPulangAppRepository.findAllByProjectId(projectId));
+                    approvalResponse.setAbsenPulangApprovals(absenPulangAppRepository.findAllByProjectIdAndIsApproveIsNull(projectId));
                     approvalResponse.setAbsenWebApprovals(null);
                     approvalResponse.setCutiApprovals(null);
                     approvalResponse.setCutiApprovalWebs(null);
@@ -433,7 +437,7 @@ public class NotifService {
                     .cutiApprovals(null)
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
-                    .reimburseApprovals(reimburseAppRepository.findAllByProjectId(projectId))
+                    .reimburseApprovals(reimburseAppRepository.findAllByProjectIdAndIsApproveIsNull(projectId))
                     .dataCounter(reimburseAppRepository.count())
                     .build();
 
@@ -774,22 +778,22 @@ public class NotifService {
                         cutiAppRepository.save(datanya);
 
                         dataCuti = CutiEntity.builder()
-                        .alamatCuti(tokenWithBearer)
-                        .dtmApp(null)
-                        .dtmCrt(null)
-                        .flagApp(namaUser)
-                        .flgKet(namaUser)
-                        .isApproved(namaUser)
-                        .jmlCuti(null)
-                        .jmlCutiBersama(null)
-                        .jmlCutiKhusus(null)
-                        .keperluanCuti(namaUser)
-                        .nama(namaUser)
-                        .nik(nikUser)
-                        .sisaCuti(null)
-                        .tglKembaliKerja(null)
-                        .tglMulai(null)
-                        .tglSelesai(null)
+                        .alamatCuti(datanya.getAlamatCuti())
+                        .dtmApp(datanya.getDtmApp())
+                        .dtmCrt(datanya.getDtmCrt())
+                        .flagApp("-")
+                        .flgKet(datanya.getFlgKet())
+                        .isApproved("1")
+                        .jmlCuti(datanya.getJmlCuti())
+                        .jmlCutiBersama(datanya.getJmlCutiBersama())
+                        .jmlCutiKhusus(datanya.getJmlCutiKhusus())
+                        .keperluanCuti(datanya.getKeperluanCuti())
+                        .nama(datanya.getNama())
+                        .nik(datanya.getNik())
+                        .sisaCuti(datanya.getSisaCuti())
+                        .tglKembaliKerja(datanya.getTglKembaliKerja())
+                        .tglMulai(datanya.getTglMulai())
+                        .tglSelesai(datanya.getTglSelesai())
                         .build();
                         cutiRepository.save(dataCuti);
                     }else if ("0".equals(request.getIsApprove())) {
@@ -821,11 +825,251 @@ public class NotifService {
     }
 
     public ResponseEntity<Map<String, Object>> postCutiWebApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
-        return null;
+        try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nikUser = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
+                    String namaUser = dataUser.get().getNama();
+                    System.out.println(nikUser + "ini udah masuk postLemburApproval");
+
+                    CutiAppUploadEntity datanya = cutiAppUploadRepository.findById(idApproval).get();
+                    CutiEntity dataCuti = new CutiEntity();
+                    if ("1".equals(request.getIsApprove())) {
+                        datanya.setIsApproved("1");
+                        datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp(namaUser);
+                        datanya.setNoteApp(request.getNoteApp());
+                        cutiAppUploadRepository.save(datanya);
+
+                        dataCuti = CutiEntity.builder()
+                        .alamatCuti(datanya.getAlamatCuti())
+                        .dtmApp(datanya.getDtmApp())
+                        .dtmCrt(datanya.getDtmCrt())
+                        .flagApp("-")
+                        .flgKet(datanya.getFlgKet())
+                        .isApproved("1")
+                        .jmlCutiBersama(datanya.getJmlCutiBersama())
+                        .jmlCutiKhusus(datanya.getJmlCutiKhusus())
+                        .keperluanCuti(datanya.getKeperluanCuti())
+                        .nama(datanya.getNama())
+                        .nik(datanya.getNik())
+                        .tglKembaliKerja(datanya.getTglKembaliKerja())
+                        .tglMulai(datanya.getTglMulai())
+                        .tglSelesai(datanya.getTglSelesai())
+                        .build();
+                        cutiRepository.save(dataCuti);
+                    }else if ("0".equals(request.getIsApprove())) {
+                        datanya.setIsApproved("0");
+                        datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp(namaUser);
+                        datanya.setNoteApp(request.getNoteApp());
+                        cutiAppUploadRepository.save(datanya);
+                    }
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "berhasil post ke CutiEntity dan SetValue di CutiAppUpload");
+                    response.put("data", datanya);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
     }
 
-    public ResponseEntity<Map<String, Object>> postAbsenPulangApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
-        return null;
+    public ResponseEntity<Map<String, Object>> postAbsenPulangApproval1(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
+        try {
+            String jabatanWajib = "LEAD";
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nikUser = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
+                    String namaUser = dataUser.get().getNama();
+                    System.out.println(nikUser + "ini udah masuk postLemburApproval");
+                    if(!dataUser.isPresent()){
+                        throw new RuntimeException("User not found");
+                    }
+                    String jabatan = sysUserRepository.findByUserId(nikUser)
+                                    .map(SysUserEntity::getRole)
+                                    .map(JabatanEntity::getJabatanId)
+                                    .orElse(null);
+
+                    if (!jabatanWajib.equals(jabatan)) {
+                        throw new SecurityException("Unauthorized access - User does not have the required role");
+                    }
+
+                    AbsenPulangAppEntity datanya = absenPulangAppRepository.findById(idApproval).get();
+                    AbsenEntity dataAbsen = absenRepository.findByIdAbsen(idApproval);
+                    if ("1".equals(request.getIsApprove())) {
+                        datanya.setFlagApp("1");
+                        datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp1(namaUser);
+                        datanya.setNoteApp1(request.getNoteApp());
+                        absenPulangAppRepository.save(datanya);
+
+                        // dataAbsen.setDtmApp(null);
+                        // dataAbsen.setDtmCrt(null);
+                        // dataAbsen.setGpsLatitudeMsk(null);
+                        // dataAbsen.setGpsLatitudePlg(null);
+                        // dataAbsen.setGpsLongitudeMsk(null);
+                        // dataAbsen.setGpsLongitudePlg(null);
+                        // dataAbsen.setHari(namaUser);
+                        // dataAbsen.setIsAbsen("1");
+                        // dataAbsen.setIsCuti(namaUser);
+                        // dataAbsen.setIsLembur(namaUser);
+                        // dataAbsen.setIsLibur(namaUser);
+                        // dataAbsen.setIsOther(namaUser);
+                        // dataAbsen.setIsSakit(namaUser);
+                        // dataAbsen.setIsWfh(namaUser);
+                        // dataAbsen.setJamMsk(null);
+                        // dataAbsen.setJamPlg(null);
+                        // dataAbsen.setJarakMsk(namaUser);
+                        // dataAbsen.setJarakPlg(namaUser);
+                        // dataAbsen.setLokasiMsk(namaUser);
+                        // dataAbsen.setLokasiPlg(namaUser);
+                        // dataAbsen.setNama(namaUser);
+                        // dataAbsen.setNik(nikUser);
+                        // dataAbsen.setNoteApp(namaUser);
+                        // dataAbsen.setNoteOther(namaUser);
+                        // dataAbsen.setNotePekerjaan(namaUser);
+                        // dataAbsen.setNotePlgCepat(namaUser);
+                        // dataAbsen.setNoteTelatMsk(namaUser);
+                        // dataAbsen.setProjectId(null);
+                        // dataAbsen.setTglAbsen(null);
+                        // dataAbsen.setTotalJamKerja(null);
+                        // dataAbsen.setUsrApp(namaUser);
+                        // dataAbsen.setUsrCrt(namaUser);
+
+                        // absenRepository.save(dataAbsen);
+                    }else if ("0".equals(request.getIsApprove())) {
+                        datanya.setIsApprove("0");
+                        datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp1(namaUser);
+                        datanya.setNoteApp1(request.getNoteApp());
+                        absenPulangAppRepository.save(datanya);
+                    }
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "berhasil post ke CutiEntity dan SetValue di CutiAppUpload");
+                    response.put("data", datanya);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+    }
+
+    public ResponseEntity<Map<String, Object>> postAbsenPulangApproval2(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
+        try {
+            String jabatanWajib = "HEAD";
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nikUser = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
+                    String namaUser = dataUser.get().getNama();
+                    System.out.println(nikUser + "ini udah masuk postLemburApproval");
+                    if(!dataUser.isPresent()){
+                        throw new RuntimeException("User not found");
+                    }
+                    String jabatan = sysUserRepository.findByUserId(nikUser)
+                                    .map(SysUserEntity::getRole)
+                                    .map(JabatanEntity::getJabatanId)
+                                    .orElse(null);
+
+                    if (!jabatanWajib.equals(jabatan)) {
+                        throw new SecurityException("Unauthorized access - User does not have the required role");
+                    }
+
+                    AbsenPulangAppEntity datanya = absenPulangAppRepository.findById(idApproval).get();
+                    AbsenEntity dataAbsen = absenRepository.findByIdAbsen(idApproval);
+                    if ("1".equals(request.getIsApprove())) {
+                        datanya.setIsApprove("1");
+                        datanya.setDtmApp2(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp2(namaUser);
+                        datanya.setNoteApp2(request.getNoteApp());
+                        absenPulangAppRepository.save(datanya);
+
+                        //yang dikomen di bawah ini, ngga perlu diset dari sini karena data masuknya udah ada di dataAbsen
+                        dataAbsen.setDtmApp(datanya.getDtmApp2());
+                        dataAbsen.setDtmCrt(datanya.getDtmUpd());
+                        // dataAbsen.setGpsLatitudeMsk(datanya.get);
+                        dataAbsen.setGpsLatitudePlg(datanya.getGpsLatitudePlg());
+                        // dataAbsen.setGpsLongitudeMsk(null);
+                        dataAbsen.setGpsLongitudePlg(datanya.getGpsLongitudePlg());
+                        // dataAbsen.setHari(namaUser);
+                        // dataAbsen.setIsAbsen("1");
+                        // dataAbsen.setIsCuti(namaUser);
+                        // dataAbsen.setIsLembur(namaUser);
+                        // dataAbsen.setIsLibur(namaUser);
+                        // dataAbsen.setIsOther(namaUser);
+                        // dataAbsen.setIsSakit(namaUser);
+                        // dataAbsen.setIsWfh(namaUser);
+                        // dataAbsen.setJamMsk(null);
+                        dataAbsen.setJamPlg(datanya.getJamPlg());
+                        // dataAbsen.setJarakMsk(namaUser);
+                        dataAbsen.setJarakPlg(datanya.getJarakPlg());
+                        // dataAbsen.setLokasiMsk(namaUser);
+                        dataAbsen.setLokasiPlg(datanya.getLokasiPlg());
+                        // dataAbsen.setNama(namaUser);
+                        // dataAbsen.setNik(nikUser);
+                        dataAbsen.setNoteApp(datanya.getNoteApp2());
+                        // dataAbsen.setNoteOther(namaUser);
+                        dataAbsen.setNotePekerjaan(datanya.getNotePekerjaan());
+                        dataAbsen.setNotePlgCepat(datanya.getNotePlgCepat());
+                        // dataAbsen.setNoteTelatMsk(namaUser);
+                        // dataAbsen.setProjectId(null);
+                        // dataAbsen.setTglAbsen(null);
+                        dataAbsen.setTotalJamKerja(datanya.getTotalJamKerja());
+                        dataAbsen.setUsrApp(datanya.getUsrApp2());
+                        dataAbsen.setUsrCrt(datanya.getUsrUpd());
+
+                        absenRepository.save(dataAbsen);
+                    }else if ("0".equals(request.getIsApprove())) {
+                        datanya.setIsApprove("0");
+                        datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp1(namaUser);
+                        datanya.setNoteApp1(request.getNoteApp());
+                        absenPulangAppRepository.save(datanya);
+                    }
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "berhasil post ke CutiEntity dan SetValue di CutiAppUpload");
+                    response.put("data", datanya);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
     }
 
     public ResponseEntity<Map<String, Object>> postAbsenWebApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
@@ -841,7 +1085,68 @@ public class NotifService {
     }
 
     public ResponseEntity<Map<String, Object>> postSakitApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
-        return null;
+        try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nikUser = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
+                    String namaUser = dataUser.get().getNama();
+                    System.out.println(nikUser + "ini udah masuk postSakitApproval");
+
+                    CutiAppEntity datanya = cutiAppRepository.findById(idApproval).get();
+                    CutiEntity dataSakit = new CutiEntity();
+                    if ("1".equals(request.getIsApprove())) {
+                        datanya.setIsApproved("1");
+                        datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp(namaUser);
+                        datanya.setNoteApp(request.getNoteApp());
+                        cutiAppRepository.save(datanya);
+
+                        dataSakit = CutiEntity.builder()
+                        .alamatCuti(datanya.getAlamatCuti())
+                        .dtmApp(datanya.getDtmApp())
+                        .dtmCrt(datanya.getDtmCrt())
+                        .flagApp("-")
+                        .flgKet(datanya.getFlgKet())
+                        .isApproved("1")
+                        .jmlCuti(datanya.getJmlCuti())
+                        .jmlCutiBersama(datanya.getJmlCutiBersama())
+                        .jmlCutiKhusus(datanya.getJmlCutiKhusus())
+                        .keperluanCuti(datanya.getKeperluanCuti())
+                        .nama(datanya.getNama())
+                        .nik(datanya.getNik())
+                        .sisaCuti(datanya.getSisaCuti())
+                        .tglKembaliKerja(datanya.getTglKembaliKerja())
+                        .tglMulai(datanya.getTglMulai())
+                        .tglSelesai(datanya.getTglSelesai())
+                        .build();
+                        cutiRepository.save(dataSakit);
+                    }else if ("0".equals(request.getIsApprove())) {
+                        datanya.setIsApproved("0");
+                        datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrApp(namaUser);
+                        datanya.setNoteApp(request.getNoteApp());
+                        cutiAppRepository.save(datanya);
+                    }
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "berhasil post ke CutiEntity dan SetValue di CutiApp");
+                    response.put("data", datanya);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to retrieve project details");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
     }
 
 

@@ -110,8 +110,11 @@ public class NotifController {
             case "cuti-web":
                 return notifService.postCutiWebApproval(tokenWithBearer, idApproval, request);
 
-            case "absen-pulang":
-                return notifService.postAbsenPulangApproval(tokenWithBearer, idApproval, request);
+            case "absen-pulang1":
+                return notifService.postAbsenPulangApproval1(tokenWithBearer, idApproval, request);
+            
+            case "absen-pulang2":
+                return notifService.postAbsenPulangApproval2(tokenWithBearer, idApproval, request);
 
             case "absen-web":
                 return notifService.postAbsenWebApproval(tokenWithBearer, idApproval, request);

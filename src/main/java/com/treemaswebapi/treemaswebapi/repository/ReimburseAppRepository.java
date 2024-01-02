@@ -15,4 +15,6 @@ public interface ReimburseAppRepository extends JpaRepository<ReimburseAppEntity
     List<ReimburseAppEntity> findAllByProjectId(ProjectEntity projectId);
 
     List<ReimburseAppEntity> findAllByNik(String nik);
+
+    List<ReimburseAppEntity> findAllByProjectIdAndIsApproveIsNull(ProjectEntity projectId);
 }

@@ -57,12 +57,12 @@ public class ProjectService {
                 throw new RuntimeException("Biaya Reimburse cannot be null or empty");
             }
             // Check if project with the given projectId already exists
-        if (projectRepository.existsById(request.getProjectId())) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("status", "Failed");
-            response.put("message", "Project with the same ID already exists");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+            if (projectRepository.existsById(request.getProjectId())) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Project with the same ID already exists");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
 
             var projectEntity = ProjectEntity.builder()
                 .projectId(request.getProjectId())
@@ -80,13 +80,11 @@ public class ProjectService {
             .build();
 
             projectRepository.save(projectEntity);
-            Map<String, Object> data = new HashMap<>();
-            data.put("user", projectEntity);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Project Created");
-            response.put("data", data);
+            response.put("data", projectEntity);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
@@ -131,10 +129,43 @@ public class ProjectService {
             
             Optional<KaryawanEntity> user = karyawanRepository.findByNik(userToken);
             String nama = user.get().getNama();
+            
 
             Optional<ProjectEntity> projectOptional = projectRepository.findById(id);
             long currentTimeMillis = System.currentTimeMillis();
             Timestamp dtmUpd = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+            // Check if individual fields are null or empty
+            if (request.getProjectId() == null || request.getProjectId().isEmpty()) {
+                throw new RuntimeException("Project ID cannot be null or empty");
+            }
+
+            if (request.getNamaProject() == null || request.getNamaProject().isEmpty()) {
+                throw new RuntimeException("Nama Project cannot be null or empty");
+            }
+
+            if (request.getLokasi() == null || request.getLokasi().isEmpty()) {
+                throw new RuntimeException("Lokasi cannot be null or empty");
+            }
+
+            if (request.getGpsLatitude() == null) {
+                throw new RuntimeException("Latitude cannot be null");
+            }
+
+            if (request.getGpsLongitude() == null) {
+                throw new RuntimeException("Longitude cannot be null or empty");
+            }
+
+            if (request.getBiayaReimburse() == null) {
+                throw new RuntimeException("Biaya Reimburse cannot be null or empty");
+            }
+
+            // Check if project with the given projectId already exists
+            if (projectRepository.existsById(request.getProjectId())) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "Project with the same ID already exists");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
 
             if (projectOptional.isPresent()) {
                 ProjectEntity newProject = projectOptional.get();

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
+import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
@@ -28,6 +29,7 @@ import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
+import com.treemaswebapi.treemaswebapi.repository.ClaimImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiImageRepository;
@@ -52,6 +54,7 @@ public class RekapService {
     private final ClaimRepository claimRepository;
     private final KaryawanRepository karyawanRepository;
     private final CutiImageRepository cutiImageRepository;
+    private final ClaimImageRepository claimImageRepository;
     
 
     /* --------------------------------------------BAGIAN REIMBURSE------------------------------------------------ */
@@ -594,19 +597,19 @@ public class RekapService {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
     
-                Optional<ClaimEntity> dataClaimnya = claimRepository.findById(id);
+                Optional<ClaimImageEntity> gambarClaimnya = claimImageRepository.findById(id);
     
-                if (!dataClaimnya.isEmpty()) {
+                if (!gambarClaimnya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Data Claim for nik: "+nik+" with idClaim "+id+" retrieved successfully");
-                    response.put("data", dataClaimnya);
+                    response.put("data", gambarClaimnya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Claim found for nik :" + nik + "and idClaim " + id);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid

@@ -362,7 +362,8 @@ public class AbsenService {
                         existingAbsenEntity.setNoteOther(request.getNoteOther());
                         existingAbsenEntity.setIsOther("1");
                     }
-                    existingAbsenEntity = absenRepository.save(existingAbsenEntity);
+                    
+                    absenRepository.save(existingAbsenEntity);
                     // save ke absenTrackingEntity
                     AbsenTrackingEntity absenTrackingEntity = new AbsenTrackingEntity();
                     
@@ -387,7 +388,7 @@ public class AbsenService {
                         absenTrackingEntity.setIsOther("1");
                     }
 
-                    absenTrackingEntity = absenTrackingRepository.save(absenTrackingEntity);
+                    absenTrackingRepository.save(absenTrackingEntity);
 
                     TimesheetEntity timesheetEntity = new TimesheetEntity();
 
@@ -402,8 +403,8 @@ public class AbsenService {
 
                     timesheetEntity.setFlgKet(flgKetValue);
                     timesheetEntity.setHari(existingAbsenEntity.getHari());
-                    timesheetEntity.setJamKeluar(request.getJamPlg());
-                    timesheetEntity.setJamMasuk(request.getJamMsk());
+                    timesheetEntity.setJamKeluar(jamSekarang);
+                    timesheetEntity.setJamMasuk(jamMsk);
                     timesheetEntity.setNama(nama);
                     timesheetEntity.setNik(nik);
                     timesheetEntity.setNote(request.getNotePekerjaan());
@@ -461,6 +462,7 @@ public class AbsenService {
                     reimburseApp.setTotalJamKerja(totalHours);
                     reimburseApp.setUsrUpd(nama);
                     reimburseAppRepository.save(reimburseApp);
+
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Absen data inserted successfully + timesheet + reimburse");

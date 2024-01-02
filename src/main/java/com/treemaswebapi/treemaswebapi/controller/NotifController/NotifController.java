@@ -105,25 +105,25 @@ public class NotifController {
                 return notifService.postLemburApproval(tokenWithBearer, idApproval, request);
 
             case "cuti":
-                return notifService.postCutiApproval(tokenWithBearer, idApproval);
+                return notifService.postCutiApproval(tokenWithBearer, idApproval, request);
 
             case "cuti-web":
-                return notifService.postCutiWebApproval(tokenWithBearer, idApproval);
+                return notifService.postCutiWebApproval(tokenWithBearer, idApproval, request);
 
             case "absen-pulang":
-                return notifService.postAbsenPulangApproval(tokenWithBearer, idApproval);
+                return notifService.postAbsenPulangApproval(tokenWithBearer, idApproval, request);
 
             case "absen-web":
-                return notifService.postAbsenWebApproval(tokenWithBearer, idApproval);
+                return notifService.postAbsenWebApproval(tokenWithBearer, idApproval, request);
 
             case "general-param":
-                return notifService.postGeneralParamApproval(tokenWithBearer, idApproval);
+                return notifService.postGeneralParamApproval(tokenWithBearer, idApproval, request);
 
             case "reimburse":
-                return notifService.postReimburseApproval(tokenWithBearer, idApproval);
+                return notifService.postReimburseApproval(tokenWithBearer, idApproval, request);
             
             case "sakit":
-                return notifService.postSakitApproval(tokenWithBearer, idApproval);
+                return notifService.postSakitApproval(tokenWithBearer, idApproval, request);
             
             default:
                 // Handle the case where 'by' is not recognized

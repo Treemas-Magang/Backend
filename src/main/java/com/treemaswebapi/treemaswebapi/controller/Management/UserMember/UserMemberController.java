@@ -55,7 +55,7 @@ public class UserMemberController {
         return response;
     }
     
-    @DeleteMapping("user-member-view/delete")
+    @DeleteMapping("/user-member-view/delete")
     public ResponseEntity<Map<String, Object>> deleteMember(
         @RequestBody UserMemberRequest request
     ) {

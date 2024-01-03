@@ -11,4 +11,6 @@ import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserMemberEntity;
 public interface SysUserMemberRepository extends JpaRepository<SysUserMemberEntity, Long> {
     List<SysUserMemberEntity> findByNikLeader(String nikLeader);
     void deleteByNikUserAndNikLeader(String nikUser, String nikLeader);
+    // Tambahkan metode untuk memeriksa apakah data dengan nikUser dan nikLeader ada
+    boolean existsByNikUserAndNikLeader(String nikUser, String nikLeader);
 }

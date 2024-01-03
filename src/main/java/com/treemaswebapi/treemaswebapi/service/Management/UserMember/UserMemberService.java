@@ -22,6 +22,7 @@ import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserMemberRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -166,14 +167,27 @@ public class UserMemberService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Map<String, Object>> deleteMember(
         UserMemberRequest request
     ) {
         try {
             String nikLeader = request.getNikLeader();
             String nikUser = request.getNikUser();
-           // Menghapus data berdasarkan nikUser dan nikLeader
-           sysUserMemberRepository.deleteByNikUserAndNikLeader(nikUser, nikLeader);
+            // Periksa apakah data dengan nikUser dan nikLeader yang diberikan ada
+            if (!sysUserMemberRepository.existsByNikUserAndNikLeader(nikUser, nikLeader)) {
+                // Jika tidak ada data yang cocok, kembalikan respons user deleted already
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Success");
+                response.put("message", "User deleted already!");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            }
+
+
+            // Menghapus data berdasarkan nikUser dan nikLeader
+            sysUserMemberRepository.deleteByNikUserAndNikLeader(nikUser, nikLeader);
+           
+
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");

@@ -320,10 +320,11 @@ import lombok.RequiredArgsConstructor;
                 Optional<KaryawanEntity> optionalNikToken = karyawanRepository.findByNik(userToken);
                 // Cari data dari id
                 Optional<KaryawanEntity> optionalNik = karyawanRepository.findByNik(id);
+                Optional<SysUserEntity> getRoleInToken = sysUserRepository.findByUserId(userToken);
                 Optional<SysUserEntity> optionalSysUser = sysUserRepository.findByUserId(id);
                 Optional<KaryawanImageEntity> optionalKaryawanImage = karyawanImageRepository.findByNik(id);
 
-                if (optionalSysUser.get().getRole() != null && optionalSysUser.get().getRole().getJabatanId().equals("HEAD")) {
+                if (getRoleInToken.get().getRole() != null && getRoleInToken.get().getRole().getJabatanId().equals("HEAD")) {
                     if (optionalNik.isPresent()) {
                     String nama = optionalNikToken.get().getNama();
 
@@ -426,7 +427,6 @@ import lombok.RequiredArgsConstructor;
 
                     karyawanRepository.save(karyawan);
                 
-                String isLeader = request.getIsLeader();
                 // Mengirim ke table Sys_User
                     SysUserEntity sysUser = optionalSysUser.get();
                     sysUser.setUserId(request.getNik());
@@ -464,7 +464,7 @@ import lombok.RequiredArgsConstructor;
 
             Map<String, String> response = new HashMap<>();
             response.put("status", "Success");
-            response.put("message", "Registration Successful");
+            response.put("message", "Karyawan Edit Successful");
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
@@ -484,7 +484,7 @@ import lombok.RequiredArgsConstructor;
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("status", "Failed");
-            response.put("message", "Registration Failed");
+            response.put("message", "Karyawan Edit Failed");
             response.put("error", e.getMessage());
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

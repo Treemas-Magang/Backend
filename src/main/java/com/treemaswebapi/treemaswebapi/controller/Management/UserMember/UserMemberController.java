@@ -3,7 +3,9 @@ package com.treemaswebapi.treemaswebapi.controller.Management.UserMember;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -42,6 +44,22 @@ public class UserMemberController {
         @RequestBody UserMemberRequest request
     ) {
         ResponseEntity<Map<String, Object>> response = service.userMemberAdd(jwtToken, request);
+        return response;
+    }
+
+    @GetMapping("/user-member-view/dropdown-member/{nik}")
+    public ResponseEntity<Map<String, Object>> dropdownMember(
+        @PathVariable String nik
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.dropdownMember(nik);
+        return response;
+    }
+    
+    @DeleteMapping("user-member-view/delete")
+    public ResponseEntity<Map<String, Object>> deleteMember(
+        @RequestBody UserMemberRequest request
+    ) {
+        ResponseEntity<Map<String, Object>> response = service.deleteMember(request);
         return response;
     }
 

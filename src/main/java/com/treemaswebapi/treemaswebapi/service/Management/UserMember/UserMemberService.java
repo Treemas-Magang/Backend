@@ -89,6 +89,18 @@ public class UserMemberService {
             // Cari siapa yang akses api ini
             String token = jwtToken.substring(7);
             String nik = jwtService.extractUsername(token); 
+            // Cari nikLeader
+            String nikLeader = request.getNikLeader();
+            Optional<SysUserEntity> searchNikLeader = sysUserRepository.findByUserId(nikLeader);
+            
+            if (searchNikLeader.isEmpty()) {
+                // Handle jika nikLeader tidak ditemukan
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "Failed");
+                response.put("message", "HEAD or LEAD is not found!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
             // Harus Head
             Optional<SysUserEntity> optionalSysUser = sysUserRepository.findByUserId(nik);
             Optional<KaryawanEntity> karyawan = karyawanRepository.findByNik(nik);
@@ -126,6 +138,51 @@ public class UserMemberService {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Failed");
             response.put("message", "Failed to add User");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> dropdownMember(
+        String nik
+    ) {
+        try {
+            // Melakukan pencarian data berdasarkan nik
+            List<SysUserMemberEntity> users = sysUserMemberRepository.findByNikLeader(nik);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Retrieved");
+            response.put("data", users);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to retrieve User");
+            response.put("error", e.getMessage());
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> deleteMember(
+        UserMemberRequest request
+    ) {
+        try {
+            String nikLeader = request.getNikLeader();
+            String nikUser = request.getNikUser();
+           // Menghapus data berdasarkan nikUser dan nikLeader
+           sysUserMemberRepository.deleteByNikUserAndNikLeader(nikUser, nikLeader);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", "Deleted");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "Failed");
+            response.put("message", "Failed to delete User");
             response.put("error", e.getMessage());
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

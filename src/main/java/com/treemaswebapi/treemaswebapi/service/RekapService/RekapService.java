@@ -526,11 +526,11 @@ public class RekapService {
                 List<CutiEntity> data2Sakitnya = cutiRepository.findAllByNikAndFlgKet(nik, "sakit");
     
                 for (CutiEntity dataSakitnya : data2Sakitnya) {
-                    Long idClaim = dataSakitnya.getId();
-                    Optional<ClaimImageEntity> claimImage = claimImageRepository.findById(idClaim);
+                    Long idCuti = dataSakitnya.getId();
+                    Optional<CutiImageEntity> cutiImage = cutiImageRepository.findById(idCuti);
     
                     boolean gambarnya = false;
-                    if (claimImage.isPresent() && !claimImage.get().getImage64().isEmpty()) {
+                    if (cutiImage.isPresent() && !cutiImage.get().getImage().isEmpty()) {
                         gambarnya = true;
                     }
                     dataSakitnya.setGambarnya(gambarnya);
@@ -558,7 +558,7 @@ public class RekapService {
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Failed to retrieve Data Claim");
+            response.put("message", "Failed to retrieve Data Sakit");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

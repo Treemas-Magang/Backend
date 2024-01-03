@@ -559,14 +559,14 @@ public class NotifService {
     public ResponseEntity<Map<String, Object>> getFullCounter(String tokenWithBearer){
             try {
                 if (tokenWithBearer.startsWith("Bearer ")) {
-                    Long absenApprovalCount = absenAppRepository.count();
-                    Long absenPulangApprovalCount = absenPulangAppRepository.count();
-                    Long absenWebApprovalCount = absenAppUploadRepository.count();
-                    Long cutiApprovalCount = cutiAppRepository.countByFlgKet("cuti");
-                    Long cutiApprovalWebCount = cutiAppUploadRepository.countByFlgKet("cuti");
-                    Long sakitApprovalCount = cutiAppRepository.countByFlgKet("sakit");
-                    Long generalParamApprovalCount = generalParamAppRepository.count();
-                    Long reimburseApprovalCount = reimburseAppRepository.count();
+                    Long absenApprovalCount = absenAppRepository.countByIsApproveIsNull();
+                    Long absenPulangApprovalCount = absenPulangAppRepository.countByIsApproveIsNull();
+                    Long absenWebApprovalCount = absenAppUploadRepository.countByIsApproveIsNull();
+                    Long cutiApprovalCount = cutiAppRepository.countByFlgKetAndIsApprovedIsNull("cuti");
+                    Long cutiApprovalWebCount = cutiAppUploadRepository.countByFlgKetAndIsApprovedIsNull("cuti");
+                    Long sakitApprovalCount = cutiAppRepository.countByFlgKetAndIsApprovedIsNull("sakit");
+                    Long generalParamApprovalCount = generalParamAppRepository.countByIsApproveIsNull();
+                    Long reimburseApprovalCount = reimburseAppRepository.countByIsApproveIsNull();
                     Long fullCounter = absenApprovalCount + absenPulangApprovalCount + cutiApprovalCount + 
                     cutiApprovalWebCount + sakitApprovalCount + 
                     generalParamApprovalCount + reimburseApprovalCount + absenWebApprovalCount;

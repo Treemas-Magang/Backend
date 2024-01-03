@@ -14,6 +14,8 @@ public interface CutiAppUploadRepository extends JpaRepository<CutiAppUploadEnti
     Long countByFlgKet(String string);
 
     List<CutiAppUploadEntity> findByIsApprovedIsNull();
+
+    Long countByFlgKetAndIsApprovedIsNull(String string);
 }
 
 

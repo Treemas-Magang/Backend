@@ -14,5 +14,7 @@ import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 @Repository
 public interface GeneralParamApprovalRepository extends JpaRepository<GeneralParamApprovalEntity, String> {
 
+    Long countByIsApproveIsNull();
+
     
 }

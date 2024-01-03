@@ -575,7 +575,7 @@ public class RekapService {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
     
-                Optional<CutiImageEntity> gambarSakitnya = cutiImageRepository.findById(id);
+                Optional<CutiImageAppEntity> gambarSakitnya = cutiImageAppRepository.findById(id);
     
                 if (!gambarSakitnya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();

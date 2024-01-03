@@ -24,6 +24,7 @@ import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
@@ -32,6 +33,7 @@ import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiImageAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
@@ -55,7 +57,7 @@ public class RekapService {
     private final KaryawanRepository karyawanRepository;
     private final CutiImageRepository cutiImageRepository;
     private final ClaimImageRepository claimImageRepository;
-    
+    private final CutiImageAppRepository cutiImageAppRepository;
 
     /* --------------------------------------------BAGIAN REIMBURSE------------------------------------------------ */
     public ResponseEntity<Map<String, Object>> rekapReimburse(@RequestHeader String tokenWithBearer) {
@@ -522,12 +524,15 @@ public class RekapService {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
-    
-                List<CutiEntity> data2Sakitnya = cutiRepository.findAllByNikAndFlgKet(nik, "sakit");
-    
-                for (CutiEntity dataSakitnya : data2Sakitnya) {
+                Boolean ketemu = false;
+                List<CutiAppEntity> data2AppSakitnya = cutiAppRepository.findAllByNikAndFlgKet(nik, "sakit");
+                if (!data2AppSakitnya.isEmpty()) {
+                    ketemu = true;
+                }
+                System.out.println("ada ngga?" + "" + ketemu);
+                for (CutiAppEntity dataSakitnya : data2AppSakitnya) {
                     Long idCuti = dataSakitnya.getId();
-                    Optional<CutiImageEntity> cutiImage = cutiImageRepository.findById(idCuti);
+                    Optional<CutiImageAppEntity> cutiImage = cutiImageAppRepository.findById(idCuti);
     
                     boolean gambarnya = false;
                     if (cutiImage.isPresent() && !cutiImage.get().getImage().isEmpty()) {
@@ -536,11 +541,11 @@ public class RekapService {
                     dataSakitnya.setGambarnya(gambarnya);
                 }
     
-                if (!data2Sakitnya.isEmpty()) {
+                if (!data2AppSakitnya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Data Sakit for nik: " + nik + " retrieved successfully");
-                    response.put("data", data2Sakitnya);
+                    response.put("data", data2AppSakitnya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     Map<String, Object> response = new HashMap<>();

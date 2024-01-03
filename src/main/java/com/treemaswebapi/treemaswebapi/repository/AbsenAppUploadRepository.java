@@ -12,4 +12,6 @@ import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 public interface AbsenAppUploadRepository extends JpaRepository<AbsenAppUploadEntity, Long> {
 
     List<AbsenAppUploadEntity> findAllByProjectId(ProjectEntity projectId);
+
+    List<AbsenAppUploadEntity> findByIsApproveIsNull();
 }

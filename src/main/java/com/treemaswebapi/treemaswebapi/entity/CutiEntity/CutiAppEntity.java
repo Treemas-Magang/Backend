@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -89,4 +90,7 @@ public class CutiAppEntity {
     @OneToOne
     @JoinColumn(name = "jenis_cuti", referencedColumnName = "id")
     private MasterCutiEntity jenisCuti;
+
+    @Transient
+    private Boolean gambarnya;
 }

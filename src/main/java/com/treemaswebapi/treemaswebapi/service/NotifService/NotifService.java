@@ -69,12 +69,12 @@ public class NotifService {
                      String nik = jwtService.extractUsername(token);
                      System.out.println(nik);
                      ApprovalResponse approvalResponse = ApprovalResponse.builder()
-                     .liburApprovals(absenAppRepository.findAll())
-                     .absenPulangApprovals(absenPulangAppRepository.findAll())
-                     .absenWebApprovals(absenAppUploadRepository.findAll())
-                     .cutiApprovals(cutiAppRepository.findAll())
-                     .cutiApprovalWebs(cutiAppUploadRepository.findAll())
-                     .reimburseApprovals(reimburseAppRepository.findAll())
+                     .liburApprovals(absenAppRepository.findByIsApproveIsNull())
+                     .absenPulangApprovals(absenPulangAppRepository.findByIsApproveIsNull())
+                     .absenWebApprovals(absenAppUploadRepository.findByIsApproveIsNull())
+                     .cutiApprovals(cutiAppRepository.findByIsApprovedIsNull())
+                     .cutiApprovalWebs(cutiAppUploadRepository.findByIsApprovedIsNull())
+                     .reimburseApprovals(reimburseAppRepository.findByIsApproveIsNull())
                      .build();
                     /*
                   

@@ -14,5 +14,7 @@ public interface AbsenPulangAppRepository extends JpaRepository<AbsenPulangAppEn
     List<AbsenPulangAppEntity> findAllByProjectId(ProjectEntity projectId);
 
     List<AbsenPulangAppEntity> findAllByProjectIdAndIsApproveIsNull(ProjectEntity projectId);
+
+    List<AbsenPulangAppEntity> findByIsApproveIsNull();
 }
 

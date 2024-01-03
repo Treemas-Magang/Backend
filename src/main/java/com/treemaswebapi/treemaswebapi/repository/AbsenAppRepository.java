@@ -46,4 +46,6 @@ public interface AbsenAppRepository extends JpaRepository<AbsenAppEntity, Long> 
     List<AbsenAppEntity> findAllByProjectIdAndIsLemburAndIsApproveIsNull(ProjectEntity projectId, String string);
 
 List<AbsenAppEntity> findByIsApproveIsNull();
+
+Long countByIsApproveIsNull();
 }

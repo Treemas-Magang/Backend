@@ -57,9 +57,10 @@ public class UserMemberController {
     
     @DeleteMapping("/user-member-view/delete")
     public ResponseEntity<Map<String, Object>> deleteMember(
-        @RequestBody UserMemberRequest request
+        @PathVariable String nikLeader,
+        @PathVariable String nikUser
     ) {
-        ResponseEntity<Map<String, Object>> response = service.deleteMember(request);
+        ResponseEntity<Map<String, Object>> response = service.deleteMember(nikLeader, nikUser);
         return response;
     }
 

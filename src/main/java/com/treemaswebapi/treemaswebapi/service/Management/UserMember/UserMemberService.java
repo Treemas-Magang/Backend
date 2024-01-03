@@ -169,11 +169,10 @@ public class UserMemberService {
 
     @Transactional
     public ResponseEntity<Map<String, Object>> deleteMember(
-        UserMemberRequest request
+        String nikLeader,
+        String nikUser
     ) {
         try {
-            String nikLeader = request.getNikLeader();
-            String nikUser = request.getNikUser();
             // Periksa apakah data dengan nikUser dan nikLeader yang diberikan ada
             if (!sysUserMemberRepository.existsByNikUserAndNikLeader(nikUser, nikLeader)) {
                 // Jika tidak ada data yang cocok, kembalikan respons user deleted already
@@ -182,12 +181,8 @@ public class UserMemberService {
                 response.put("message", "User deleted already!");
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             }
-
-
             // Menghapus data berdasarkan nikUser dan nikLeader
             sysUserMemberRepository.deleteByNikUserAndNikLeader(nikUser, nikLeader);
-           
-
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");

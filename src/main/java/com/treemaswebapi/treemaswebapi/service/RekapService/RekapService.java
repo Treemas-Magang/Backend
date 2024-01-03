@@ -539,13 +539,13 @@ public class RekapService {
                 if (!data2Sakitnya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
-                    response.put("message", "Data Claim for nik: " + nik + " retrieved successfully");
+                    response.put("message", "Data Sakit for nik: " + nik + " retrieved successfully");
                     response.put("data", data2Sakitnya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
-                    response.put("message", "No Data Claim found for nik: " + nik);
+                    response.put("message", "No Data Sakit found for nik: " + nik);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {

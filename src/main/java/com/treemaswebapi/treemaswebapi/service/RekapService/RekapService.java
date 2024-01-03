@@ -523,18 +523,29 @@ public class RekapService {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
     
-                List<CutiEntity> dataSakitnya = cutiRepository.findAllByNikAndFlgKet(nik, "sakit");
+                List<CutiEntity> data2Sakitnya = cutiRepository.findAllByNikAndFlgKet(nik, "sakit");
     
-                if (!dataSakitnya.isEmpty()) {
+                for (CutiEntity dataSakitnya : data2Sakitnya) {
+                    Long idClaim = dataSakitnya.getId();
+                    Optional<ClaimImageEntity> claimImage = claimImageRepository.findById(idClaim);
+    
+                    boolean gambarnya = false;
+                    if (claimImage.isPresent() && !claimImage.get().getImage64().isEmpty()) {
+                        gambarnya = true;
+                    }
+                    dataSakitnya.setGambarnya(gambarnya);
+                }
+    
+                if (!data2Sakitnya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
-                    response.put("message", "Data Sakit for nik: "+nik+" retrieved successfully");
-                    response.put("data", dataSakitnya);
+                    response.put("message", "Data Claim for nik: " + nik + " retrieved successfully");
+                    response.put("data", data2Sakitnya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
-                    response.put("message", "No Data Sakit found for nik :" + nik);
+                    response.put("message", "No Data Claim found for nik: " + nik);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
@@ -547,7 +558,7 @@ public class RekapService {
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Failed to retrieve Data Sakit");
+            response.put("message", "Failed to retrieve Data Claim");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -595,18 +606,29 @@ public class RekapService {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
     
-                List<ClaimEntity> dataClaimnya = claimRepository.findAllByNik(nik);
+                List<ClaimEntity> data2Claimnya = claimRepository.findAllByNik(nik);
     
-                if (!dataClaimnya.isEmpty()) {
+                for (ClaimEntity dataClaimnya : data2Claimnya) {
+                    Long idClaim = dataClaimnya.getId();
+                    Optional<ClaimImageEntity> claimImage = claimImageRepository.findById(idClaim);
+    
+                    boolean gambarnya = false;
+                    if (claimImage.isPresent() && !claimImage.get().getImage64().isEmpty()) {
+                        gambarnya = true;
+                    }
+                    dataClaimnya.setGambarnya(gambarnya);
+                }
+    
+                if (!data2Claimnya.isEmpty()) {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
-                    response.put("message", "Data Claim for nik: "+nik+" retrieved successfully");
-                    response.put("data", dataClaimnya);
+                    response.put("message", "Data Claim for nik: " + nik + " retrieved successfully");
+                    response.put("data", data2Claimnya);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
-                    response.put("message", "No Data Claim found for nik :" + nik);
+                    response.put("message", "No Data Claim found for nik: " + nik);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
@@ -624,6 +646,7 @@ public class RekapService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    
 
     public ResponseEntity<Map<String, Object>> rekapClaimDetail (@RequestHeader String tokenWithBearer, @RequestParam Long id) {
         try {

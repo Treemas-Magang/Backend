@@ -51,4 +51,7 @@ public class ClaimEntity {
     @OneToOne
     @JoinColumn(name = "id_claim", referencedColumnName = "id_claim")
     private TipeClaimEntity tipeClaimEntity;
+
+    @Transient
+    private Boolean gambarnya;
 }

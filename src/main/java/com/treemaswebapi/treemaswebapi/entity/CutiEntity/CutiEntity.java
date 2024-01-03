@@ -83,4 +83,6 @@ public class CutiEntity {
     @JoinColumn(name = "jenis_cuti", referencedColumnName = "id")
     private MasterCutiEntity masterCutiEntity;
 
+    @Transient
+    private Boolean gambarnya;
 }

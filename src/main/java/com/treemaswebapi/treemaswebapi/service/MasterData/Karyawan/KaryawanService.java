@@ -431,7 +431,7 @@ import lombok.RequiredArgsConstructor;
                     SysUserEntity sysUser = optionalSysUser.get();
                     sysUser.setUserId(request.getNik());
                     sysUser.setEmail(request.getEmail());
-                    sysUser.setFullName(request.getFullName());
+                    sysUser.setFullName(request.getNama());
                     sysUser.setRole(jabatan);
                     sysUser.setIsLogin(sysUser.getIsLogin());
                     sysUser.setWrongPassCount(sysUser.getWrongPassCount());

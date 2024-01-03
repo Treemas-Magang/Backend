@@ -159,13 +159,6 @@ public class ProjectService {
                 throw new RuntimeException("Biaya Reimburse cannot be null or empty");
             }
 
-            // Check if project with the given projectId already exists
-            if (projectRepository.existsById(request.getProjectId())) {
-                Map<String, Object> response = new HashMap<>();
-                response.put("status", "Failed");
-                response.put("message", "Project with the same ID already exists");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
 
             if (projectOptional.isPresent()) {
                 ProjectEntity newProject = projectOptional.get();

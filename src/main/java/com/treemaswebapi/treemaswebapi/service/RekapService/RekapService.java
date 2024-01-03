@@ -141,10 +141,44 @@ public class RekapService {
                 Optional<ReimburseAppEntity> dataReimbursenya = reimburseAppRepository.findById(id);
     
                 if (!dataReimbursenya.isEmpty()) {
+                    ReimburseAppEntity datanya = dataReimbursenya.get();
+                    ReimburseResponse reimburseResponse = new ReimburseResponse();
+                    reimburseResponse.setId(datanya.getId());
+                    reimburseResponse.setFlgKet(datanya.getKeterangan());
+                    reimburseResponse.setHari(datanya.getHari());
+                    reimburseResponse.setJamMsk(datanya.getJamMsk());
+                    reimburseResponse.setJamPlg(datanya.getJamPlg());
+                    reimburseResponse.setLokasi(datanya.getProjectId().getLokasi());
+                    reimburseResponse.setNamaProject(datanya.getProjectId().getNamaProject());
+                    reimburseResponse.setTanggal(datanya.getTglAbsen());
+                    reimburseResponse.setTransport(datanya.getProjectId().getBiayaReimburse());
+
+                    LocalTime jamMasuk = datanya.getJamMsk();
+                    LocalTime jamPulang = datanya.getJamPlg();
+                    Duration duration = Duration.between(jamMasuk, jamPulang);
+                    Double hours = duration.getSeconds() / 3600.0;
+                    BigDecimal totalHours = BigDecimal.valueOf(hours);
+                    reimburseResponse.setTotalJamKerja(totalHours);
+
+                    long uangMakanValue = "1".equals(datanya.getIsLembur()) ? 20000L : 0L;
+                    reimburseResponse.setUangMakan(uangMakanValue);
+                    
+                    BigDecimal regularHours = BigDecimal.valueOf(9);
+                    BigDecimal overtimeHours = BigDecimal.valueOf(0);
+                    if(totalHours.compareTo(regularHours) > 0){
+                     overtimeHours = totalHours.subtract(regularHours);
+                    }
+                    reimburseResponse.setOvertime(overtimeHours);
+                    
+
+                    String status = "1".equals(datanya.getIsApprove()) ? "Approved" :
+                    "0".equals(datanya.getIsApprove()) ? "Not Approved" : "Waiting for Approval";
+                    reimburseResponse.setStatus(status);
+
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "Data Reimburse for nik: "+nik+" with idReimburse "+id+" retrieved successfully");
-                    response.put("data", dataReimbursenya);
+                    response.put("data", reimburseResponse);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     Map<String, Object> response = new HashMap<>();

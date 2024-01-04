@@ -29,6 +29,15 @@ public class RekapController {
     ){
         return rekapService.rekapReimburse(tokenWithBearer);
     }
+
+    @GetMapping("/get-itungan-reimburse")
+    public ResponseEntity<Map<String, Object>> getItunganReimburse(
+        @RequestHeader("Authorization") String tokenWithBearer
+    ) {
+        return rekapService.getItunganReimburse(tokenWithBearer);
+    }
+    
+
     @GetMapping("/get-detail-reimburse")
     public ResponseEntity<Map<String, Object>> getDetailReimburse(
         @RequestHeader("Authorization") String tokenWithBearer,

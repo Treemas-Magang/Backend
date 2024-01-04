@@ -458,6 +458,7 @@ public class AbsenService {
                 // ngga perlu cek, langsung tarik dari screen.
                 AbsenPulangAppEntity lupaPulang = new AbsenPulangAppEntity();
                 lupaPulang.setId(idAbsen);
+                lupaPulang.setProjectId(existingAbsenData.getProjectId());
                 lupaPulang.setJamMsk(existingAbsenData.getJamMsk());
                 lupaPulang.setJarakMsk(existingAbsenData.getJarakMsk());
                 lupaPulang.setLokasiMsk(existingAbsenData.getLokasiMsk());

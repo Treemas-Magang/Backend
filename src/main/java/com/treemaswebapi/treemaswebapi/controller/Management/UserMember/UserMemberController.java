@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
@@ -57,9 +58,10 @@ public class UserMemberController {
     
     @DeleteMapping("/user-member-view/delete")
     public ResponseEntity<Map<String, Object>> deleteMember(
-        @RequestBody UserMemberRequest request
+        @RequestParam String nikLeader,
+        @RequestParam String nikUser
     ) {
-        ResponseEntity<Map<String, Object>> response = service.deleteMember(request);
+        ResponseEntity<Map<String, Object>> response = service.deleteMember(nikLeader, nikUser);
         return response;
     }
 

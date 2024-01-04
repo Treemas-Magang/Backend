@@ -1,7 +1,11 @@
 package com.treemaswebapi.treemaswebapi.service.NotifService;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +23,7 @@ import com.treemaswebapi.treemaswebapi.controller.NotifController.response.Appro
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
+import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenAppUploadRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenPulangAppRepository;
@@ -31,6 +36,7 @@ import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
+import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenAppUploadEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
@@ -60,7 +66,7 @@ public class NotifService {
     private final ProjectRepository projectRepository;
     private final KaryawanRepository karyawanRepository;
     private final SysUserRepository sysUserRepository;
-
+    private final TimesheetRepository timesheetRepository;
     // INI BAGIAN GET LIST
       public ResponseEntity<Map<String, Object>> getAllApproval(@RequestHeader String tokenWithBearer) {
              try {
@@ -917,40 +923,117 @@ public class NotifService {
                         datanya.setNoteApp1(request.getNoteApp());
                         absenPulangAppRepository.save(datanya);
 
-                        // dataAbsen.setDtmApp(null);
-                        // dataAbsen.setDtmCrt(null);
-                        // dataAbsen.setGpsLatitudeMsk(null);
-                        // dataAbsen.setGpsLatitudePlg(null);
-                        // dataAbsen.setGpsLongitudeMsk(null);
-                        // dataAbsen.setGpsLongitudePlg(null);
-                        // dataAbsen.setHari(namaUser);
-                        // dataAbsen.setIsAbsen("1");
-                        // dataAbsen.setIsCuti(namaUser);
-                        // dataAbsen.setIsLembur(namaUser);
-                        // dataAbsen.setIsLibur(namaUser);
-                        // dataAbsen.setIsOther(namaUser);
-                        // dataAbsen.setIsSakit(namaUser);
-                        // dataAbsen.setIsWfh(namaUser);
-                        // dataAbsen.setJamMsk(null);
-                        // dataAbsen.setJamPlg(null);
-                        // dataAbsen.setJarakMsk(namaUser);
-                        // dataAbsen.setJarakPlg(namaUser);
-                        // dataAbsen.setLokasiMsk(namaUser);
-                        // dataAbsen.setLokasiPlg(namaUser);
-                        // dataAbsen.setNama(namaUser);
-                        // dataAbsen.setNik(nikUser);
-                        // dataAbsen.setNoteApp(namaUser);
-                        // dataAbsen.setNoteOther(namaUser);
-                        // dataAbsen.setNotePekerjaan(namaUser);
-                        // dataAbsen.setNotePlgCepat(namaUser);
-                        // dataAbsen.setNoteTelatMsk(namaUser);
-                        // dataAbsen.setProjectId(null);
-                        // dataAbsen.setTglAbsen(null);
-                        // dataAbsen.setTotalJamKerja(null);
-                        // dataAbsen.setUsrApp(namaUser);
-                        // dataAbsen.setUsrCrt(namaUser);
+                        dataAbsen.setDtmApp(datanya.getDtmApp2());
+                        dataAbsen.setDtmCrt(datanya.getDtmUpd());
+                        dataAbsen.setGpsLatitudeMsk(datanya.getGpsLatitudeMsk());
+                        dataAbsen.setGpsLatitudePlg(datanya.getGpsLatitudePlg());
+                        dataAbsen.setGpsLongitudeMsk(datanya.getGpsLongitudeMsk());
+                        dataAbsen.setGpsLongitudePlg(datanya.getGpsLongitudePlg());
+                        dataAbsen.setHari(datanya.getHari());
+                        dataAbsen.setIsAbsen("1");
+                        dataAbsen.setIsCuti(datanya.getIsCuti());
+                        dataAbsen.setIsLembur(datanya.getIsLembur());
+                        dataAbsen.setIsLibur(datanya.getIsLibur());
+                        dataAbsen.setIsOther(datanya.getIsOther());
+                        dataAbsen.setIsSakit(datanya.getIsSakit());
+                        dataAbsen.setIsWfh(datanya.getIsWfh());
+                        dataAbsen.setJamMsk(datanya.getJamMsk());
+                        dataAbsen.setJamPlg(datanya.getJamPlg());
+                        dataAbsen.setJarakMsk(datanya.getJarakMsk());
+                        dataAbsen.setJarakPlg(datanya.getJarakPlg());
+                        dataAbsen.setLokasiMsk(datanya.getLokasiMsk());
+                        dataAbsen.setLokasiPlg(datanya.getLokasiPlg());
+                        dataAbsen.setNama(datanya.getNama());
+                        dataAbsen.setNik(datanya.getNik());
+                        dataAbsen.setNoteApp(datanya.getNoteApp2());
+                        dataAbsen.setNoteOther(datanya.getNoteOther());
+                        dataAbsen.setNotePekerjaan(datanya.getNotePekerjaan());
+                        dataAbsen.setNotePlgCepat(datanya.getNotePlgCepat());
+                        dataAbsen.setNoteTelatMsk(datanya.getNoteTelatMsk());
+                        dataAbsen.setProjectId(datanya.getProjectId());
+                        dataAbsen.setTglAbsen(datanya.getTglAbsen());
+                        dataAbsen.setTotalJamKerja(datanya.getTotalJamKerja());
+                        dataAbsen.setUsrApp(datanya.getUsrApp2());
+                        dataAbsen.setUsrCrt(datanya.getUsrUpd());
 
-                        // absenRepository.save(dataAbsen);
+                        absenRepository.save(dataAbsen);
+
+                        LocalDate tglAbsen = datanya.getTglAbsen();
+
+                        TimesheetEntity timesheetEntity = timesheetRepository.findByNikAndTglMsk(dataAbsen.getNik(), tglAbsen);
+
+
+                        timesheetEntity.setDtmCrt(Timestamp.valueOf(LocalDateTime.now()));
+                        String flgKetValue = "-"; // Default value
+
+                            if ("1".equals(datanya.getIsSakit())) {
+                                flgKetValue = "sakit";
+                            } else if ("1".equals(datanya.getIsCuti())) {
+                                flgKetValue = "cuti";
+                            }
+
+                        timesheetEntity.setFlgKet(flgKetValue);
+                        timesheetEntity.setHari(datanya.getHari());
+                        timesheetEntity.setJamKeluar(datanya.getJamPlg());
+                        timesheetEntity.setJamMasuk(datanya.getJamMsk());
+                        timesheetEntity.setNama(datanya.getNama());
+                        timesheetEntity.setNik(datanya.getNik());
+                        timesheetEntity.setNote(datanya.getNotePekerjaan());
+                        timesheetEntity.setProjectId(datanya.getProjectId());
+                        timesheetEntity.setTglMsk(datanya.getTglAbsen());
+                        timesheetEntity.setUsrCrt(datanya.getUsrUpd());
+
+                        LocalTime jamMashook = datanya.getJamMsk();
+                        LocalTime jamPoelang = datanya.getJamPlg();
+                        
+                        BigDecimal totalHours = BigDecimal.ZERO;
+                        BigDecimal jamLembur = BigDecimal.ZERO;
+
+                        if (jamMashook != null && jamPoelang != null){
+                        Duration duration = Duration.between(jamMashook, jamPoelang);
+                        long totalHoursLong = duration.toHours();
+                        totalHours = BigDecimal.valueOf(totalHoursLong);
+                            if (totalHoursLong > 9){
+                                jamLembur = BigDecimal.valueOf(totalHoursLong-9);
+                            }
+                        }
+
+                        timesheetEntity.setOvertime(jamLembur);
+                        timesheetEntity.setTotalJamKerja(totalHours);
+                        timesheetEntity.setProjectId(datanya.getProjectId());
+                        timesheetEntity.setDtmCrt(Timestamp.valueOf(LocalDateTime.now()));
+                        timesheetRepository.save(timesheetEntity);
+
+                        ReimburseAppEntity reimburseApp = reimburseAppRepository.findByNikAndTglAbsen(datanya.getNik(), tglAbsen);
+                        reimburseApp.setIsAbsen(datanya.getIsAbsen());
+                        reimburseApp.setNik(datanya.getNik());
+                        reimburseApp.setNotePekerjaan(datanya.getNotePekerjaan());
+                        reimburseApp.setIsLembur(datanya.getIsLembur());
+                        reimburseApp.setIsLibur(datanya.getIsLibur());
+                        reimburseApp.setIsSakit(datanya.getIsSakit());
+                        reimburseApp.setDtmUpd(datanya.getDtmUpd());
+                        reimburseApp.setGpsLatitudeMsk(datanya.getGpsLatitudeMsk());
+                        reimburseApp.setGpsLongitudePlg(datanya.getGpsLongitudePlg());
+                        reimburseApp.setGpsLongitudeMsk(datanya.getGpsLongitudeMsk());
+                        reimburseApp.setGpsLatitudePlg(datanya.getGpsLatitudePlg());
+                        reimburseApp.setIsOther(datanya.getIsOther());
+                        reimburseApp.setIsWfh(datanya.getIsWfh());
+                        reimburseApp.setJamMsk(datanya.getJamMsk());
+                        reimburseApp.setJamPlg(datanya.getJamPlg());
+                        reimburseApp.setJarakMsk(datanya.getJarakMsk());
+                        reimburseApp.setLokasiMsk(datanya.getLokasiMsk());
+                        reimburseApp.setLokasiPlg(datanya.getLokasiPlg());
+                        reimburseApp.setNama(datanya.getNama());
+                        reimburseApp.setNoteOther(datanya.getNoteOther());
+                        reimburseApp.setNotePekerjaan(datanya.getNotePekerjaan());
+                        reimburseApp.setNotePlgCepat(datanya.getNotePlgCepat());
+                        reimburseApp.setNoteTelatMsk(datanya.getNoteTelatMsk());
+                        reimburseApp.setProjectId(datanya.getProjectId());
+                        reimburseApp.setTglAbsen(datanya.getTglAbsen());
+                        reimburseApp.setTotalJamKerja(totalHours);
+                        reimburseApp.setUsrUpd(datanya.getUsrUpd());
+                        reimburseAppRepository.save(reimburseApp);
+
                     }else if ("0".equals(request.getIsApprove())) {
                         datanya.setIsApprove("0");
                         datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));

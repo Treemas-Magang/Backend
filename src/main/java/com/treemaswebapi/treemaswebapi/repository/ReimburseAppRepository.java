@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,8 @@ public interface ReimburseAppRepository extends JpaRepository<ReimburseAppEntity
     List<ReimburseAppEntity> findByIsApproveIsNull();
 
     Long countByIsApproveIsNull();
+
+    List<ReimburseAppEntity> findByNik(String nik);
+
+    ReimburseAppEntity findByNikAndTglAbsen(String nik, LocalDate currentDate);
 }

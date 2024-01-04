@@ -202,6 +202,52 @@ public class RekapService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    public ResponseEntity<Map<String, Object>> getItunganReimburse (@RequestHeader String tokenWithBearer) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                String token = tokenWithBearer.substring("Bearer ".length());
+                String nik = jwtService.extractUsername(token);
+    
+                List<ReimburseAppEntity> data2Reimbursenya = reimburseAppRepository.findByNik(nik);
+                
+                if (!data2Reimbursenya.isEmpty()) {
+                    Map<LocalDate, BigDecimal> reimburseHarian = new HashMap<>();
+                    BigDecimal totalReimburse = BigDecimal.ZERO;
+                    for(ReimburseAppEntity dataReimbursenya : data2Reimbursenya)
+                        {
+                            if ("1".equals(dataReimbursenya.getIsApprove())) 
+                            {
+                                LocalDate tanggal = dataReimbursenya.getTglAbsen();
+                                BigDecimal duitnya = dataReimbursenya.getProjectId().getBiayaReimburse();
+                                reimburseHarian.put(tanggal, reimburseHarian.getOrDefault(tanggal, BigDecimal.ZERO).add(duitnya));
+
+                                totalReimburse = totalReimburse.add(duitnya);
+                            } 
+                        }
+                    response.put("success", true);
+                    response.put("detailData", reimburseHarian);
+                    response.put("data",totalReimburse);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    response.put("success", false);
+                    response.put("message", "No Data Reimburse found for nik :" + nik);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            } else {
+                // Handle the case where the token format is invalid
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to retrieve Data Reimburse");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
     /* --------------------------------------------BAGIAN TIMESHEET------------------------------------------------ */
      public ResponseEntity<Map<String, Object>> rekapTimesheet(@RequestHeader String tokenWithBearer) {
         try {

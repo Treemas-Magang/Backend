@@ -15,8 +15,12 @@ import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
+import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
+import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
+import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +30,9 @@ public class CreateAbsenEntriesJob implements Job {
     private final KaryawanRepository karyawanRepository;
     private final AbsenRepository absenRepository;
     private final Logger logger = LoggerFactory.getLogger(CreateAbsenEntriesJob.class);
+    private final ReimburseAppRepository reimburseAppRepository;
+    private final TimesheetRepository timesheetRepository;
+
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -49,6 +56,21 @@ public class CreateAbsenEntriesJob implements Job {
                     absenEntity.setDtmCrt(dtmSekarang);
                     absenEntity.setTglAbsen(currentDate);
                     absenRepository.save(absenEntity);
+
+                    ReimburseAppEntity reimburseAppEntity = new ReimburseAppEntity();
+                    reimburseAppEntity.setNik(karyawan.getNik());
+                    reimburseAppEntity.setNama(karyawan.getNama());
+                    reimburseAppEntity.setDtmUpd(dtmSekarang);
+                    reimburseAppEntity.setTglAbsen(currentDate);
+                    reimburseAppRepository.save(reimburseAppEntity);
+
+                    TimesheetEntity timesheetEntity = new TimesheetEntity();
+                    timesheetEntity.setTglMsk(currentDate);
+                    timesheetEntity.setNik(karyawan.getNik());
+                    timesheetEntity.setNama(karyawan.getNama());
+                    timesheetEntity.setDtmCrt(dtmSekarang);
+                    timesheetRepository.save(timesheetEntity);
+                    
                     logger.info("Scheduled job has been executed for nik: {}", karyawan.getNik());
                 }
             }

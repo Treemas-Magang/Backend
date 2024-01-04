@@ -144,7 +144,7 @@ public class AbsenService {
                     Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
                     if("1".equals(request.getIsOther())){
                         LocalTime jamSekarang = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                        AbsenEntity absenEntity = new AbsenEntity();
+                        AbsenEntity absenEntity = absenRepository.findByTglAbsenAndNik(tanggalIni, nik);
                         absenEntity.setNik(nik);
                         absenEntity.setJamMsk(jamSekarang);
                         absenEntity.setNama(nama);

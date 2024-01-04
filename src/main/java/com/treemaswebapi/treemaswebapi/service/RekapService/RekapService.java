@@ -205,68 +205,44 @@ public class RekapService {
     }
 
     public ResponseEntity<Map<String, Object>> getItunganReimburse (@RequestHeader String tokenWithBearer) {
+        Map<String, Object> response = new HashMap<>();
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
     
-                List<ReimburseAppEntity> dataReimbursenya = reimburseAppRepository.findByNik(nik);
-    
-                if (!dataReimbursenya.isEmpty()) {
-                    ReimburseAppEntity datanya = dataReimbursenya.get(0);
-                    ReimburseResponse reimburseResponse = new ReimburseResponse();
-                    reimburseResponse.setId(datanya.getId());
-                    reimburseResponse.setFlgKet(datanya.getKeterangan());
-                    reimburseResponse.setHari(datanya.getHari());
-                    reimburseResponse.setJamMsk(datanya.getJamMsk());
-                    reimburseResponse.setJamPlg(datanya.getJamPlg());
-                    reimburseResponse.setLokasi(datanya.getProjectId().getLokasi());
-                    reimburseResponse.setNamaProject(datanya.getProjectId().getNamaProject());
-                    reimburseResponse.setTanggal(datanya.getTglAbsen());
-                    reimburseResponse.setTransport(datanya.getProjectId().getBiayaReimburse());
+                List<ReimburseAppEntity> data2Reimbursenya = reimburseAppRepository.findByNik(nik);
+                
+                if (!data2Reimbursenya.isEmpty()) {
+                    Map<LocalDate, BigDecimal> reimburseHarian = new HashMap<>();
+                    BigDecimal totalReimburse = BigDecimal.ZERO;
+                    for(ReimburseAppEntity dataReimbursenya : data2Reimbursenya)
+                        {
+                            if ("1".equals(dataReimbursenya.getIsApprove())) 
+                            {
+                                LocalDate tanggal = dataReimbursenya.getTglAbsen();
+                                BigDecimal duitnya = dataReimbursenya.getProjectId().getBiayaReimburse();
+                                reimburseHarian.put(tanggal, reimburseHarian.getOrDefault(tanggal, BigDecimal.ZERO).add(duitnya));
 
-                    LocalTime jamMasuk = datanya.getJamMsk();
-                    LocalTime jamPulang = datanya.getJamPlg();
-                    Duration duration = Duration.between(jamMasuk, jamPulang);
-                    Double hours = duration.getSeconds() / 3600.0;
-                    BigDecimal totalHours = BigDecimal.valueOf(hours);
-                    reimburseResponse.setTotalJamKerja(totalHours);
-
-                    long uangMakanValue = "1".equals(datanya.getIsLembur()) ? 20000L : 0L;
-                    reimburseResponse.setUangMakan(uangMakanValue);
-                    
-                    BigDecimal regularHours = BigDecimal.valueOf(9);
-                    BigDecimal overtimeHours = BigDecimal.valueOf(0);
-                    if(totalHours.compareTo(regularHours) > 0){
-                     overtimeHours = totalHours.subtract(regularHours);
-                    }
-                    reimburseResponse.setOvertime(overtimeHours);
-                    
-
-                    String status = "1".equals(datanya.getIsApprove()) ? "Approved" :
-                    "0".equals(datanya.getIsApprove()) ? "Not Approved" : "Waiting for Approval";
-                    reimburseResponse.setStatus(status);
-
-                    Map<String, Object> response = new HashMap<>();
+                                totalReimburse = totalReimburse.add(duitnya);
+                            } 
+                        }
                     response.put("success", true);
-                    response.put("message", "Data Itungan Reimburse for nik: "+nik+"retrieved successfully");
-                    response.put("data", reimburseResponse);
+                    response.put("detailData", reimburseHarian);
+                    response.put("data",totalReimburse);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
-                } else {
-                    Map<String, Object> response = new HashMap<>();
+                    } else {
                     response.put("success", false);
                     response.put("message", "No Data Reimburse found for nik :" + nik);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
-                Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "Invalid token format");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Failed to retrieve Data Reimburse");
             response.put("error", e.getMessage());

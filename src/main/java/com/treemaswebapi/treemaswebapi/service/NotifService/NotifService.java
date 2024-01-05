@@ -355,7 +355,7 @@ public class NotifService {
                     approvalResponse.setCutiApprovalWebs(null);
                     approvalResponse.setGeneralParamApprovals(null);
                     approvalResponse.setReimburseApprovals(null);
-                    approvalResponse.setDataCounter(absenPulangAppRepository.count());
+                    approvalResponse.setDataCounter(absenPulangAppRepository.countByIsApproveIsNull());
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
@@ -600,6 +600,7 @@ public class NotifService {
     // INI BAGIIAN POST SERVICE
     public ResponseEntity<Map<String, Object>> postLiburApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
         try {
+                Map<String, Object> response =  new HashMap<>();
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nikUser = jwtService.extractUsername(token);
@@ -609,13 +610,67 @@ public class NotifService {
 
                     Optional<AbsenAppEntity> datanyaOptional = absenAppRepository.findById(idApproval);
                     if (datanyaOptional.isPresent()) {
+                        String approval1 = request.getIsApprove1();
+                        String approval2 = request.getIsApprove2();
                         AbsenAppEntity datanya = datanyaOptional.get();
+                        if (approval2.isEmpty() && !approval1.isEmpty()) {
+                            if ("0".equals(approval1)) {
+                                datanya.setIsApprove(approval1);
+                                datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                                datanya.setUsrApp(namaUser);
+                                datanya.setNoteApp(request.getNoteApp1());
+                                absenAppRepository.save(datanya);
+
+                                AbsenEntity dataAbsen = new AbsenEntity();
+                                dataAbsen = AbsenEntity.builder()
+                                .dtmApp(Timestamp.valueOf(LocalDateTime.now()))
+                                .dtmCrt(datanya.getDtmCrt())
+                                .gpsLatitudeMsk(datanya.getGpsLatitudeMsk())
+                                .gpsLatitudePlg(datanya.getGpsLatitudePlg())
+                                .gpsLongitudeMsk(datanya.getGpsLongitudeMsk())
+                                .gpsLongitudePlg(datanya.getGpsLongitudePlg())
+                                .hari(datanya.getHari())
+                                .isAbsen("0")
+                                .isCuti("0")
+                                .isLembur(datanya.getIsLembur())
+                                .isLibur(datanya.getIsLibur())
+                                .isOther(datanya.getIsOther())
+                                .isSakit(datanya.getIsSakit())
+                                .isWfh(datanya.getIsWfh())
+                                .jamMsk(datanya.getJamMsk())
+                                .jamPlg(datanya.getJamPlg())
+                                .jarakMsk(datanya.getJarakMsk())
+                                .jarakPlg(datanya.getJarakPlg())
+                                .lokasiMsk(datanya.getLokasiMsk())
+                                .lokasiPlg(datanya.getLokasiPlg())
+                                .nama(datanya.getNama())
+                                .nik(datanya.getNik())
+                                .projectId(datanya.getProjectId())
+                                .tglAbsen(datanya.getTglAbsen())
+                                .totalJamKerja(datanya.getTotalJamKerja())
+                                .usrApp(namaUser)
+                                .usrCrt(datanya.getUsrCrt())
+                                .build();
+                                absenRepository.save(dataAbsen);
+                                
+
+                                response.put("message", "data approval tidak disetujui");
+                                response.put("data", approval2);
+                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                            }
+                            datanya.setFlagApp(approval1);
+                        }else if (!approval2.isEmpty() && approval1.isEmpty()) {
+                            datanya.setIsApprove(approval2);
+                            datanya.setNoteApp(request.getNoteApp2());
+                            datanya.setUsrApp(namaUser);
+                            datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                        }
                         AbsenEntity dataAbsen = new AbsenEntity();
                         if ("1".equals(request.getIsApprove())) {
                             datanya.setIsApprove("1");
                             datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
                             datanya.setUsrApp(namaUser);
-                            datanya.setNoteApp(request.getNoteApp());
+                            datanya.setNoteApp(request.getNoteApp2());
                             absenAppRepository.save(datanya);
 
                             dataAbsen = AbsenEntity.builder()
@@ -656,26 +711,23 @@ public class NotifService {
                             datanya.setUsrApp(namaUser);
                             datanya.setNoteApp(request.getNoteApp());
                             absenAppRepository.save(datanya);
-                            Map<String, Object> response = new HashMap<>();
+        
                             response.put("success", true);
                             response.put("message", "berhasil post ke AbsenEntity dan SetValue di AbsenApp");
                             response.put("data", datanya);
                             return ResponseEntity.status(HttpStatus.OK).body(response);
                         }
-                        Map<String, Object> response = new HashMap<>();
                         response.put("success", true);
                         response.put("message", "berhasil post ke AbsenEntity dan SetValue di AbsenApp");
                         response.put("data", datanya);
                         return ResponseEntity.status(HttpStatus.OK).body(response);
                     }else{
-                        Map<String, Object> response = new HashMap<>();
                         response.put("success", false);
                         response.put("message", "dataOptionalnya ngga ada");
                         return ResponseEntity.status(HttpStatus.OK).body(response);
                     }
                 } else {
                 // Handle the case where the token format is invalid
-                Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "Invalid token format");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

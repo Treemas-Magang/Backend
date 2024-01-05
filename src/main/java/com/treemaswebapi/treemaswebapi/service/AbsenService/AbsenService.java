@@ -348,8 +348,12 @@ public class AbsenService {
 
                     absenTrackingRepository.save(absenTrackingEntity);
 
+                    Boolean ketemu = false;
                     TimesheetEntity timesheetEntity = timesheetRepository.findByNikAndTglMsk(nik, currentDate);
-
+                    if (timesheetEntity.equals(null)) {
+                        ketemu = true;
+                    }
+                    System.out.println("timesheet di data pulangnya ketemu ga? " + ketemu);
                     timesheetEntity.setDtmCrt(jamIni);
                     String flgKetValue = "-"; // Default value
 

@@ -14,4 +14,6 @@ public interface CutiRepository extends JpaRepository<CutiEntity, Long> {
     List<CutiEntity> findAllByNik(String nik);
 
     List<CutiEntity> findAllByNikAndFlgKet(String nik, String string);
+
+    List<CutiEntity> findAllByFlgKet(String string);
 }

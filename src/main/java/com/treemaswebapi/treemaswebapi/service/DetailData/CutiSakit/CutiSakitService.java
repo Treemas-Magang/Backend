@@ -69,11 +69,12 @@ public class CutiSakitService {
         return indonesianDayMap.get(dayOfWeek.toString());
     }
 
+    //  ini fungsinya buat ngambil data cuti semua orang yang ngajuin cuti
     public ResponseEntity<Map<String, Object>> cutiGet() {
         
         try {
             // Disetujui atau ditolak
-            List<CutiEntity> cutiList  = cutiRepository.findByFlagApp("cuti");
+            List<CutiEntity> cutiList  = cutiRepository.findAllByFlgKet("cuti");
             List<Map<String, Object>> responseData = new ArrayList<>();
             // Format dtmapp to YYYY-MM-DD
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -101,7 +102,7 @@ public class CutiSakitService {
             }
 
             // Menunggu
-            List<CutiAppEntity> cutiAppList  = cutiAppRepository.findByFlgKet("cuti");
+            List<CutiAppEntity> cutiAppList  = cutiAppRepository.findByFlgKetAndIsApprovedIsNull("cuti");
             List<Map<String, Object>> responseDataApp = new ArrayList<>();
             
             for (CutiAppEntity cutiApp : cutiAppList) {
@@ -148,7 +149,7 @@ public class CutiSakitService {
     public ResponseEntity<Map<String, Object>> sakitGet() {
         try {
             // Disetujui atau ditolak
-            List<CutiEntity> sakitList  = cutiRepository.findByFlagApp("sakit");
+            List<CutiEntity> sakitList  = cutiRepository.findAllByFlgKet("sakit");
             List<Map<String, Object>> responseData = new ArrayList<>();
 
             for (CutiEntity sakit : sakitList) {

@@ -263,7 +263,7 @@ public class NotifService {
                     .lemburApprovals(null)
                     .absenPulangApprovals(null)
                     .absenWebApprovals(null)
-                    .cutiApprovals(cutiAppRepository.findByIsApprovedIsNull())
+                    .cutiApprovals(cutiAppRepository.findByFlgKetAndIsApprovedIsNull("cuti"))
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)

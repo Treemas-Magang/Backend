@@ -21,4 +21,6 @@ public interface CutiAppRepository extends JpaRepository<CutiAppEntity, Long> {
 
     Long countByFlgKetAndIsApprovedIsNull(String string);
 
+    List<CutiAppEntity> findByFlgKetAndIsApprovedIsNull(String string);
+
 }

@@ -460,6 +460,7 @@ public class AbsenService {
                 lupaPulang.setId(idAbsen);
                 lupaPulang.setProjectId(existingAbsenData.getProjectId());
                 lupaPulang.setJamMsk(existingAbsenData.getJamMsk());
+                lupaPulang.setNama(existingAbsenData.getNama());
                 lupaPulang.setJarakMsk(existingAbsenData.getJarakMsk());
                 lupaPulang.setLokasiMsk(existingAbsenData.getLokasiMsk());
                 lupaPulang.setNoteTelatMsk(existingAbsenData.getNoteTelatMsk());

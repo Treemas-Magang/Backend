@@ -77,7 +77,10 @@ public class RekapService {
                     reimburseResponse.setHari(dataReimbursenya.getHari());
                     reimburseResponse.setJamMsk(dataReimbursenya.getJamMsk());
                     reimburseResponse.setJamPlg(dataReimbursenya.getJamPlg());
-                    reimburseResponse.setLokasi(dataReimbursenya.getProjectId().getLokasi());
+                    String lokasi = Optional.ofNullable(dataReimbursenya.getProjectId())
+                            .map(projectId -> projectId.getLokasi())
+                            .orElse(null);
+                    reimburseResponse.setLokasi(lokasi);
                     reimburseResponse.setNamaProject(dataReimbursenya.getProjectId().getNamaProject());
                     reimburseResponse.setTanggal(dataReimbursenya.getTglAbsen());
                     reimburseResponse.setTransport(dataReimbursenya.getProjectId().getBiayaReimburse());

@@ -79,7 +79,7 @@ public class ManagementUserService {
     public ResponseEntity<Map<String, Object>> userGet() {
         try {
             List<SysUserEntity> sysUser = sysUserRepository.findAll();
-
+            
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Retrieved");

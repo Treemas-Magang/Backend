@@ -174,7 +174,6 @@ public class RekapService {
                      overtimeHours = totalHours.subtract(regularHours);
                     }
                     reimburseResponse.setOvertime(overtimeHours);
-                    
 
                     String status = "1".equals(datanya.getIsApprove()) ? "Approved" :
                     "0".equals(datanya.getIsApprove()) ? "Not Approved" : "Waiting for Approval";

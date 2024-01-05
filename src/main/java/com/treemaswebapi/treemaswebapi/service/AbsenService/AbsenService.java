@@ -220,7 +220,7 @@ public class AbsenService {
                             absenTrackingEntity.setIsWfh(request.getIsWfh());
 
                             absenTrackingRepository.save(absenTrackingEntity);
-    
+
                             Long idAbsen = absenEntity.getId();
                             AbsenImgEntity absenImgEntity = new AbsenImgEntity();
                             absenImgEntity.setNik(nik);

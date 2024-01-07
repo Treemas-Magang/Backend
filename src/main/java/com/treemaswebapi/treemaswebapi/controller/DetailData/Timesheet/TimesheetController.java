@@ -20,7 +20,7 @@ public class TimesheetController {
     
     private final TimesheetService service;
 
-    @GetMapping("/timesheet-view")
+    @GetMapping("/get-rekap-timesheet/data-member")
     public ResponseEntity<Map<String, Object>> timesheetGet(@RequestHeader("Authorization") String jwtToken,TimesheetResponse timesheetResponse) {
         ResponseEntity<Map<String, Object>> response = service.timesheetGet(jwtToken,timesheetResponse);
         return response;

@@ -81,9 +81,15 @@ public class RekapService {
                             .map(projectId -> projectId.getLokasi())
                             .orElse(null);
                     reimburseResponse.setLokasi(lokasi);
-                    reimburseResponse.setNamaProject(dataReimbursenya.getProjectId().getNamaProject());
+                    String namaProject = Optional.ofNullable(dataReimbursenya.getProjectId())
+                            .map(projectId -> projectId.getNamaProject())
+                            .orElse(null);
+                    reimburseResponse.setNamaProject(namaProject);
                     reimburseResponse.setTanggal(dataReimbursenya.getTglAbsen());
-                    reimburseResponse.setTransport(dataReimbursenya.getProjectId().getBiayaReimburse());
+                    BigDecimal biayaReimburse = Optional.ofNullable(dataReimbursenya.getProjectId())
+                            .map(projectId -> projectId.getBiayaReimburse())
+                            .orElse(null);
+                    reimburseResponse.setTransport(biayaReimburse);
                     
                     LocalTime jamMasuk = dataReimbursenya.getJamMsk();
                     LocalTime jamPulang = dataReimbursenya.getJamPlg();
@@ -146,26 +152,34 @@ public class RekapService {
                 Optional<ReimburseAppEntity> dataReimbursenya = reimburseAppRepository.findById(id);
     
                 if (!dataReimbursenya.isEmpty()) {
-                    ReimburseAppEntity datanya = dataReimbursenya.get();
                     ReimburseResponse reimburseResponse = new ReimburseResponse();
-                    reimburseResponse.setId(datanya.getId());
-                    reimburseResponse.setFlgKet(datanya.getKeterangan());
-                    reimburseResponse.setHari(datanya.getHari());
-                    reimburseResponse.setJamMsk(datanya.getJamMsk());
-                    reimburseResponse.setJamPlg(datanya.getJamPlg());
-                    reimburseResponse.setLokasi(datanya.getProjectId().getLokasi());
-                    reimburseResponse.setNamaProject(datanya.getProjectId().getNamaProject());
-                    reimburseResponse.setTanggal(datanya.getTglAbsen());
-                    reimburseResponse.setTransport(datanya.getProjectId().getBiayaReimburse());
-
-                    LocalTime jamMasuk = datanya.getJamMsk();
-                    LocalTime jamPulang = datanya.getJamPlg();
+                    reimburseResponse.setId(dataReimbursenya.get().getId());
+                    reimburseResponse.setFlgKet(dataReimbursenya.get().getKeterangan());
+                    reimburseResponse.setHari(dataReimbursenya.get().getHari());
+                    reimburseResponse.setJamMsk(dataReimbursenya.get().getJamMsk());
+                    reimburseResponse.setJamPlg(dataReimbursenya.get().getJamPlg());
+                    String lokasi = Optional.ofNullable(dataReimbursenya.get().getProjectId())
+                            .map(projectId -> projectId.getLokasi())
+                            .orElse(null);
+                    reimburseResponse.setLokasi(lokasi);
+                    String namaProject = Optional.ofNullable(dataReimbursenya.get().getProjectId())
+                            .map(projectId -> projectId.getNamaProject())
+                            .orElse(null);
+                    reimburseResponse.setNamaProject(namaProject);
+                    reimburseResponse.setTanggal(dataReimbursenya.get().getTglAbsen());
+                    BigDecimal biayaReimburse = Optional.ofNullable(dataReimbursenya.get().getProjectId())
+                            .map(projectId -> projectId.getBiayaReimburse())
+                            .orElse(null);
+                    reimburseResponse.setTransport(biayaReimburse);
+                    
+                    LocalTime jamMasuk = dataReimbursenya.get().getJamMsk();
+                    LocalTime jamPulang = dataReimbursenya.get().getJamPlg();
                     Duration duration = Duration.between(jamMasuk, jamPulang);
                     Double hours = duration.getSeconds() / 3600.0;
                     BigDecimal totalHours = BigDecimal.valueOf(hours);
                     reimburseResponse.setTotalJamKerja(totalHours);
 
-                    long uangMakanValue = "1".equals(datanya.getIsLembur()) ? 20000L : 0L;
+                    long uangMakanValue = "1".equals(dataReimbursenya.get().getIsLembur()) ? 20000L : 0L;
                     reimburseResponse.setUangMakan(uangMakanValue);
                     
                     BigDecimal regularHours = BigDecimal.valueOf(9);
@@ -174,10 +188,12 @@ public class RekapService {
                      overtimeHours = totalHours.subtract(regularHours);
                     }
                     reimburseResponse.setOvertime(overtimeHours);
+                    
 
-                    String status = "1".equals(datanya.getIsApprove()) ? "Approved" :
-                    "0".equals(datanya.getIsApprove()) ? "Not Approved" : "Waiting for Approval";
+                    String status = "1".equals(dataReimbursenya.get().getIsApprove()) ? "Approved" :
+                    "0".equals(dataReimbursenya.get().getIsApprove()) ? "Not Approved" : "Waiting for Approval";
                     reimburseResponse.setStatus(status);
+
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);

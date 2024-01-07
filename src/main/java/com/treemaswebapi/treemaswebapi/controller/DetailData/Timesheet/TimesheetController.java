@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.treemaswebapi.treemaswebapi.service.DetailData.Timesheet.TimesheetResponse;
 import com.treemaswebapi.treemaswebapi.service.DetailData.Timesheet.TimesheetService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,8 +20,8 @@ public class TimesheetController {
     private final TimesheetService service;
 
     @GetMapping("/get-rekap-timesheet/data-member")
-    public ResponseEntity<Map<String, Object>> timesheetGet(@RequestHeader("Authorization") String jwtToken,TimesheetResponse timesheetResponse) {
-        ResponseEntity<Map<String, Object>> response = service.timesheetGet(jwtToken,timesheetResponse);
+    public ResponseEntity<Map<String, Object>> timesheetGet(@RequestHeader("Authorization") String jwtToken) {
+        ResponseEntity<Map<String, Object>> response = service.timesheetGet(jwtToken);
         return response;
     }
 }

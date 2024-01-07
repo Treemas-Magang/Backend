@@ -40,9 +40,7 @@ public class TimesheetService {
     
     // Get Data Timesheet ( MEMBER = tapi masih belum jadi fitur member add nya di web sementara findAll di table reimburseApp )
     public ResponseEntity<Map<String, Object>> timesheetGet(
-        @RequestHeader("Authorization") String jwtToken, 
-        TimesheetResponse timesheetResponse
-        ) {
+        @RequestHeader("Authorization") String jwtToken        ) {
             try {
                 if (jwtToken.startsWith("Bearer ")) {
                     String token = jwtToken.substring("Bearer ".length());
@@ -53,7 +51,7 @@ public class TimesheetService {
                     if (!dataTimesheetnya.isEmpty()) {
                         Map<String, Object> response = new HashMap<>();
                         response.put("success", true);
-                        response.put("message", "Data Timesheet for nik: "+nik+" retrieved successfully");
+                        response.put("message", "Data Timesheet retrieved successfully");
                         response.put("data", dataTimesheetnya);
                         return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
+import com.treemaswebapi.treemaswebapi.repository.JabatanRepository;
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AbsenServiceWeb {
     private final AbsenRepository absenRepository;
+    private final SysUserRepository sysUserRepository;
     
     public ResponseEntity<Map<String, Object>> absenGet() {
         try {
@@ -42,9 +47,15 @@ public class AbsenServiceWeb {
                 absenData.put("isWfh", absen.getIsWfh());
                 absenData.put("isLembur", absen.getIsLembur());
                 absenData.put("projectId", absen.getProjectId());
-        
-                responseData.add(absenData);
-            }
+                // Cari role dari setiap nik di table sys_user
+                Optional<SysUserEntity> sysUserOptional = sysUserRepository.findByUserId(absen.getNik());
+                if (sysUserOptional.isPresent()) {
+                    SysUserEntity sysUser = sysUserOptional.get();
+                    absenData.put("role", sysUser.getRole());
+                }
+
+                    responseData.add(absenData);
+                }
         
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");

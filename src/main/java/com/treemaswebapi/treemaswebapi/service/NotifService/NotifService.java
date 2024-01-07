@@ -599,8 +599,8 @@ public class NotifService {
 
     // INI BAGIIAN POST SERVICE
     public ResponseEntity<Map<String, Object>> postLiburApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
+        Map<String, Object> response =  new HashMap<>();
         try {
-                Map<String, Object> response =  new HashMap<>();
                 if (tokenWithBearer.startsWith("Bearer ")) {
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nikUser = jwtService.extractUsername(token);
@@ -645,6 +645,7 @@ public class NotifService {
                                 .lokasiPlg(datanya.getLokasiPlg())
                                 .nama(datanya.getNama())
                                 .nik(datanya.getNik())
+                                .noteApp(request.getNoteApp1())
                                 .projectId(datanya.getProjectId())
                                 .tglAbsen(datanya.getTglAbsen())
                                 .totalJamKerja(datanya.getTotalJamKerja())
@@ -654,77 +655,92 @@ public class NotifService {
                                 absenRepository.save(dataAbsen);
                                 
 
-                                response.put("message", "data approval tidak disetujui");
-                                response.put("data", approval2);
+                                response.put("message", "data approval tidak disetujui oleh level1");
+                                response.put("data", dataAbsen);
                                 return ResponseEntity.status(HttpStatus.OK).body(response);
+                            }else if("1".equals(approval1)){
+                                datanya.setIsApprove(approval1);
+                                datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                                datanya.setUsrApp(namaUser);
+                                datanya.setNoteApp(request.getNoteApp1());
+                                absenAppRepository.save(datanya);
+                                
+                                response.put("message", "data approval disetujui oleh level1");
+                                response.put("data", "data absen approvalnya ini:\n"+datanya);
+                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                            }else{
+                                response.put("message", "data approval yang lo kirim salah");
+                                response.put("data", "cek lagi kiriman lo");
+                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                             }
-                            datanya.setFlagApp(approval1);
                         }else if (!approval2.isEmpty() && approval1.isEmpty()) {
+                            if ("1".equals(approval2)) {
+                                datanya.setIsApprove(approval2);
+                                datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
+                                datanya.setUsrApp(namaUser);
+                                datanya.setNoteApp(request.getNoteApp1());
+                                absenAppRepository.save(datanya);
+
+                                AbsenEntity dataAbsen = new AbsenEntity();
+                                dataAbsen = AbsenEntity.builder()
+                                .dtmApp(Timestamp.valueOf(LocalDateTime.now()))
+                                .dtmCrt(datanya.getDtmCrt())
+                                .gpsLatitudeMsk(datanya.getGpsLatitudeMsk())
+                                .gpsLatitudePlg(datanya.getGpsLatitudePlg())
+                                .gpsLongitudeMsk(datanya.getGpsLongitudeMsk())
+                                .gpsLongitudePlg(datanya.getGpsLongitudePlg())
+                                .hari(datanya.getHari())
+                                .isAbsen("1")
+                                .isCuti("0")
+                                .isLembur(datanya.getIsLembur())
+                                .isLibur(datanya.getIsLibur())
+                                .isOther(datanya.getIsOther())
+                                .isSakit(datanya.getIsSakit())
+                                .isWfh(datanya.getIsWfh())
+                                .jamMsk(datanya.getJamMsk())
+                                .jamPlg(datanya.getJamPlg())
+                                .jarakMsk(datanya.getJarakMsk())
+                                .jarakPlg(datanya.getJarakPlg())
+                                .lokasiMsk(datanya.getLokasiMsk())
+                                .lokasiPlg(datanya.getLokasiPlg())
+                                .nama(datanya.getNama())
+                                .nik(datanya.getNik())
+                                .noteApp(request.getNoteApp2())
+                                .projectId(datanya.getProjectId())
+                                .tglAbsen(datanya.getTglAbsen())
+                                .totalJamKerja(datanya.getTotalJamKerja())
+                                .usrApp(namaUser)
+                                .usrCrt(datanya.getUsrCrt())
+                                .build();
+                                absenRepository.save(dataAbsen);
+                                response.put("message", "data approval disetujui oleh level2");
+                                response.put("data", "data absen approvalnya ini:\n"+datanya);
+                                return ResponseEntity.status(HttpStatus.OK).body(response);
+                            }else if("0".equals(approval2)){
                             datanya.setIsApprove(approval2);
                             datanya.setNoteApp(request.getNoteApp2());
                             datanya.setUsrApp(namaUser);
                             datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
-                        }
-                        AbsenEntity dataAbsen = new AbsenEntity();
-                        if ("1".equals(request.getIsApprove())) {
-                            datanya.setIsApprove("1");
-                            datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
-                            datanya.setUsrApp(namaUser);
-                            datanya.setNoteApp(request.getNoteApp2());
-                            absenAppRepository.save(datanya);
 
-                            dataAbsen = AbsenEntity.builder()
-                            .dtmApp(Timestamp.valueOf(LocalDateTime.now()))
-                            .dtmCrt(datanya.getDtmCrt())
-                            .gpsLatitudeMsk(datanya.getGpsLatitudeMsk())
-                            .gpsLatitudePlg(datanya.getGpsLatitudePlg())
-                            .gpsLongitudeMsk(datanya.getGpsLongitudeMsk())
-                            .gpsLongitudePlg(datanya.getGpsLongitudePlg())
-                            .hari(datanya.getHari())
-                            .isAbsen("1")
-                            .isCuti("0")
-                            .isLembur(datanya.getIsLembur())
-                            .isLibur(datanya.getIsLibur())
-                            .isOther(datanya.getIsOther())
-                            .isSakit(datanya.getIsSakit())
-                            .isWfh(datanya.getIsWfh())
-                            .jamMsk(datanya.getJamMsk())
-                            .jamPlg(datanya.getJamPlg())
-                            .jarakMsk(datanya.getJarakMsk())
-                            .jarakPlg(datanya.getJarakPlg())
-                            .lokasiMsk(datanya.getLokasiMsk())
-                            .lokasiPlg(datanya.getLokasiPlg())
-                            .nama(datanya.getNama())
-                            .nik(datanya.getNik())
-                            .projectId(datanya.getProjectId())
-                            .tglAbsen(datanya.getTglAbsen())
-                            .totalJamKerja(datanya.getTotalJamKerja())
-                            .usrApp(namaUser)
-                            .usrCrt(datanya.getUsrCrt())
-                            .build();
-                            absenRepository.save(dataAbsen);
-
-                            absenAppRepository.delete(datanya);
-                        }else if ("0".equals(request.getIsApprove())) {
-                            datanya.setIsApprove("0");
-                            datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
-                            datanya.setUsrApp(namaUser);
-                            datanya.setNoteApp(request.getNoteApp());
                             absenAppRepository.save(datanya);
-        
-                            response.put("success", true);
-                            response.put("message", "berhasil post ke AbsenEntity dan SetValue di AbsenApp");
-                            response.put("data", datanya);
+                            
+                            response.put("message", "data approval tidak disetujui oleh level2");
+                            response.put("data", "data absen approvalnya ini:\n"+datanya);
                             return ResponseEntity.status(HttpStatus.OK).body(response);
+                            }else{
+                            response.put("message", "gagal");
+                            response.put("data", "salah kayanya deh, coba cek log");
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                            }
+                        }else{
+                            response.put("message", "salah masukin kiriman kayanya");
+                            response.put("data", "coba cek log");
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                         }
-                        response.put("success", true);
-                        response.put("message", "berhasil post ke AbsenEntity dan SetValue di AbsenApp");
-                        response.put("data", datanya);
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
                     }else{
                         response.put("success", false);
                         response.put("message", "dataOptionalnya ngga ada");
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                     }
                 } else {
                 // Handle the case where the token format is invalid
@@ -733,7 +749,6 @@ public class NotifService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Failed to retrieve project details");
             response.put("error", e.getMessage());

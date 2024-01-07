@@ -93,11 +93,16 @@ public class RekapService {
                     
                     LocalTime jamMasuk = dataReimbursenya.getJamMsk();
                     LocalTime jamPulang = dataReimbursenya.getJamPlg();
-                    Duration duration = Duration.between(jamMasuk, jamPulang);
-                    Double hours = duration.getSeconds() / 3600.0;
-                    BigDecimal totalHours = BigDecimal.valueOf(hours);
+                    
+                    BigDecimal totalHours = BigDecimal.valueOf(0D);
+                    if (jamMasuk != null && jamPulang !=null) {
+                        Duration duration = Duration.between(jamMasuk, jamPulang);
+                        Double hours = duration.getSeconds() / 3600.0;
+                        totalHours = BigDecimal.valueOf(hours);
+                    }else{
+                        totalHours = BigDecimal.valueOf(0D);                        
+                    }
                     reimburseResponse.setTotalJamKerja(totalHours);
-
                     long uangMakanValue = "1".equals(dataReimbursenya.getIsLembur()) ? 20000L : 0L;
                     reimburseResponse.setUangMakan(uangMakanValue);
                     
@@ -105,6 +110,8 @@ public class RekapService {
                     BigDecimal overtimeHours = BigDecimal.valueOf(0);
                     if(totalHours.compareTo(regularHours) > 0){
                      overtimeHours = totalHours.subtract(regularHours);
+                    }else{
+                     overtimeHours = BigDecimal.valueOf(0D);
                     }
                     reimburseResponse.setOvertime(overtimeHours);
                     

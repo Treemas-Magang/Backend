@@ -471,7 +471,7 @@ public class RekapService {
             String token = tokenWithBearer.substring("Bearer ".length());
             String nik = jwtService.extractUsername(token);
             System.out.println("ini masuk area rekap cuti");
-            List<CutiAppEntity> data2Cutinya = cutiAppRepository.findAllByNik(nik);
+            List<CutiAppEntity> data2Cutinya = cutiAppRepository.findAllByNikAndFlgKet(nik,"cuti");
             System.out.println("ini data2cutinya:"+data2Cutinya);
             
             if (!data2Cutinya.isEmpty()) {

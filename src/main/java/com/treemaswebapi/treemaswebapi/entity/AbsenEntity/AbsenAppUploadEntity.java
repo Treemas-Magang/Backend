@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -147,4 +148,14 @@ public class AbsenAppUploadEntity {
 
     @Column(name = "dtmcrt")
     private Timestamp dtmCrt;
+    
+    @Transient
+    public Boolean getIsApprove1() {
+        return "1".equals(this.getFlagApp());
+    }
+
+    @Transient
+    public Boolean getIsApprove2() {
+        return "1".equals(this.getIsApprove());
+    }
 }

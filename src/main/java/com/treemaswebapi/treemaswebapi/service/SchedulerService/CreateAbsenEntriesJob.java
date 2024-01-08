@@ -55,19 +55,7 @@ public class CreateAbsenEntriesJob implements Job {
                     absenEntity.setNama(karyawan.getNama());
                     absenEntity.setDtmCrt(dtmSekarang);
                     absenEntity.setTglAbsen(currentDate);
-                    absenRepository.save(absenEntity);
-
-                    ReimburseAppEntity reimburseAppEntity = new ReimburseAppEntity();
-                    reimburseAppEntity.setNik(karyawan.getNik());
-                    reimburseAppEntity.setNama(karyawan.getNama());
-                    reimburseAppEntity.setDtmUpd(dtmSekarang);
-                    reimburseAppEntity.setTglAbsen(currentDate);
-                    reimburseAppEntity.setGpsLatitudeMsk(0D);
-                    reimburseAppEntity.setGpsLongitudeMsk(0D);
-                    reimburseAppEntity.setGpsLatitudePlg(0D);
-                    reimburseAppEntity.setGpsLongitudePlg(0D);
-                    reimburseAppRepository.save(reimburseAppEntity);
-                    
+                    absenRepository.save(absenEntity);                   
 
                     TimesheetEntity timesheetEntity = new TimesheetEntity();
                     timesheetEntity.setTglMsk(currentDate);

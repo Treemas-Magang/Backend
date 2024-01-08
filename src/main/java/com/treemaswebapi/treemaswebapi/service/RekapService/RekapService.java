@@ -134,7 +134,7 @@ public class RekapService {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "No Data Reimburse found for nik: " + nik);
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } else {
             Map<String, Object> response = new HashMap<>();
@@ -211,7 +211,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Reimburse found for nik :" + nik + "and idReimburse " + id);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -293,7 +293,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Timesheet found for nik :" + nik);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -329,7 +329,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Timesheet found for nik :" + nik + "and idTimesheet " + id);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -374,7 +374,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Timesheet found for nik :" + nik + "and idTimesheet " + id);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -411,7 +411,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Absen found for nik :" + nik);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -447,7 +447,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Absen found for nik :" + nik + "and idAbsen " + id);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -513,7 +513,7 @@ public class RekapService {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "No Data Cuti found for nik: " + nik);
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } else {
             Map<String, Object> response = new HashMap<>();
@@ -658,7 +658,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Sakit found for nik :" + nik + "and idSakit " + id);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid
@@ -742,7 +742,7 @@ public class RekapService {
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", false);
                     response.put("message", "No Data Claim found for nik :" + nik + "and idClaim " + id);
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                 }
             } else {
                 // Handle the case where the token format is invalid

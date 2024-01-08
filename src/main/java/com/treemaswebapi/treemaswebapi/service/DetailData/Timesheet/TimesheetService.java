@@ -58,7 +58,7 @@ public class TimesheetService {
                         Map<String, Object> response = new HashMap<>();
                         response.put("success", false);
                         response.put("message", "No Data Timesheet found for nik :" + nik);
-                        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                     }
                 } else {
                     // Handle the case where the token format is invalid

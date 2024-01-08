@@ -1,5 +1,7 @@
 package com.treemaswebapi.treemaswebapi.entity.UploadApkEntity;
 
+import java.sql.Timestamp;
+
 import org.postgresql.util.PGobject;
 
 import jakarta.persistence.Column;
@@ -25,8 +27,12 @@ public class UploadApkEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "file_name")
     private String fileName;
 
     @Column(name = "apk_data", columnDefinition = "bytea")
     private PGobject apkData;
+    
+    @Column(name = "dtmcrt")
+    private Timestamp dtmCrt;
 }

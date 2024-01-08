@@ -1,5 +1,7 @@
 package com.treemaswebapi.treemaswebapi.entity.UploadApkEntity;
 
+import org.postgresql.util.PGobject;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +27,6 @@ public class UploadApkEntity {
 
     private String fileName;
 
-    @Lob
-    @Column(columnDefinition = "bytea")
-    private byte[] apkData;
+    @Column(name = "apk_data", columnDefinition = "bytea")
+    private PGobject apkData;
 }

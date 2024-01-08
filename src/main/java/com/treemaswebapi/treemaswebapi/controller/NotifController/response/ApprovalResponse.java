@@ -43,5 +43,6 @@ public class ApprovalResponse {
     private Optional<CutiAppEntity> cutiApproval;
     private Optional<CutiAppUploadEntity> cutiApprovalWeb;
     private Long dataCounter;
-    
+    // Gambar
+    private String image64;
 }

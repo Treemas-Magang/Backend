@@ -30,6 +30,7 @@ import com.treemaswebapi.treemaswebapi.repository.AbsenPulangAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiAppUploadRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiImageAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.GeneralParamApprovalRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
@@ -44,6 +45,8 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppUploadEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageAppEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.JabatanEntity.JabatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 
@@ -58,6 +61,7 @@ public class NotifService {
     private final AbsenRepository absenRepository;
     private final CutiAppRepository cutiAppRepository;
     private final CutiRepository cutiRepository;
+    private final CutiImageAppRepository cutiImageAppRepository;
     private final CutiAppUploadRepository cutiAppUploadRepository;
     private final AbsenAppUploadRepository absenAppUploadRepository;
     private final AbsenPulangAppRepository absenPulangAppRepository;
@@ -1684,13 +1688,15 @@ public class NotifService {
        try {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 Optional<CutiAppEntity> dataApprovalnya = cutiAppRepository.findById(idApproval);
-    
+                Optional<CutiImageAppEntity> dataGambarnya = cutiImageAppRepository.findById(idApproval);
+                String gambarnya = dataGambarnya.get().getImage();
                 if (dataApprovalnya.isPresent()) {
                     System.out.println(dataApprovalnya);
                     String token = tokenWithBearer.substring("Bearer ".length());
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk reimburseApproval");
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
+                    .image64(gambarnya)
                     .sakitApproval(dataApprovalnya)
                     .build();
 
@@ -1699,7 +1705,7 @@ public class NotifService {
                     response.put("message", "berhasil retrieve data approval");
                     Map<String, Object> data = new HashMap<>();
                     if (approvalResponse.getSakitApproval() != null) {
-                        data.put("getSakitApproval", approvalResponse.getSakitApproval());
+                        data.put("getSakitApproval", approvalResponse);
                     }
                     response.put("data", data);
                     return ResponseEntity.status(HttpStatus.OK).body(response);

@@ -386,13 +386,13 @@ public class MemberService {
                         } else {
                             response.put("success", false);
                             response.put("message", "No member data found!");
-                            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                         }
         
                     } else {
                         response.put("success", false);
                         response.put("message", "No project placement found for the user!");
-                        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                     }
                 } else {
                     // Handle the case where the token format is invalid

@@ -11,4 +11,6 @@ import com.treemaswebapi.treemaswebapi.entity.UploadApkEntity.UploadApkEntity;
 public interface UploadApkRepository extends JpaRepository<UploadApkEntity, Long> {
 
     Optional<UploadApkEntity> findByFileName(String filename);
+    Optional<UploadApkEntity> findTopByOrderByDtmCrtDesc();
+
 }

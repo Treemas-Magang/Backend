@@ -2,6 +2,7 @@ package com.treemaswebapi.treemaswebapi.service.Upload.Apk;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.GZIPOutputStream;
@@ -31,13 +32,7 @@ public class UploadApkService {
 
     public ResponseEntity<Map<String, Object>> uploadApk(MultipartFile file) {
         try {
-            // Mencari ID terakhir
-            Long lastId = uploadApkRepository.findTopByOrderByIdDesc().orElse(0L);
-
-            // ID untuk data yang akan dioperasikan
-            Long idToOperate = lastId + 1;
-
-            UploadApkEntity existingApk = uploadApkRepository.findById(idToOperate).orElse(null);
+            UploadApkEntity existingApk = uploadApkRepository.findById(1L).orElse(null);
 
             if (existingApk != null) {
                 // Lakukan operasi penyimpanan file atau manipulasi lain sesuai kebutuhan

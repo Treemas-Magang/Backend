@@ -127,10 +127,12 @@ public class UploadAbsenService {
                     System.out.println(projectFound);
                     if (projectFound) {
                         ProjectEntity project = projectRepository.findByProjectId(projectRequest);
+                        
                         if (project != null) {
+                            System.out.println("PROJECT GAK NULL ");
                             // Save to absen Entity
                             LocalTime jamSekarang = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                            AbsenAppUploadEntity absenEntity = absenAppUploadRepository.findByTglAbsenAndNik(tanggalIni, nik);
+                            AbsenAppUploadEntity absenEntity = new AbsenAppUploadEntity();
                             absenEntity.setProjectId(project);
                             absenEntity.setNik(request.getNik());
                             absenEntity.setNama(nama);

@@ -119,11 +119,12 @@ public class UploadAbsenService {
                     boolean projectFound = false;
                     String projectRequest = request.getProjectIdWeb();
                     for (PenempatanEntity projReq : registeredProjects) {
-                        if (projReq.getProjectId().getProjectId().equals(projectRequest)) {
+                        if (projReq.getProjectId().getProjectId().equals(projectRequest) && "1".equals(projReq.getActive())) {
                             projectFound = true;
                             // break;
                         }
                     }
+
                     System.out.println(projectFound);
                     if (projectFound) {
                         ProjectEntity project = projectRepository.findByProjectId(projectRequest);

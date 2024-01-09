@@ -61,6 +61,14 @@ public class RekapController {
         return rekapService.rekapTimesheetDetail(tokenWithBearer, id);
     }
 
+    @GetMapping("/get-itungan-timesheet")
+    public ResponseEntity<Map<String, Object>> getItunganTimesheet(
+        @RequestHeader("Authorization") String tokenWithBearer
+    ){
+        return rekapService.getItunganTimesheet(tokenWithBearer);
+    }
+    
+
     @PutMapping("/update-timesheet")
     public ResponseEntity<Map<String, Object>> updateTimesheet(
         @RequestHeader("Authorization") String tokenWithBearer, 

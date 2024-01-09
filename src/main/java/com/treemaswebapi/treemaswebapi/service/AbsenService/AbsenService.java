@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -482,6 +483,7 @@ public class AbsenService {
                 lupaPulang.setGpsLongitudeMsk(existingAbsenData.getGpsLongitudeMsk());
                 lupaPulang.setJamMsk(existingAbsenData.getJamMsk());
                 lupaPulang.setLokasiMsk(existingAbsenData.getLokasiMsk());
+                lupaPulang.setTglAbsen(existingAbsenData.getTglAbsen());
                 /*
                 data yang harus lo kasih:
                 KeteranganLupaPulang
@@ -661,7 +663,10 @@ public class AbsenService {
                 String nik = jwtService.extractUsername(token);
 
                 // Search for idAbsen that has no Plg data`
-                List<AbsenEntity> unprocessedAbsenList = absenRepository.findIdAbsenByNikAndIsAbsenIsNull(nik);
+                List<AbsenEntity> unprocessedAbsenList = absenRepository.findIdAbsenByNikAndIsAbsenIsNullAndJamMskIsNotNull(nik);
+                List<AbsenPulangAppEntity> processedAbsenList = absenPulangAppRepository.findAll();
+                unprocessedAbsenList.removeIf(unprocessedAbsen -> processedAbsenList.stream()
+                .anyMatch(processedAbsen -> Objects.equals(processedAbsen.getTglAbsen(), unprocessedAbsen.getTglAbsen())));
                 System.out.println("ini data belom absennya: "+unprocessedAbsenList);
                 List<AbsenBelumPulangResponse> listAbsenResponse = new ArrayList<>();
                 for(AbsenEntity absenEntity : unprocessedAbsenList){

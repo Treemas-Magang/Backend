@@ -28,6 +28,4 @@ public class ReimburseResponse {
     String status;
     BigDecimal totalJamKerja;
     BigDecimal overtime;
-    // buat response unprocessedAbsenEntity
-    
 }

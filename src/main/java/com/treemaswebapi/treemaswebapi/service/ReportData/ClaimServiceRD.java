@@ -50,13 +50,11 @@ public class ClaimServiceRD {
             for (ClaimEntity claim : claims) {
                 Map<String, Object> formattedClaim = new HashMap<>();
                 formattedClaim.put("id", claim.getId());
-                
-                Date tglUploadDate = new Date(claim.getTanggal().getTime());
-                String formattedTglUpload = dateFormat.format(tglUploadDate);
+            
                 
                 formattedClaim.put("nik", claim.getNik());
                 formattedClaim.put("nama", claim.getNama());
-                formattedClaim.put("tanggal", formattedTglUpload);
+                formattedClaim.put("tanggal", claim.getTanggal());
                 formattedClaim.put("nominal", claim.getNominal());
                 formattedClaim.put("keterangan", claim.getKeterangan());
                 formattedClaim.put("tipeClaim", claim.getTipeClaimEntity().getKeterangan());
@@ -99,9 +97,6 @@ public class ClaimServiceRD {
             // Menggunakan LocalDate untuk mendapatkan tanggal hari ini
             LocalDate currentDate = LocalDate.now();
 
-            // Konversi LocalDate ke java.sql.Date
-            Date tanggal = Date.valueOf(currentDate);
-
             TipeClaimEntity tipeClaimEntity = tipeClaimRepository.findById(request.getSelectedTipeClaim())
                 .orElseThrow(() -> new RuntimeException("TipeClaim not found for id: " + request.getSelectedTipeClaim()));
 
@@ -111,7 +106,7 @@ public class ClaimServiceRD {
                 .nama(nama)
                 .keterangan(request.getKeterangan())
                 .nominal(request.getNominal())
-                .tanggal(tanggal)
+                .tanggal(currentDate)
                 .dtmCrt(dtmCrt)
                 .usrCrt(nama)
                 .tipeClaimEntity(tipeClaimEntity)
@@ -122,7 +117,7 @@ public class ClaimServiceRD {
             // Ke tbl_claim_image
             var claimAddImage = ClaimImageEntity.builder()
                 .nik(userToken)
-                .tanggal(tanggal)
+                .tanggal(currentDate)
                 .image64(request.getImage64())
                 .usrCrt(nama)
                 .dtmCrt(dtmCrt)

@@ -130,7 +130,6 @@ public class AbsenService {
     }
     
     
-    // masih error, ga ngeluarin PenempatanEntity / ProjectEntity
     public ResponseEntity<Map<String, Object>> inputAbsen(@RequestHeader("Authorization") String tokenWithBearer, AbsenRequest request) {
         try {
             

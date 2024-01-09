@@ -53,6 +53,9 @@ public class AbsenRequest {
     private String noteApp;
     private String photoAbsen;
     private String keteranganLupaPulang;
+
+    // Buat web langsung kirim projectId nya tanpa dari table ProjectId
+    private String projectIdWeb;
 }
 
 

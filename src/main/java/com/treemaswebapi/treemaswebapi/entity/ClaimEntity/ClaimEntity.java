@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 // id_claim FK dari tbl_tipe_claim
 
@@ -34,7 +35,7 @@ public class ClaimEntity {
     private String hari;
 
     @Column(name = "tanggal")
-    private Date tanggal;
+    private LocalDate tanggal;
 
     @Column(name = "nominal")
     private BigDecimal nominal;

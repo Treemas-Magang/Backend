@@ -108,7 +108,7 @@ public class NotifService {
              } catch (Exception e) {
                  Map<String, Object> response = new HashMap<>();
                  response.put("success", false);
-                 response.put("message", "Failed to retrieve project details");
+                 response.put("message", "Failed to retrieve All Approval");
                  response.put("error", e.getMessage());
                  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
              }
@@ -208,7 +208,7 @@ public class NotifService {
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Failed to retrieve project details");
+            response.put("message", "Failed to retrieve get LiburApproval");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -250,7 +250,7 @@ public class NotifService {
         } catch (Exception e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Failed to retrieve project details");
+            response.put("message", "Failed to retrieve get LemburApproval");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -295,7 +295,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve get CutiApproval");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -340,7 +340,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve get CutiWebApproval");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -382,7 +382,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve get AbsenPulangApproval");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -472,7 +472,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve get ReimburseApproval");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -516,7 +516,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve get AbsenWebApproval");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -561,7 +561,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve get SakitApproval");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -595,7 +595,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve fullCounter");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -617,9 +617,15 @@ public class NotifService {
                         String approval1 = request.getIsApprove1();
                         String approval2 = request.getIsApprove2();
                         AbsenAppEntity datanya = datanyaOptional.get();
-                        if (approval2.isEmpty() && !approval1.isEmpty()) {
+                        boolean isApproval1Empty = (approval1 == null) ? true : approval1.isEmpty();
+                        boolean isApproval2Empty = (approval2 == null) ? true : approval2.isEmpty();
+
+                        if (!isApproval1Empty && isApproval2Empty) {
                             if ("0".equals(approval1)) {
+                                //langsung setIsApprove karena ketolak
                                 datanya.setIsApprove(approval1);
+                                //setFlagApp buat si level1
+                                datanya.setFlagApp(approval1);
                                 datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
                                 datanya.setUsrApp(namaUser);
                                 datanya.setNoteApp(request.getNoteApp1());
@@ -663,7 +669,8 @@ public class NotifService {
                                 response.put("data", dataAbsen);
                                 return ResponseEntity.status(HttpStatus.OK).body(response);
                             }else if("1".equals(approval1)){
-                                datanya.setIsApprove(approval1);
+                                //setFlagApp ini buat si level 1
+                                datanya.setFlagApp(approval1);
                                 datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
                                 datanya.setUsrApp(namaUser);
                                 datanya.setNoteApp(request.getNoteApp1());
@@ -677,7 +684,7 @@ public class NotifService {
                                 response.put("data", "cek lagi kiriman lo");
                                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                             }
-                        }else if (!approval2.isEmpty() && approval1.isEmpty()) {
+                        }else if (isApproval1Empty && !isApproval2Empty) {
                             if ("1".equals(approval2)) {
                                 datanya.setIsApprove(approval2);
                                 datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
@@ -721,7 +728,8 @@ public class NotifService {
                                 response.put("data", "data absen approvalnya ini:\n"+datanya);
                                 return ResponseEntity.status(HttpStatus.OK).body(response);
                             }else if("0".equals(approval2)){
-                            datanya.setIsApprove(approval2);
+                            datanya.setIsApprove(null);
+                            datanya.setFlagApp(null);
                             datanya.setNoteApp(request.getNoteApp2());
                             datanya.setUsrApp(namaUser);
                             datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
@@ -754,7 +762,7 @@ public class NotifService {
             }
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "Failed to retrieve project details");
+            response.put("message", "Failed to retrieve post LiburApproval");
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -830,7 +838,7 @@ public class NotifService {
             } catch (Exception e) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
-                response.put("message", "Failed to retrieve project details");
+                response.put("message", "Failed to retrieve post LemburApproval");
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
@@ -908,7 +916,7 @@ public class NotifService {
                     String nikUser = jwtService.extractUsername(token);
                     Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
                     String namaUser = dataUser.get().getNama();
-                    System.out.println(nikUser + "ini udah masuk postLemburApproval");
+                    System.out.println(nikUser + "ini udah masuk postCutiWebApproval");
 
                     CutiAppUploadEntity datanya = cutiAppUploadRepository.findById(idApproval).get();
                     CutiEntity dataCuti = new CutiEntity();

@@ -5,11 +5,13 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
+import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.ClaimImageRepository;
@@ -39,6 +42,7 @@ import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseRepository;
+import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -58,6 +62,7 @@ public class RekapService {
     private final CutiImageRepository cutiImageRepository;
     private final ClaimImageRepository claimImageRepository;
     private final CutiImageAppRepository cutiImageAppRepository;
+    private final SysUserRepository sysUserRepository;
 
     /* --------------------------------------------BAGIAN REIMBURSE------------------------------------------------ */
     public ResponseEntity<Map<String, Object>> rekapReimburse(@RequestHeader String tokenWithBearer) {
@@ -235,12 +240,37 @@ public class RekapService {
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
                 String nik = jwtService.extractUsername(token);
-    
-                List<ReimburseAppEntity> data2Reimbursenya = reimburseAppRepository.findByNik(nik);
-                
+                SysUserEntity dataUser = sysUserRepository.findByUserId(nik).get();
+                String jabatan = dataUser.getRole().getJabatanId();
+                LocalDate currentDate = LocalDate.now();
+
+                // Calculate the start date as the 13th of the current month
+                LocalDate startDate = LocalDate.of(currentDate.getYear(), currentDate.getMonth(), 13);
+
+                // Calculate the end date as the 13th of the next month
+                LocalDate endDate = startDate.plusMonths(1);
+                List<ReimburseAppEntity> data2Reimbursenya = reimburseAppRepository.findByNikAndTglAbsenBetween(nik, startDate, endDate);
+                BigDecimal totalReimburse = BigDecimal.ZERO;
+                BigDecimal totalClaim = BigDecimal.ZERO;
+                BigDecimal totalDuit = BigDecimal.ZERO;
+                BigDecimal dataVoice = BigDecimal.ZERO;
+                switch (jabatan) {
+                    case "HEAD":
+                    case "LEAD":
+                        dataVoice = BigDecimal.valueOf(150000);
+                        break;
+            
+                    case "EMPL":
+                        dataVoice = BigDecimal.valueOf(100000);
+                        break;
+                    default:
+                        dataVoice = BigDecimal.ZERO;
+                        break;
+                }
+                List<ClaimEntity> data2Claimnya = claimRepository.findByNikAndTanggalBetween(nik, startDate, endDate);
                 if (!data2Reimbursenya.isEmpty()) {
                     Map<LocalDate, BigDecimal> reimburseHarian = new HashMap<>();
-                    BigDecimal totalReimburse = BigDecimal.ZERO;
+                    
                     for(ReimburseAppEntity dataReimbursenya : data2Reimbursenya)
                         {
                             if ("1".equals(dataReimbursenya.getIsApprove())) 
@@ -252,9 +282,28 @@ public class RekapService {
                                 totalReimburse = totalReimburse.add(duitnya);
                             } 
                         }
+                    if (!data2Claimnya.isEmpty()) {
+                        for(ClaimEntity dataClaimnya : data2Claimnya)
+                            {
+                                BigDecimal duitClaimnya = dataClaimnya.getNominal();
+                                totalClaim = totalClaim.add(duitClaimnya);
+                            }
+                    }
+                    totalDuit = totalDuit.add(dataVoice);
+                    totalDuit = totalDuit.add(totalClaim);
+                    totalDuit = totalDuit.add(totalReimburse);
+
+                    TotalReimburse totalReimburseResponse = TotalReimburse.builder()
+                    .dataVoice(dataVoice)
+                    .lainlain(totalClaim)
+                    .reimburse(totalReimburse)
+                    .keseluruhan(totalDuit)
+                    .build();
+                    
+
                     response.put("success", true);
-                    response.put("detailData", reimburseHarian);
-                    response.put("data",totalReimburse);
+                    response.put("message", "berhasil retrieve listReimbursenya");
+                    response.put("data",totalReimburseResponse);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     response.put("success", false);
@@ -391,6 +440,68 @@ public class RekapService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    public BigDecimal calculateJamKerja(LocalTime jamMasuk, LocalTime jamKeluar) {
+        // Check for null values or handle invalid cases
+        if (jamMasuk == null || jamKeluar == null) {
+            return BigDecimal.ZERO;
+        }
+
+        // Calculate the duration in hours
+        long hours = ChronoUnit.HOURS.between(jamMasuk, jamKeluar);
+
+        // Convert the result to BigDecimal
+        return BigDecimal.valueOf(hours);
+    }
+    
+    public ResponseEntity<Map<String, Object>> getItunganTimesheet (@RequestHeader String tokenWithBearer) { 
+        try {
+            Map<String, Object> response = new HashMap<>();
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                String token = tokenWithBearer.substring("Bearer ".length());
+                String nik = jwtService.extractUsername(token);
+    
+                List<TimesheetEntity> data2Timesheetnya = timesheetRepository.findAllByNik(nik);
+                
+                if (!data2Timesheetnya.isEmpty()) {
+                    BigDecimal totalJamReguler = data2Timesheetnya.stream()
+                    .map((TimesheetEntity timesheet) -> calculateJamKerja(timesheet.getJamMasuk(), timesheet.getJamKeluar()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                    BigDecimal totalJamLembur = totalJamReguler.compareTo(BigDecimal.valueOf(9)) > 0 ?
+                            totalJamReguler.subtract(BigDecimal.valueOf(9)) : BigDecimal.ZERO;
+
+                    BigDecimal totalJamKerja = totalJamReguler.add(totalJamLembur);
+                    
+                    TimesheetSummary timesheetSummary = TimesheetSummary.builder()
+                    .totalJamKerja(totalJamKerja)
+                    .totalJamLembur(totalJamLembur)
+                    .totalJamReguler(totalJamReguler)
+                    .build();
+
+                    response.put("success", true);
+                    response.put("message", "berhasil");
+                    response.put("data",timesheetSummary);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    response.put("success", false);
+                    response.put("message", "No Data Reimburse found for nik :" + nik);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+            } else {
+                // Handle the case where the token format is invalid
+                response.put("success", false);
+                response.put("message", "Invalid token format");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to retrieve Data Timesheet");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }   
 
     /* --------------------------------------------BAGIAN ABSEN------------------------------------------------ */
      public ResponseEntity<Map<String, Object>> rekapAbsen(@RequestHeader String tokenWithBearer) {
@@ -771,4 +882,5 @@ public class RekapService {
 
         return indonesianDayMap.get(dayOfWeek.toString());
     }
+
 }

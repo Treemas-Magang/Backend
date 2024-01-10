@@ -272,4 +272,103 @@ public class ProfileService {
         }
         return null; // or an empty string if needed
     }
+
+    public ResponseEntity<Map<String, String>> updateProfileMobile(
+        ProfileRequest request, 
+        @RequestHeader("Authorization") String jwtToken
+        ) {
+        try {
+            // Cari siapa yang akses api ini
+            String token = jwtToken.substring(7);
+            String nik = jwtService.extractUsername(token);
+            
+            System.out.println("CEBELAPA IMOET CI NIK AQ: "+nik);
+            // User hasil compare nik dari request dengan database
+            Optional<KaryawanEntity> karyawanOptional = karyawanRepository.findByNik(nik);
+            // Check if selectedRole is present and not empty (Ini yang dirubah)
+    
+
+            KaryawanEntity karyawan = karyawanOptional.get();
+            if (karyawanOptional.isPresent()) {
+                karyawan.setNama(request.getNama());
+                karyawan.setTempatLahir(request.getTempatLahir());
+                karyawan.setTanggalLahir(request.getTanggalLahir());
+                karyawan.setJenisKelamin(request.getJenisKelamin());
+                karyawan.setAgama(request.getAgama());
+                karyawan.setKewarganegaraan(request.getKewarganegaraan());
+                karyawan.setKodePos(request.getKodePos());
+                karyawan.setAlamatKtp(request.getAlamatKtp());
+                karyawan.setNoHp(request.getNoHp());
+                karyawan.setEmail(request.getEmail());
+                karyawan.setNoRek(request.getNoRek());
+                karyawan.setJenjangPendidikan(request.getJenjangPendidikan());
+                karyawan.setTanggalBergabung(request.getTanggalBergabung());
+                karyawan.setAlamatSekarang(request.getAlamatSekarang());
+                karyawan.setStatusPerkawinan(request.getStatusPerkawinan());
+                karyawan.setGolonganDarah(request.getGolonganDarah());
+                karyawan.setEmergencyContact(request.getEmergencyContact());
+                karyawan.setStatusEmergency(request.getStatusEmergency());
+                karyawan.setAlamatEmergency(request.getAlamatEmergency());
+                karyawan.setTelpEmergency(request.getTelpEmergency());
+                karyawan.setNomorKtp(request.getNomorKtp());
+                karyawan.setNoNpwp(request.getNoNpwp());
+                /*
+                  nama
+                  nik
+                  tempatLahir
+                  tanggalLahir
+                  jenisKelamin
+                  agama
+                  kewarganegaraan
+                  alamatKtp
+                  kodePos
+                  alamatSekarang
+                  noHp
+                  email
+                  noRek
+                  jenjangPendidikan
+                  tanggalBergabung
+                  statusPerkawinan
+                  golonganDarah
+                  emergencyContact
+                  statusEmergency
+                  alamatEmergency
+                  telpEmergency
+                  nomorKtp
+                  nomorNpwp
+                 */
+            }
+            Optional<KaryawanEntity> user = karyawanRepository.findByNik(nik);
+            String nama = user.get().getNama();
+
+            Optional<SysUserEntity> sysUserOptional = sysUserRepository.findByUserId(nik);
+            long currentTimeMillis = System.currentTimeMillis();
+            Timestamp dtmCrt = new Timestamp(currentTimeMillis - (currentTimeMillis % 1000));
+            if(sysUserOptional.isPresent()) {
+                    SysUserEntity sysUser = sysUserOptional.get();
+                    sysUser.setFullName(request.getNama());
+                    sysUser.setUsrUpd(nama);
+                    sysUser.setDtmUpd(dtmCrt);
+                    sysUser.setEmail(request.getEmail());
+                    // Ambil password dari user
+                    // Set Password kalau old Pw dari request sesuai dengan pw di database
+                    karyawanRepository.save(karyawan);
+                    sysUserRepository.save(sysUser);
+            }
+
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Update Success!");
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "failed");
+            response.put("message", "Update failed!");
+            response.put("error", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

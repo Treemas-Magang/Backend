@@ -14,6 +14,8 @@ import com.treemaswebapi.treemaswebapi.controller.ProfileController.request.Prof
 import com.treemaswebapi.treemaswebapi.service.ProfileService.ProfileService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,6 +30,15 @@ public class ProfileController {
        @RequestHeader("Authorization") String jwtToken
     ) {
         ResponseEntity<Map<String, String>> response = service.updateProfile(request, jwtToken);
+        return response;    
+    }
+
+    @PutMapping("/update-profile-mobile")
+    public ResponseEntity<Map<String, String>> updateProfileMobile(
+       @RequestBody ProfileRequest request,
+       @RequestHeader("Authorization") String jwtToken
+    ) {
+        ResponseEntity<Map<String, String>> response = service.updateProfileMobile(request, jwtToken);
         return response;    
     }
 }

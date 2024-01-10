@@ -26,6 +26,6 @@ public interface CutiAppRepository extends JpaRepository<CutiAppEntity, Long> {
 
     int countByIsApprovedAndNikAndFlgKet(String string, String nik, String string2);
 
-    List<CutiAppEntity> findByNikInAndTglAbsen(List<String> memberNiks, LocalDate currentDate);
+    List<CutiAppEntity> findByNikInAndTglMulai(List<String> memberNiks, LocalDate currentDate);
 
 }

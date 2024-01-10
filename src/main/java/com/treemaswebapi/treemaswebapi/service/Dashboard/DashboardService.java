@@ -179,7 +179,7 @@ public class DashboardService {
         // Calculate totals for each type for all members for the current date
         LocalDate currentDate = LocalDate.now();
         List<AbsenEntity> absenEntities = absenRepository.findByNikInAndTglAbsen(memberNiks, currentDate);
-        List<CutiAppEntity> cutiEntities = cutiAppRepository.findByNikInAndTglAbsen(memberNiks, currentDate);
+        List<CutiAppEntity> cutiEntities = cutiAppRepository.findByNikInAndTglMulai(memberNiks, currentDate);
         int totalMasuk = 0;
         int totalSakit = 0;
         int totalTelatMasuk = 0;

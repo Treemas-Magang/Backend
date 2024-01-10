@@ -21,4 +21,6 @@ public interface SysUserRepository extends JpaRepository<SysUserEntity, String> 
 
     @Query("SELECT u FROM SysUserEntity u WHERE u.role.jabatanId = :jabatanId")
     List<SysUserEntity> findByRole(@Param("jabatanId") String jabatanId);
+    @Query("SELECT fullName FROM SysUserEntity WHERE userId = :userId")
+    String findNameByNik(@Param("userId") String userId);
 }

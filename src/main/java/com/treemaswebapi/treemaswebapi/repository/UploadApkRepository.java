@@ -13,6 +13,4 @@ public interface UploadApkRepository extends JpaRepository<UploadApkEntity, Long
 
     Optional<UploadApkEntity> findByFileName(String filename);
     Optional<UploadApkEntity> findTopByOrderByDtmCrtDesc();
-    @Query("SELECT MAX(id) FROM UploadApkEntity")
-    Optional<Long> findTopByOrderByIdDesc();
 }

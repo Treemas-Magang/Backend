@@ -45,11 +45,21 @@ public class DashboardController {
         return karyawanService.getDataPribadi(token, dashboardResponse);
     }
 
-    // @GetMapping("/data-kehadiran-member")
-    // public ResponseEntity<Map<String, Object>> dashboardGetMember(
-    //     DashboardResponse dashboardResponse
-    //     ) {
-    //     ResponseEntity<Map<String, Object>> response = service.dashboardGetMember(dashboardResponse);
-    //     return response;
-    // }
+    @GetMapping("/data-kehadiran-member-hari")
+        public ResponseEntity<Map<String, Object>> dashboardGetMemberHarian(
+            DashboardResponse dashboardResponse,
+            @RequestHeader("Authorization") String jwtToken
+            ) {
+            ResponseEntity<Map<String, Object>> response = service.dashboardGetMemberHarian(dashboardResponse, jwtToken);
+            return response;
+        }
+
+    @GetMapping("/data-kehadiran-member")
+    public ResponseEntity<Map<String, Object>> dashboardGetMemberTahunan(
+        DashboardResponse dashboardResponse,
+        @RequestHeader("Authorization") String jwtToken
+        ) {
+        ResponseEntity<Map<String, Object>> response = service.dashboardGetMemberTahunan(dashboardResponse, jwtToken);
+        return response;
+    }
 }

@@ -18,4 +18,7 @@ public class DashboardResponse {
     int totalTidakMasuk;
     String nama;
     String isLocked;
+
+    // Tambahan Web
+    String nik;
 }

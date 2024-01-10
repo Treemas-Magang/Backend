@@ -59,5 +59,7 @@ public interface AbsenRepository extends JpaRepository<AbsenEntity, Long> {
     List<AbsenEntity> findIdAbsenByNikAndIsAbsenIsNullAndJamMskIsNotNull(String nik);
 
     List<AbsenEntity> findByIsCuti(String string);
+    // Retrieve AbsenEntity for a specific NIK for the current date
+    List<AbsenEntity> findByNikInAndTglAbsen(List<String> nikList, LocalDate currentDate);
 
 }

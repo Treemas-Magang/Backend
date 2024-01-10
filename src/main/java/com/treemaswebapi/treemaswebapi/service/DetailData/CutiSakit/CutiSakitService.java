@@ -120,6 +120,7 @@ public class CutiSakitService {
                 cutiDataApp.put("noteApp", cutiApp.getNoteApp());
                 cutiDataApp.put("usrapp", cutiApp.getUsrApp());
                 cutiDataApp.put("dtmapp", cutiApp.getDtmApp());
+                cutiDataApp.put("isApproved", cutiApp.getIsApproved());
                 
                 responseDataApp.add(cutiDataApp);
             }
@@ -127,7 +128,7 @@ public class CutiSakitService {
             Map<String, Object> dataApporveOrNoOrWait = new HashMap<>();
             dataApporveOrNoOrWait.put("setujuAtauTolak", responseData);
             dataApporveOrNoOrWait.put("menunggu", responseDataApp);
-        
+            
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Retrieved");
@@ -191,7 +192,7 @@ public class CutiSakitService {
                 sakitDataApp.put("noteApp", sakitApp.getNoteApp());
                 sakitDataApp.put("usrapp", sakitApp.getUsrApp());
                 sakitDataApp.put("dtmapp", sakitApp.getDtmApp());
-        
+                sakitDataApp.put("isApproved", sakitApp.getIsApproved());
                 responseDataApp.add(sakitDataApp);
             }
 

@@ -1241,8 +1241,10 @@ public class NotifService {
                                 datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));
                                 datanya.setUsrApp1(namaUser);
                                 datanya.setNoteApp1(request.getNoteApp1());
+                                datanya.setIsApprove("0");
+                                
                                 absenAppUploadRepository.save(datanya);
-
+                                        
                                 AbsenEntity dataAbsen = new AbsenEntity();
                                 dataAbsen = AbsenEntity.builder()
                                 .dtmApp(Timestamp.valueOf(LocalDateTime.now()))
@@ -1285,6 +1287,7 @@ public class NotifService {
                                 datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));
                                 datanya.setUsrApp1(namaUser);
                                 datanya.setNoteApp1(request.getNoteApp1());
+                                datanya.setIsApprove("1");
                                 absenAppUploadRepository.save(datanya);
                                 
                                 response.put("message", "data approval disetujui oleh level1");
@@ -1297,10 +1300,11 @@ public class NotifService {
                             }
                         }else if (!approval2.isEmpty() && approval1.isEmpty()) {
                             if ("1".equals(approval2)) {
-                                datanya.setIsApprove(approval2);
+                                datanya.setIsApprove("1");
                                 datanya.setDtmApp2(Timestamp.valueOf(LocalDateTime.now()));
                                 datanya.setUsrApp2(namaUser);
                                 datanya.setNoteApp2(request.getNoteApp1());
+                                
                                 absenAppUploadRepository.save(datanya);
 
                                 AbsenEntity dataAbsen = new AbsenEntity();
@@ -1339,7 +1343,7 @@ public class NotifService {
                                 response.put("data", "data absen approvalnya ini:\n"+datanya);
                                 return ResponseEntity.status(HttpStatus.OK).body(response);
                             }else if("0".equals(approval2)){
-                            datanya.setIsApprove(approval2);
+                            datanya.setIsApprove("0");
                             datanya.setNoteApp2(request.getNoteApp2());
                             datanya.setUsrApp2(namaUser);
                             datanya.setDtmApp2(Timestamp.valueOf(LocalDateTime.now()));

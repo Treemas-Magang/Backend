@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
+import com.treemaswebapi.treemaswebapi.controller.RekapController.TimesheetRequest;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimImageEntity;
@@ -402,7 +403,7 @@ public class RekapService {
     public ResponseEntity<Map<String, Object>> rekapTimesheetUpdate (
         @RequestHeader String tokenWithBearer, 
         @RequestParam Long id,
-        @RequestBody String noteTimesheet
+        @RequestBody TimesheetRequest noteTimesheet
     ){
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
@@ -415,7 +416,7 @@ public class RekapService {
                     // ambil datanya, karena Optional
                     TimesheetEntity datanya = dataTimesheetnya.get();
                     // ubah data keterangannnya
-                    datanya.setNote(noteTimesheet);
+                    datanya.setNote(noteTimesheet.getNoteTimesheet());
                     timesheetRepository.save(datanya);
 
                     Map<String, Object> response = new HashMap<>();

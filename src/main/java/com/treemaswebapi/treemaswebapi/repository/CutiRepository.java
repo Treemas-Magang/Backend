@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,6 @@ public interface CutiRepository extends JpaRepository<CutiEntity, Long> {
     List<CutiEntity> findAllByNikAndFlgKet(String nik, String string);
 
     List<CutiEntity> findAllByFlgKet(String string);
+
+    List<CutiEntity> findByIsApprovedAndTglMulai(String string, LocalDate date);
 }

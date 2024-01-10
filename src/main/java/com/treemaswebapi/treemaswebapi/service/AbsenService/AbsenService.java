@@ -31,12 +31,14 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenPulangAppEntity;
 import com.treemaswebapi.treemaswebapi.controller.AbsenController.AbsenBelumPulangResponse;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.repository.AbsenImgRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenPulangAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenTrackingRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
@@ -61,6 +63,7 @@ public class AbsenService {
     private final AbsenPulangAppRepository absenPulangAppRepository;
     private final TimesheetRepository timesheetRepository;
     private final ReimburseAppRepository reimburseAppRepository;
+    private final CutiRepository cutiRepository;
 
     private static String getIndonesianDayOfWeek(DayOfWeek dayOfWeek){
         Map<String,String> indonesianDayMap = new HashMap<>();
@@ -1083,7 +1086,7 @@ public class AbsenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    public ResponseEntity <Map<String, Object>> getCutiByDate(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("date") LocalDate date) {
+    public ResponseEntity <Map<String, Object>> getCutiByDate(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("date") String dateString) {
         try{
             if (tokenWithBearer.startsWith("Bearer ")) {
                 String token = tokenWithBearer.substring("Bearer ".length());
@@ -1091,17 +1094,18 @@ public class AbsenService {
                 Map<String, Object> response = new HashMap<>();
                 if (nik != null) {
                     // check absen masuk nik tersebut di hari ini
-                    List<AbsenEntity> dataCuti = absenRepository.findIdAbsenByIsCutiAndTglAbsen("1", date);
+                    LocalDate date = LocalDate.parse(dateString);
+                    List<CutiEntity> dataCuti = cutiRepository.findByIsApprovedAndTglMulai("1", date);
                     if (dataCuti.isEmpty()) {
                         response.put("success", true);
                         response.put("message", "data cuti tidak ditemukan");
                         response.put("data", null);
-                        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
                     }else{
                     response.put("success", false);
                     response.put("message", "data cuti berhasil diretrieve");
                     response.put("data", dataCuti);
-                    return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(response);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
                     }
                 } else {
                     response.put("success", false);

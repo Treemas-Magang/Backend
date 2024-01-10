@@ -139,9 +139,9 @@ public class AbsenController {
     }
     @GetMapping("/cek-cuti-by")
     public ResponseEntity<Map<String, Object>> getCutiByDate(
-        @RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date
+        @RequestHeader("Authorization") String token, @RequestParam("date") String dateString
     ){
-        return absenService.getCutiByDate(token, date);
+        return absenService.getCutiByDate(token, dateString);
     }
 
     // @GetMapping("/get-all-members")

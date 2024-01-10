@@ -73,7 +73,7 @@ public class RekapController {
     public ResponseEntity<Map<String, Object>> updateTimesheet(
         @RequestHeader("Authorization") String tokenWithBearer, 
         @RequestParam Long id,
-        @RequestBody String noteTimesheet
+        @RequestBody TimesheetRequest noteTimesheet
     ){        
         return rekapService.rekapTimesheetUpdate(tokenWithBearer, id, noteTimesheet);
     }

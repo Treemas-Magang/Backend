@@ -991,10 +991,11 @@ public class NotifService {
                 String approval1 = request.getIsApprove1();
                 String approval2 = request.getIsApprove2();
                 boolean isApproval1Empty = (approval1 == null) ? true : approval1.isEmpty();
+                System.out.println("si LEADERnya udah belom? "+ isApproval1Empty);
                 boolean isApproval2Empty = (approval2 == null) ? true : approval2.isEmpty();
+                System.out.println("si HEADnya udah belom? "+ isApproval2Empty);
                 if (!isApproval1Empty && isApproval2Empty) {
                     if ("1".equals(approval1)){
-                    datanya.setIsApprove(approval1);
                     datanya.setFlagApp(approval1);
                     datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));
                     datanya.setUsrApp1(namaUser);
@@ -1006,6 +1007,7 @@ public class NotifService {
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     }else if ("0".equals(approval1)) {
                         datanya.setIsApprove(approval1);
+                        //langsung setIsApprove ke 0 kalo ditolak di level 1
                         datanya.setFlagApp(approval1);
                         datanya.setDtmApp1(Timestamp.valueOf(LocalDateTime.now()));
                         datanya.setUsrApp1(namaUser);
@@ -1058,10 +1060,9 @@ public class NotifService {
                 } else if (isApproval1Empty && !isApproval2Empty) {
                     if ("1".equals(approval2)) {
                         datanya.setIsApprove(approval2);
-                        datanya.setFlagApp(approval2);
                         datanya.setDtmApp2(Timestamp.valueOf(LocalDateTime.now()));
                         datanya.setUsrApp2(namaUser);
-                        datanya.setNoteApp1(request.getNoteApp2());
+                        datanya.setNoteApp2(request.getNoteApp2());
                         absenPulangAppRepository.save(datanya);
 
                         // Modify AbsenEntity and save

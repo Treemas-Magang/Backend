@@ -62,8 +62,18 @@ public class CreateAbsenEntriesJob implements Job {
                     timesheetEntity.setNik(karyawan.getNik());
                     timesheetEntity.setNama(karyawan.getNama());
                     timesheetEntity.setDtmCrt(dtmSekarang);
-                    
                     timesheetRepository.save(timesheetEntity);
+
+                    ReimburseAppEntity reimburseAppEntity = new ReimburseAppEntity();
+                    reimburseAppEntity.setTglAbsen(currentDate);
+                    reimburseAppEntity.setNik(karyawan.getNik());
+                    reimburseAppEntity.setNama(karyawan.getNama());
+                    reimburseAppEntity.setDtmUpd(dtmSekarang);
+                    reimburseAppEntity.setGpsLatitudeMsk(0D);
+                    reimburseAppEntity.setGpsLongitudeMsk(0D);
+                    reimburseAppEntity.setGpsLatitudePlg(0D);
+                    reimburseAppEntity.setGpsLongitudePlg(0D);
+                    reimburseAppRepository.save(reimburseAppEntity);
                     
                     logger.info("Scheduled job has been executed for nik: {}", karyawan.getNik());
                 }

@@ -73,9 +73,9 @@ public class RekapController {
     public ResponseEntity<Map<String, Object>> updateTimesheet(
         @RequestHeader("Authorization") String tokenWithBearer, 
         @RequestParam Long id,
-        @RequestBody String keteranganTimesheet
+        @RequestBody String noteTimesheet
     ){        
-        return rekapService.rekapTimesheetUpdate(tokenWithBearer, id, keteranganTimesheet);
+        return rekapService.rekapTimesheetUpdate(tokenWithBearer, id, noteTimesheet);
     }
     /*---------------------------INI BAGIAN ABSEN---------------------------- */
     @GetMapping("/get-rekap-absen")

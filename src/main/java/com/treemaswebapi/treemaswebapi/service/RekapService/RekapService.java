@@ -243,12 +243,13 @@ public class RekapService {
                 SysUserEntity dataUser = sysUserRepository.findByUserId(nik).get();
                 String jabatan = dataUser.getRole().getJabatanId();
                 LocalDate currentDate = LocalDate.now();
-
+                System.out.println("currentDate: "+currentDate);
                 // Calculate the start date as the 13th of the current month
                 LocalDate startDate = LocalDate.of(currentDate.getYear(), currentDate.getMonth(), 13);
-
+                System.out.println("startDate: "+startDate);
                 // Calculate the end date as the 13th of the next month
                 LocalDate endDate = startDate.plusMonths(1);
+                System.out.println("endDate: "+endDate);
                 List<ReimburseAppEntity> data2Reimbursenya = reimburseAppRepository.findByNikAndTglAbsenBetween(nik, startDate, endDate);
                 BigDecimal totalReimburse = BigDecimal.ZERO;
                 BigDecimal totalClaim = BigDecimal.ZERO;
@@ -275,11 +276,14 @@ public class RekapService {
                         {
                             if ("1".equals(dataReimbursenya.getIsApprove())) 
                             {
+                                BigDecimal uangMakan = "1".equals(dataReimbursenya.getIsLembur()) ? new BigDecimal("20000") : BigDecimal.ZERO;
+
                                 LocalDate tanggal = dataReimbursenya.getTglAbsen();
                                 BigDecimal duitnya = dataReimbursenya.getProjectId().getBiayaReimburse();
                                 reimburseHarian.put(tanggal, reimburseHarian.getOrDefault(tanggal, BigDecimal.ZERO).add(duitnya));
 
                                 totalReimburse = totalReimburse.add(duitnya);
+                                totalReimburse = totalReimburse.add(uangMakan);
                             } 
                         }
                     if (!data2Claimnya.isEmpty()) {
@@ -398,7 +402,7 @@ public class RekapService {
     public ResponseEntity<Map<String, Object>> rekapTimesheetUpdate (
         @RequestHeader String tokenWithBearer, 
         @RequestParam Long id,
-        @RequestBody String keteranganTimesheet
+        @RequestBody String noteTimesheet
     ){
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {
@@ -411,7 +415,7 @@ public class RekapService {
                     // ambil datanya, karena Optional
                     TimesheetEntity datanya = dataTimesheetnya.get();
                     // ubah data keterangannnya
-                    datanya.setNote(keteranganTimesheet);
+                    datanya.setNote(noteTimesheet);
                     timesheetRepository.save(datanya);
 
                     Map<String, Object> response = new HashMap<>();

@@ -21,4 +21,6 @@ public interface AbsenAppUploadRepository extends JpaRepository<AbsenAppUploadEn
 
     AbsenAppUploadEntity findByTglAbsenAndNik(LocalDate tanggalIni, String nik);
     List<AbsenAppUploadEntity> findAllByNik(String nik);
+
+    List<AbsenAppUploadEntity> findAllByProjectIdAndIsApproveIsNull(ProjectEntity projectId);
 }

@@ -22,6 +22,7 @@ import com.treemaswebapi.treemaswebapi.controller.NotifController.request.Approv
 import com.treemaswebapi.treemaswebapi.controller.NotifController.response.ApprovalResponse;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
+import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenAppRepository;
@@ -36,6 +37,7 @@ import com.treemaswebapi.treemaswebapi.repository.GeneralParamApprovalRepository
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
+import com.treemaswebapi.treemaswebapi.repository.ReimburseRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserRepository;
 import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenAppEntity;
@@ -67,6 +69,7 @@ public class NotifService {
     private final AbsenPulangAppRepository absenPulangAppRepository;
     private final GeneralParamApprovalRepository generalParamAppRepository;
     private final ReimburseAppRepository reimburseAppRepository;
+    private final ReimburseRepository reimburseRepository;
     private final ProjectRepository projectRepository;
     private final KaryawanRepository karyawanRepository;
     private final SysUserRepository sysUserRepository;
@@ -487,7 +490,7 @@ public class NotifService {
                     .liburApprovals(null)
                     .lemburApprovals(null)
                     .absenPulangApprovals(null)
-                    .absenWebApprovals(absenAppUploadRepository.findAllByProjectId(projectId))
+                    .absenWebApprovals(absenAppUploadRepository.findAllByProjectIdAndIsApproveIsNull(projectId))
                     .cutiApprovals(null)
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
@@ -530,7 +533,7 @@ public class NotifService {
                     ApprovalResponse approvalResponse = ApprovalResponse.builder()
                     .liburApprovals(null)
                     .lemburApprovals(null)
-                    .sakitApprovals(cutiAppRepository.findByFlgKet("sakit"))
+                    .sakitApprovals(cutiAppRepository.findByFlgKetAndIsApprovedIsNull("sakit"))
                     .absenPulangApprovals(null)
                     .absenWebApprovals(null)
                     .cutiApprovals(null)
@@ -1379,7 +1382,70 @@ public class NotifService {
     }
 
     public ResponseEntity<Map<String, Object>> postReimburseApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {
-        return null;
+        try {
+                if (tokenWithBearer.startsWith("Bearer ")) {
+                    String token = tokenWithBearer.substring("Bearer ".length());
+                    String nikUser = jwtService.extractUsername(token);
+                    Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
+                    String namaUser = dataUser.get().getNama();
+                    System.out.println(nikUser + "ini udah masuk postSakitApproval");
+
+                    ReimburseAppEntity datanya = reimburseAppRepository.findById(idApproval).get();
+                    ReimburseEntity dataReimburse = new ReimburseEntity();
+                    if ("1".equals(request.getIsApprove())) {
+                        datanya.setIsApprove("1");
+                        datanya.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrUpd(namaUser);
+                        datanya.setFlagApp(request.getNoteApp());
+                        reimburseAppRepository.save(datanya);
+
+                        dataReimburse = ReimburseEntity.builder()
+                        .dtmApp(null)
+                        .dtmCrt(null)
+                        .flgKet(namaUser)
+                        .hari(namaUser)
+                        .id(idApproval)
+                        .jamKeluar(null)
+                        .jamMasuk(null)
+                        .nama(namaUser)
+                        .nik(nikUser)
+                        .noteApp(namaUser)
+                        .projectId(namaUser)
+                        .status(namaUser)
+                        .tanggal(null)
+                        .totalJamKerja(null)
+                        .transport(null)
+                        .uangMakan(null)
+                        .usrApp(namaUser)
+                        .usrCrt(namaUser)
+                        .build();
+                        reimburseRepository.save(dataReimburse);
+                    }else if ("0".equals(request.getIsApprove())) {
+                        datanya.setIsApprove("0");
+                        datanya.setDtmUpd(Timestamp.valueOf(LocalDateTime.now()));
+                        datanya.setUsrUpd(namaUser);
+                        datanya.setFlagApp(request.getNoteApp());
+                        reimburseAppRepository.save(datanya);
+                    }
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", true);
+                    response.put("message", "berhasil post ke CutiEntity dan SetValue di CutiApp");
+                    response.put("data", datanya);
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                    } else {
+                    // Handle the case where the token format is invalid
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("success", false);
+                    response.put("message", "Invalid token format");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } catch (Exception e) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Failed to post SakitApproval");
+                response.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
     }
 
     public ResponseEntity<Map<String, Object>> postSakitApproval(String tokenWithBearer, Long idApproval, ApprovalRequest request) {

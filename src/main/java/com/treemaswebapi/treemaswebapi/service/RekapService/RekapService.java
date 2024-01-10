@@ -704,7 +704,6 @@ public class RekapService {
         }
     }
     /* --------------------------------------------BAGIAN SAKIT------------------------------------------------ */
-    // bagian ini masih rusak, gabisa kepanggil datanya
     public ResponseEntity<Map<String, Object>> rekapSakit(@RequestHeader String tokenWithBearer) {
         try {
             if (tokenWithBearer.startsWith("Bearer ")) {

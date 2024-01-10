@@ -448,6 +448,179 @@ public class AbsenService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    // public ResponseEntity<Map<String, Object>> cancelPulang(@RequestHeader("Authorization") String tokenWithBearer) {
+    //     try {
+    //             if (tokenWithBearer.startsWith("Bearer ")){
+    //             String token = tokenWithBearer.substring("Bearer ".length());
+    //             String nik = jwtService.extractUsername(token);
+    //             String nama = karyawanRepository.findNamaByNik(nik);
+    //             // Check if the user has already done the input for the current date
+    //             LocalDate currentDate = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    //             List<AbsenEntity> existingAbsenRecords = absenRepository.findByNikAndTglAbsen(nik, currentDate);
+
+    //             if (!existingAbsenRecords.isEmpty()) {
+    //                 // User has already done the input-absen for the day
+    //                 LocalTime jamSekarang = LocalTime.parse(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+    //                 LocalDateTime sekarangBanget = LocalDateTime.now();
+    //                 Timestamp jamIni = Timestamp.valueOf(sekarangBanget);
+    //                 AbsenEntity existingAbsenEntity = existingAbsenRecords.get(0);
+    //                 // Make separate response
+    //                 // save ke absenEntity
+    //                 existingAbsenEntity.setNotePekerjaan(null);
+    //                 existingAbsenEntity.setGpsLatitudePlg(null);
+    //                 existingAbsenEntity.setGpsLongitudePlg(null);
+    //                 existingAbsenEntity.setLokasiPlg(null);
+    //                 existingAbsenEntity.setJarakPlg(null);
+    //                 existingAbsenEntity.setJamPlg(null);
+    //                 existingAbsenEntity.setNotePlgCepat(null);
+    //                 LocalTime jamMsk = existingAbsenEntity.getJamMsk();
+    //                 LocalTime jamPlg = existingAbsenEntity.getJamPlg();
+    //                 if (jamMsk != null && jamPlg != null) {
+    //                     BigDecimal hoursPart = new BigDecimal(Duration.between(jamMsk, jamPlg).toHoursPart());
+    //                     existingAbsenEntity.setTotalJamKerja(hoursPart);
+    //                     if (hoursPart.compareTo(new BigDecimal(9))>0) {
+    //                         existingAbsenEntity.setIsAbsen("1");
+    //                         existingAbsenEntity.setIsLembur("1");
+    //                     } else {
+    //                         existingAbsenEntity.setIsAbsen("1");
+    //                         existingAbsenEntity.setIsLembur("0");
+    //                     }
+    //                 }
+                    
+    //                 if (existingAbsenEntity.getIsOther() != null) {
+    //                     existingAbsenEntity.setNoteOther(null);
+    //                     existingAbsenEntity.setIsOther("1");
+    //                 }
+                    
+    //                 absenRepository.save(existingAbsenEntity);
+    //                 // save ke absenTrackingEntity
+    //                 AbsenTrackingEntity absenTrackingEntity = absenTrackingRepository.findByTglAbsenAndNik(currentDate, nik).get(0);
+                    
+    //                 absenTrackingEntity.setProjectId(request.getProjectId());
+    //                 absenTrackingEntity.setNik(nik);
+    //                 absenTrackingEntity.setNama(nama);
+    //                 absenTrackingEntity.setHari(getIndonesianDayOfWeek(LocalDate.now().getDayOfWeek()));
+    //                 absenTrackingEntity.setTglAbsen(LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+    //                 absenTrackingEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
+    //                 absenTrackingEntity.setGpsLongitudePlg(request.getGpsLongitudePlg());
+    //                 absenTrackingEntity.setLokasiPlg(request.getLokasiPlg());
+    //                 absenTrackingEntity.setJarakPlg(request.getJarakPlg());
+    //                 absenTrackingEntity.setNotePekerjaan(request.getNotePekerjaan());
+    //                 absenTrackingEntity.setGpsLatitudePlg(request.getGpsLatitudePlg());
+    //                 absenTrackingEntity.setGpsLongitudePlg(request.getGpsLongitudePlg());
+    //                 absenTrackingEntity.setLokasiPlg(request.getLokasiPlg());
+    //                 absenTrackingEntity.setJarakPlg(request.getJarakPlg());
+    //                 absenTrackingEntity.setJamPlg(jamSekarang);
+    //                 absenTrackingEntity.setNotePlgCepat(request.getNotePlgCepat());
+    //                 if (request.getNoteOther() != null) {
+    //                     absenTrackingEntity.setNoteOther(request.getNoteOther());
+    //                     absenTrackingEntity.setIsOther("1");
+    //                 }
+
+    //                 absenTrackingRepository.save(absenTrackingEntity);
+
+    //                 TimesheetEntity timesheetEntity = timesheetRepository.findByNikAndTglMsk(nik, currentDate);
+
+    //                 timesheetEntity.setDtmCrt(jamIni);
+    //                 String flgKetValue = "-"; // Default value
+
+    //                     if ("1".equals(existingAbsenEntity.getIsSakit())) {
+    //                         flgKetValue = "sakit";
+    //                     } else if ("1".equals(existingAbsenEntity.getIsCuti())) {
+    //                         flgKetValue = "cuti";
+    //                     }
+
+    //                 timesheetEntity.setFlgKet(flgKetValue);
+    //                 timesheetEntity.setHari(existingAbsenEntity.getHari());
+    //                 timesheetEntity.setJamKeluar(jamSekarang);
+    //                 timesheetEntity.setJamMasuk(jamMsk);
+    //                 timesheetEntity.setNama(nama);
+    //                 timesheetEntity.setNik(nik);
+    //                 timesheetEntity.setNote(request.getNotePekerjaan());
+    //                 timesheetEntity.setProjectId(request.getProjectId());
+    //                 timesheetEntity.setTglMsk(existingAbsenEntity.getTglAbsen());
+    //                 timesheetEntity.setUsrCrt(nama);
+
+    //                 LocalTime jamMashook = request.getJamMsk();
+    //                 LocalTime jamPoelang = request.getJamPlg();
+                    
+    //                 BigDecimal totalHours = BigDecimal.ZERO;
+    //                 BigDecimal jamLembur = BigDecimal.ZERO;
+
+    //                 if (jamMashook != null && jamPoelang != null){
+    //                 Duration duration = Duration.between(jamMashook, jamPoelang);
+    //                 long totalHoursLong = duration.toHours();
+    //                 totalHours = BigDecimal.valueOf(totalHoursLong);
+    //                     if (totalHoursLong > 9){
+    //                         jamLembur = BigDecimal.valueOf(totalHoursLong-9);
+    //                     }
+    //                 }
+
+    //                 timesheetEntity.setOvertime(jamLembur);
+    //                 timesheetEntity.setTotalJamKerja(totalHours);
+    //                 timesheetEntity.setProjectId(existingAbsenEntity.getProjectId());
+    //                 timesheetEntity.setDtmCrt(jamIni);
+    //                 timesheetRepository.save(timesheetEntity);
+
+    //                 ReimburseAppEntity reimburseApp = reimburseAppRepository.findByNikAndTglAbsen(nik, currentDate);
+    //                 reimburseApp.setIsAbsen(existingAbsenEntity.getIsAbsen());
+    //                 reimburseApp.setNik(nik);
+    //                 reimburseApp.setNotePekerjaan(existingAbsenEntity.getNotePekerjaan());
+    //                 reimburseApp.setIsLembur(existingAbsenEntity.getIsLembur());
+    //                 reimburseApp.setIsLibur(existingAbsenEntity.getIsLibur());
+    //                 reimburseApp.setIsSakit(existingAbsenEntity.getIsSakit());
+    //                 reimburseApp.setDtmUpd(existingAbsenEntity.getDtmCrt());
+    //                 reimburseApp.setGpsLatitudeMsk(existingAbsenEntity.getGpsLatitudeMsk());
+    //                 reimburseApp.setGpsLongitudePlg(existingAbsenEntity.getGpsLongitudePlg());
+    //                 reimburseApp.setGpsLongitudeMsk(existingAbsenEntity.getGpsLongitudeMsk());
+    //                 reimburseApp.setGpsLatitudePlg(existingAbsenEntity.getGpsLatitudePlg());
+    //                 reimburseApp.setIsOther(existingAbsenEntity.getIsOther());
+    //                 reimburseApp.setIsWfh(existingAbsenEntity.getIsWfh());
+    //                 reimburseApp.setJamMsk(existingAbsenEntity.getJamMsk());
+    //                 reimburseApp.setJamPlg(existingAbsenEntity.getJamPlg());
+    //                 reimburseApp.setJarakMsk(existingAbsenEntity.getJarakMsk());
+    //                 reimburseApp.setLokasiMsk(existingAbsenEntity.getLokasiMsk());
+    //                 reimburseApp.setLokasiPlg(existingAbsenEntity.getLokasiPlg());
+    //                 reimburseApp.setNama(nama);
+    //                 reimburseApp.setNoteOther(existingAbsenEntity.getNoteOther());
+    //                 reimburseApp.setNotePekerjaan(existingAbsenEntity.getNotePekerjaan());
+    //                 reimburseApp.setNotePlgCepat(existingAbsenEntity.getNotePlgCepat());
+    //                 reimburseApp.setNoteTelatMsk(existingAbsenEntity.getNoteTelatMsk());
+    //                 reimburseApp.setProjectId(existingAbsenEntity.getProjectId());
+    //                 reimburseApp.setTglAbsen(existingAbsenEntity.getTglAbsen());
+    //                 reimburseApp.setTotalJamKerja(totalHours);
+    //                 reimburseApp.setUsrUpd(nama);
+    //                 reimburseAppRepository.save(reimburseApp);
+
+    //                 Map<String, Object> response = new HashMap<>();
+    //                 response.put("success", true);
+    //                 response.put("message", "Absen data inserted successfully + timesheet + reimburse");
+    //                 response.put("data", existingAbsenEntity);
+    
+    //                 return ResponseEntity.status(HttpStatus.OK).body(response);
+    //             }else{
+    //                 Map<String, Object> response = new HashMap<>();
+    //                 response.put("success", false);
+    //                 response.put("message", "You have already submitted absen data for today");
+    //                 response.put("data", existingAbsenRecords.get(0));
+    //                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    //             }
+    //         } else {
+    //             Map<String, Object> response = new HashMap<>();
+    //             response.put("success", false);
+    //             response.put("message", "Invalid token format");
+    //             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    //         }
+    //     } catch (Exception e) {
+    //         Map<String, Object> response = new HashMap<>();
+    //         response.put("success", false);
+    //         response.put("message", "Failed to insert absen data");
+    //         response.put("error", e.getMessage());
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    //     }
+    // }
+
     public ResponseEntity<Map<String, Object>> inputAbsenBelumPulang(@RequestHeader("Authorization") String tokenWithBearer, @RequestParam("id") Long idAbsen, AbsenRequest request) {
         try {
                 if (tokenWithBearer.startsWith("Bearer ")){
@@ -465,6 +638,7 @@ public class AbsenService {
                 lupaPulang.setNoteTelatMsk(existingAbsenData.getNoteTelatMsk());
                 lupaPulang.setGpsLatitudeMsk(existingAbsenData.getGpsLatitudeMsk());
                 lupaPulang.setGpsLongitudeMsk(existingAbsenData.getGpsLongitudeMsk());
+                lupaPulang.setNama(nama);
                 lupaPulang.setNik(nik);
                 // bagian yang dapet dari front-end request
                 lupaPulang.setKeterangan(request.getKeteranganLupaPulang());
@@ -472,6 +646,7 @@ public class AbsenService {
                 lupaPulang.setLokasiPlg(request.getLokasiPlg());
                 lupaPulang.setGpsLatitudePlg(request.getGpsLatitudePlg());
                 lupaPulang.setGpsLongitudePlg(request.getGpsLongitudePlg());
+
                 lupaPulang.setFlagApp(null);
                 lupaPulang.setJamPlg(request.getJamPlg());
                 lupaPulang.setJarakPlg(request.getJarakPlg());
@@ -875,7 +1050,7 @@ public class AbsenService {
                 Map<String, Object> response = new HashMap<>();
                 if (nik != null) {
                     // check absen masuk nik tersebut di hari ini
-                    List<AbsenEntity> dataCuti = absenRepository.findIdAbsenByIsCuti("1");
+                    List<AbsenEntity> dataCuti = absenRepository.findByIsCuti("1");
                     if (dataCuti.isEmpty()) {
                         response.put("success", true);
                         response.put("message", "data cuti tidak ditemukan");

@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.Dashboard.DashboardResponse;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.SysUserEntity.SysUserEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.SysUserMemberRepository;
@@ -36,6 +38,7 @@ public class DashboardService {
     private final KaryawanImageRepository KaryawanImageRepository;
     private final SysUserRepository sysUserRepository;
     private final SysUserMemberRepository sysUserMemberRepository;
+    private final CutiAppRepository cutiAppRepository;
 
     public ResponseEntity<Map<String, Object>> dashboardGet(@RequestHeader("Authorization") String jwtToken, DashboardResponse dashboardResponse) {
         try {
@@ -49,9 +52,10 @@ public class DashboardService {
             String isLocked = sysUser.get().getIsLocked();
             int masuk = absenRepository.countByJamMskIsNotNullAndNik(nik);// perubahan ini gue lakiun tanggal 13.12.2023 -Aliy
             int totalMasuk = masuk;
-            int totalSakit = absenRepository.countByIsSakitAndNik("1", nik);
+            int totalSakit = cutiAppRepository.countByIsApprovedAndNikAndFlgKet("1", nik, "sakit");
             int totalTelatMasuk = absenRepository.countByNoteTelatMskIsNotNullAndNik(nik);
-            int totalCuti = absenRepository.countByIsCutiAndNik("1", nik);
+            int totalPulangCepat = absenRepository.countByNotePlgCepatIsNotNullAndNik(nik);
+            int totalCuti = cutiAppRepository.countByIsApprovedAndNikAndFlgKet("1", nik, "cuti");
             int totalTidakMasuk = absenRepository.countByJamMskIsNullAndJamPlgIsNullAndNik(nik);
             dashboardResponse.setNama(nama);
             dashboardResponse.setIsLocked(isLocked);
@@ -118,10 +122,12 @@ public class DashboardService {
 
             for (String nik : memberNiks) {
             // Calculate totals for each member
-            int totalMasuk = absenRepository.countByIsAbsenAndNik("1", nik);
-            int totalSakit = absenRepository.countByIsSakitAndNik("1", nik);
+            int masuk = absenRepository.countByJamMskIsNotNullAndNik(nik);
+            int totalMasuk = masuk;
+            int totalSakit = cutiAppRepository.countByIsApprovedAndNikAndFlgKet("1", nik, "sakit");
             int totalTelatMasuk = absenRepository.countByNoteTelatMskIsNotNullAndNik(nik);
-            int totalCuti = absenRepository.countByIsCutiAndNik("1", nik);
+            int totalPulangCepat = absenRepository.countByNotePlgCepatIsNotNullAndNik(nik);
+            int totalCuti = cutiAppRepository.countByIsApprovedAndNikAndFlgKet("1", nik, "cuti");
             int totalTidakMasuk = absenRepository.countByJamMskIsNullAndJamPlgIsNullAndNik(nik);
             
             // Get Nama From SysUser table not SysUserMember
@@ -173,7 +179,7 @@ public class DashboardService {
         // Calculate totals for each type for all members for the current date
         LocalDate currentDate = LocalDate.now();
         List<AbsenEntity> absenEntities = absenRepository.findByNikInAndTglAbsen(memberNiks, currentDate);
-
+        List<CutiAppEntity> cutiEntities = cutiAppRepository.findByNikInAndTglAbsen(memberNiks, currentDate);
         int totalMasuk = 0;
         int totalSakit = 0;
         int totalTelatMasuk = 0;
@@ -199,6 +205,21 @@ public class DashboardService {
 
             if (absenEntity.getJamMsk() == null && absenEntity.getJamPlg() == null) {
                 totalTidakMasuk++;
+            }
+        }
+
+        for (CutiAppEntity cutiAppEntity : cutiEntities) {
+
+            if ("1".equals(cutiAppEntity.getIsApproved())) {
+                if ("sakit".equals(cutiAppEntity.getFlgKet())){
+                    totalSakit++;
+                }
+            }
+
+            if ("1".equals(cutiAppEntity.getIsApproved())) {
+                if ("cuti".equals(cutiAppEntity.getFlgKet())){
+                    totalCuti++;
+                }
             }
         }
 

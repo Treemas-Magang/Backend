@@ -1,5 +1,6 @@
 package com.treemaswebapi.treemaswebapi.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,5 +25,7 @@ public interface CutiAppRepository extends JpaRepository<CutiAppEntity, Long> {
     List<CutiAppEntity> findByFlgKetAndIsApprovedIsNull(String string);
 
     int countByIsApprovedAndNikAndFlgKet(String string, String nik, String string2);
+
+    List<CutiAppEntity> findByNikInAndTglAbsen(List<String> memberNiks, LocalDate currentDate);
 
 }

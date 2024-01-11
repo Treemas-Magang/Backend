@@ -153,11 +153,13 @@ public class AbsenPulangAppEntity {
 
     @Transient
     public Boolean getIsApprove1() {
-        return "1".equals(this.getFlagApp());
+        String isApprove1Value = this.getFlagApp();
+    return "1".equals(isApprove1Value);
     }
 
     @Transient
     public Boolean getIsApprove2() {
-        return "1".equals(this.getIsApprove());
+        String isApprove2Value = this.getIsApprove();
+    return "1".equals(isApprove2Value);
     }
 }

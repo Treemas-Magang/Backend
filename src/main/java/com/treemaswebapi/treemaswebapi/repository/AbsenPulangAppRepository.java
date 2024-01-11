@@ -18,5 +18,7 @@ public interface AbsenPulangAppRepository extends JpaRepository<AbsenPulangAppEn
     List<AbsenPulangAppEntity> findByIsApproveIsNull();
 
     Long countByIsApproveIsNull();
+
+    Long countByProjectIdAndIsApproveIsNull(ProjectEntity projectId);
 }
 

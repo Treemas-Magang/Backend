@@ -180,10 +180,10 @@ public class NotifService {
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
-                    .dataCounter(cutiAppUploadRepository.count())
+                    .dataCounter(absenAppRepository.countByProjectIdAndIsLiburAndIsApproveIsNull(projectId, "1"))
                     .build();
                     
-                    Long counter = absenAppRepository.countByProjectIdAndIsLibur(projectId, "1");
+                    Long counter = approvalResponse.getDataCounter();
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "berhasil retrieve semua data approval");
@@ -229,7 +229,7 @@ public class NotifService {
                     String nik = jwtService.extractUsername(token);
                     System.out.println(nik + "ini udah masuk getAbsenApproval");
                     List<AbsenAppEntity> lemburApproval = absenAppRepository.findAllByProjectIdAndIsLemburAndIsApproveIsNull(projectId, "1");
-                    Long counter = absenAppRepository.countByProjectIdAndIsLembur(projectId, "1");
+                    Long counter = absenAppRepository.countByProjectIdAndIsLemburAndIsApproveIsNull(projectId, "1");
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "berhasil retrieve semua data approval");
@@ -274,13 +274,13 @@ public class NotifService {
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
-                    .dataCounter(cutiAppRepository.count())
+                    .dataCounter(cutiAppRepository.countByFlgKetAndIsApprovedIsNull("cuti"))
                     .build();
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    Long counter = absenAppRepository.count();
+                    Long counter = approvalResponse.getDataCounter();
                     Map<String, Object> data = new HashMap<>();
                     if (approvalResponse.getCutiApprovals() != null) {
                         data.put("cutiApproval", approvalResponse.getCutiApprovals());
@@ -316,16 +316,16 @@ public class NotifService {
                     .absenPulangApprovals(null)
                     .absenWebApprovals(null)
                     .cutiApprovals(null)
-                    .cutiApprovalWebs(cutiAppUploadRepository.findByIsApprovedIsNull())
+                    .cutiApprovalWebs(cutiAppUploadRepository.findByFlgKetAndIsApprovedIsNull("cuti"))
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
-                    .dataCounter(cutiAppUploadRepository.count())
+                    .dataCounter(cutiAppUploadRepository.countByFlgKetAndIsApprovedIsNull("cuti"))
                     .build();
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    Long counter = absenAppUploadRepository.count();
+                    Long counter = approvalResponse.getDataCounter();
                     Map<String, Object> data = new HashMap<>();
                     if (approvalResponse.getCutiApprovalWebs() != null) {
                         data.put("cutiApprovalWeb", approvalResponse.getCutiApprovalWebs());
@@ -362,12 +362,12 @@ public class NotifService {
                     approvalResponse.setCutiApprovalWebs(null);
                     approvalResponse.setGeneralParamApprovals(null);
                     approvalResponse.setReimburseApprovals(null);
-                    approvalResponse.setDataCounter(absenPulangAppRepository.countByIsApproveIsNull());
+                    approvalResponse.setDataCounter(absenPulangAppRepository.countByProjectIdAndIsApproveIsNull(projectId));
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    Long counter = absenPulangAppRepository.count();
+                    Long counter = approvalResponse.getDataCounter();
                     Map<String, Object> data = new HashMap<>();
                     if (approvalResponse.getAbsenPulangApprovals() != null) {
                         data.put("absenPulangApproval", approvalResponse.getAbsenPulangApprovals());
@@ -450,20 +450,18 @@ public class NotifService {
                     .cutiApprovals(null)
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
-                    .reimburseApprovals(reimburseAppRepository.findAllByProjectIdAndIsApproveIsNull(projectId))
-                    .dataCounter(reimburseAppRepository.count())
+                    .reimburseApprovals(reimburseAppRepository.findAllByProjectIdAndIsApproveIsNullAndJamPlgIsNotNull(projectId))
+                    .dataCounter(reimburseAppRepository.countByProjectIdAndIsApproveIsNullAndJamPlgIsNotNull(projectId))
                     .build();
-
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    Long counter = reimburseAppRepository.count();
                     Map<String, Object> data = new HashMap<>();
                     if (approvalResponse.getReimburseApprovals() != null) {
                         data.put("reimburseApproval", approvalResponse.getReimburseApprovals());
                     }
                     response.put("data", data);
-                    response.put("dataCounter", counter);
+                    response.put("dataCounter", approvalResponse.getDataCounter());
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                     } else {
                     // Handle the case where the token format is invalid
@@ -495,13 +493,13 @@ public class NotifService {
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
-                    .dataCounter(absenAppUploadRepository.count())
+                    .dataCounter(absenAppUploadRepository.countByProjectIdAndIsApproveIsNull(projectId))
                     .build();
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    Long counter = absenAppUploadRepository.count();
+                    Long counter = approvalResponse.getDataCounter();
                     Map<String, Object> data = new HashMap<>();
                     if (approvalResponse.getAbsenWebApprovals() != null) {
                         data.put("absenWebApproval", approvalResponse.getAbsenWebApprovals());
@@ -540,13 +538,13 @@ public class NotifService {
                     .cutiApprovalWebs(null)
                     .generalParamApprovals(null)
                     .reimburseApprovals(null)
-                    .dataCounter(cutiAppRepository.countByFlgKet("sakit"))
+                    .dataCounter(cutiAppRepository.countByFlgKetAndIsApprovedIsNull("sakit"))
                     .build();
 
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message","berhasil retrieve semua data approval");
-                    Long counter = cutiAppRepository.countByFlgKet("sakit");
+                    Long counter = approvalResponse.getDataCounter();
                     Map<String, Object> data = new HashMap<>();
                     if (approvalResponse.getSakitApprovals() != null) {
                         data.put("sakitApproval", approvalResponse.getSakitApprovals());

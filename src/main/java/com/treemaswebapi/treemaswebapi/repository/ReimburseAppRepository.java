@@ -28,4 +28,8 @@ public interface ReimburseAppRepository extends JpaRepository<ReimburseAppEntity
     ReimburseAppEntity findByNikAndTglAbsen(String nik, LocalDate currentDate);
 
     List<ReimburseAppEntity> findByNikAndTglAbsenBetween(String nik, LocalDate startDate, LocalDate endDate);
+
+    List<ReimburseAppEntity> findAllByProjectIdAndIsApproveIsNullAndJamPlgIsNotNull(ProjectEntity projectId);
+
+    Long countByProjectIdAndIsApproveIsNullAndJamPlgIsNotNull(ProjectEntity projectId);
 }

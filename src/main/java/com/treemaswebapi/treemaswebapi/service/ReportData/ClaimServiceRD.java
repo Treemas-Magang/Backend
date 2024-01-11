@@ -57,7 +57,12 @@ public class ClaimServiceRD {
                 formattedClaim.put("tanggal", claim.getTanggal());
                 formattedClaim.put("nominal", claim.getNominal());
                 formattedClaim.put("keterangan", claim.getKeterangan());
-                formattedClaim.put("tipeClaim", claim.getTipeClaimEntity().getKeterangan());
+                TipeClaimEntity tipeClaimEntity = claim.getTipeClaimEntity();
+                if (tipeClaimEntity != null) {
+                    formattedClaim.put("tipeClaim", tipeClaimEntity.getKeterangan());
+                } else {
+                    formattedClaim.put("tipeClaim", "TIPE CLAIM DELETED"); // or any default value you want to set
+                }
 
                 formattedClaims.add(formattedClaim);
             }

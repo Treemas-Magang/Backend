@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.treemaswebapi.treemaswebapi.config.JwtService;
 import com.treemaswebapi.treemaswebapi.controller.MasterData.Claim.request.TipeClaimRequest;
+import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.ClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.ClaimEntity.TipeClaimEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
+import com.treemaswebapi.treemaswebapi.repository.ClaimRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.TipeClaimRepository;
 
@@ -28,6 +30,7 @@ public class ClaimService {
     private final TipeClaimRepository tipeClaimRepository;
     private final KaryawanRepository karyawanRepository;
     private final JwtService jwtService;
+    private final ClaimRepository claimRepository;
     
     public ResponseEntity<Map<String, Object>> tipeClaimAdd(
         @RequestHeader("Authorization") String jwtToken,
@@ -95,7 +98,10 @@ public class ClaimService {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 tipeClaim.setDtmUpd(LocalDateTime.now().format(formatter));
                 tipeClaimRepository.save(tipeClaim);
+            
+            
 
+            
             Map<String, Object> response = new HashMap<>();
             response.put("status", "Success");
             response.put("message", "Tipe claim created");

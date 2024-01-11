@@ -411,6 +411,13 @@ public class AbsenService {
                     reimburseApp.setJamMsk(existingAbsenEntity.getJamMsk());
                     reimburseApp.setJamPlg(existingAbsenEntity.getJamPlg());
                     reimburseApp.setJarakMsk(existingAbsenEntity.getJarakMsk());
+                    String keterangan = null;
+                    if (existingAbsenEntity.getIsSakit() != null) {
+                        keterangan = "sakit";
+                    }else if (existingAbsenEntity.getIsCuti() != null) {
+                        keterangan = "cuti";                     
+                    }
+                    reimburseApp.setKeterangan(keterangan);
                     reimburseApp.setLokasiMsk(existingAbsenEntity.getLokasiMsk());
                     reimburseApp.setLokasiPlg(existingAbsenEntity.getLokasiPlg());
                     reimburseApp.setNama(nama);

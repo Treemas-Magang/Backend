@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class AbsenResponse {
     AbsenTrackingData absenTrackingData;
     String absenImg;
+    String pp;
     // buat response unprocessedAbsenEntity
     
 }

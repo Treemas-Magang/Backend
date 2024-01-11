@@ -97,18 +97,21 @@ public class RekapService {
                             .orElse(null);
                     reimburseResponse.setTransport(biayaReimburse);
                     
+                    
                     LocalTime jamMasuk = dataReimbursenya.getJamMsk();
                     LocalTime jamPulang = dataReimbursenya.getJamPlg();
-                    
                     BigDecimal totalHours = BigDecimal.valueOf(0D);
-                    if (jamMasuk != null && jamPulang !=null) {
+                    if (jamMasuk != null && jamPulang != null) {
                         Duration duration = Duration.between(jamMasuk, jamPulang);
-                        Double hours = duration.getSeconds() / 3600.0;
+                        double hours = duration.getSeconds() / 3600.0;
                         totalHours = BigDecimal.valueOf(hours);
-                    }else{
-                        totalHours = BigDecimal.valueOf(0D);                        
+                    } else {
+                        // Handle the case where either jamMasuk or jamPulang is null
+                        totalHours = BigDecimal.valueOf(0D);
                     }
+
                     reimburseResponse.setTotalJamKerja(totalHours);
+                    
                     long uangMakanValue = "1".equals(dataReimbursenya.getIsLembur()) ? 20000L : 0L;
                     reimburseResponse.setUangMakan(uangMakanValue);
                     
@@ -187,9 +190,15 @@ public class RekapService {
                     
                     LocalTime jamMasuk = dataReimbursenya.get().getJamMsk();
                     LocalTime jamPulang = dataReimbursenya.get().getJamPlg();
-                    Duration duration = Duration.between(jamMasuk, jamPulang);
-                    Double hours = duration.getSeconds() / 3600.0;
-                    BigDecimal totalHours = BigDecimal.valueOf(hours);
+                    BigDecimal totalHours = BigDecimal.valueOf(0D);
+                    if (jamMasuk != null && jamPulang != null) {
+                        Duration duration = Duration.between(jamMasuk, jamPulang);
+                        double hours = duration.getSeconds() / 3600.0;
+                        totalHours = BigDecimal.valueOf(hours);
+                    } else {
+                        // Handle the case where either jamMasuk or jamPulang is null
+                        totalHours = BigDecimal.valueOf(0D);
+                    }
                     reimburseResponse.setTotalJamKerja(totalHours);
 
                     long uangMakanValue = "1".equals(dataReimbursenya.get().getIsLembur()) ? 20000L : 0L;

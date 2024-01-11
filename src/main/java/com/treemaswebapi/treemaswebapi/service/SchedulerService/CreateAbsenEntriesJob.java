@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -14,10 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
+import com.treemaswebapi.treemaswebapi.entity.CutiEntity.CutiEntity;
 import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ReimburseEntity.ReimburseAppEntity;
 import com.treemaswebapi.treemaswebapi.entity.TimesheetEntity.TimesheetEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
+import com.treemaswebapi.treemaswebapi.repository.CutiRepository;
 import com.treemaswebapi.treemaswebapi.repository.KaryawanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ReimburseAppRepository;
 import com.treemaswebapi.treemaswebapi.repository.TimesheetRepository;
@@ -32,6 +35,7 @@ public class CreateAbsenEntriesJob implements Job {
     private final Logger logger = LoggerFactory.getLogger(CreateAbsenEntriesJob.class);
     private final ReimburseAppRepository reimburseAppRepository;
     private final TimesheetRepository timesheetRepository;
+    private final CutiRepository cutiRepository;
 
 
     @Override
@@ -47,6 +51,8 @@ public class CreateAbsenEntriesJob implements Job {
             for (KaryawanEntity karyawan : dataKaryawan) {
                 boolean entryExists = absenRepository.existsByNikAndTglAbsen(karyawan.getNik(), currentDate);
                 Timestamp dtmSekarang = Timestamp.valueOf(LocalDateTime.now());
+                String nikKaryawan = karyawan.getNik();
+                Optional<CutiEntity> dataCuti = cutiRepository.findByNik(nikKaryawan);
                 if (entryExists) {
                     logger.info("Absen entry already exists for nik: {}", karyawan.getNik());
                 } else {
@@ -55,6 +61,13 @@ public class CreateAbsenEntriesJob implements Job {
                     absenEntity.setNama(karyawan.getNama());
                     absenEntity.setDtmCrt(dtmSekarang);
                     absenEntity.setTglAbsen(currentDate);
+                    if (dataCuti.get().getTglMulai().equals(currentDate)) {
+                        if(dataCuti.get().getFlgKet().equals("cuti")){
+                            absenEntity.setIsCuti("1");
+                        }else if (dataCuti.get().getFlgKet().equals("sakit")) {
+                            absenEntity.setIsSakit("1");
+                        }
+                    }
                     absenRepository.save(absenEntity);                   
 
                     TimesheetEntity timesheetEntity = new TimesheetEntity();
@@ -62,6 +75,13 @@ public class CreateAbsenEntriesJob implements Job {
                     timesheetEntity.setNik(karyawan.getNik());
                     timesheetEntity.setNama(karyawan.getNama());
                     timesheetEntity.setDtmCrt(dtmSekarang);
+                    if (dataCuti.get().getTglMulai().equals(currentDate)) {
+                        if(dataCuti.get().getFlgKet().equals("cuti")){
+                            timesheetEntity.setFlgKet("cuti");;
+                        }else if (dataCuti.get().getFlgKet().equals("sakit")) {
+                            timesheetEntity.setFlgKet("sakit");
+                        }
+                    }
                     timesheetRepository.save(timesheetEntity);
 
                     ReimburseAppEntity reimburseAppEntity = new ReimburseAppEntity();
@@ -73,6 +93,13 @@ public class CreateAbsenEntriesJob implements Job {
                     reimburseAppEntity.setGpsLongitudeMsk(0D);
                     reimburseAppEntity.setGpsLatitudePlg(0D);
                     reimburseAppEntity.setGpsLongitudePlg(0D);
+                    if (dataCuti.get().getTglMulai().equals(currentDate)) {
+                        if(dataCuti.get().getFlgKet().equals("cuti")){
+                            reimburseAppEntity.setIsCuti("1");
+                        }else if (dataCuti.get().getFlgKet().equals("sakit")) {
+                            reimburseAppEntity.setIsSakit("1");
+                        }
+                    }
                     reimburseAppRepository.save(reimburseAppEntity);
                     
                     logger.info("Scheduled job has been executed for nik: {}", karyawan.getNik());

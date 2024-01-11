@@ -21,12 +21,14 @@ import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenImgEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingEntity;
 import com.treemaswebapi.treemaswebapi.entity.AbsenEntity.AbsenTrackingData.AbsenTrackingData;
+import com.treemaswebapi.treemaswebapi.entity.KaryawanEntity.KaryawanImageEntity;
 import com.treemaswebapi.treemaswebapi.entity.PenempatanEntity.PenempatanEntity;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectDetails;
 import com.treemaswebapi.treemaswebapi.entity.ProjectEntity.ProjectEntity;
 import com.treemaswebapi.treemaswebapi.repository.AbsenImgRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenRepository;
 import com.treemaswebapi.treemaswebapi.repository.AbsenTrackingRepository;
+import com.treemaswebapi.treemaswebapi.repository.KaryawanImageRepository;
 import com.treemaswebapi.treemaswebapi.repository.PenempatanRepository;
 import com.treemaswebapi.treemaswebapi.repository.ProjectRepository;
 
@@ -41,6 +43,7 @@ public class MemberService {
     private final AbsenTrackingRepository absenTrackingRepository;
     private final JwtService jwtService;
     private final ProjectRepository projectRepository;
+    private final KaryawanImageRepository karyawanImageRepository;
 
 
     // fungsi untuk narik data project mana aja yang dipegang si leader
@@ -277,6 +280,11 @@ public class MemberService {
                     if (optionalImage.isPresent()) {
                         dataAbsenImg = optionalImage.get().getImage64();
                     }
+                    String karyawanImage = null;
+                    Optional<KaryawanImageEntity> optionalGambardia = karyawanImageRepository.findByNik(nik);
+                    if (optionalGambardia.isPresent()) {
+                        karyawanImage = optionalGambardia.get().getFoto();
+                    }
                     System.out.println("ini data gambarnya"+absenImgRepository.findAll().get(0).getId());
 
                     AbsenTrackingData absenTrackingData = new AbsenTrackingData();
@@ -320,6 +328,7 @@ public class MemberService {
                     AbsenResponse absenResponse = new AbsenResponse();
                     absenResponse.setAbsenTrackingData(absenTrackingData);
                     absenResponse.setAbsenImg(dataAbsenImg != null ? dataAbsenImg : null);
+                    absenResponse.setPp(karyawanImage != null ? karyawanImage : null);
                     Map<String, Object> response = new HashMap<>();
                     response.put("success", true);
                     response.put("message", "BERHASIL MENDAPATKAN DATA SEORANG MEMBER");

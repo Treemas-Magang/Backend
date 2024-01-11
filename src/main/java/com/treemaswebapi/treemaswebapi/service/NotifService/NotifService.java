@@ -853,9 +853,13 @@ public class NotifService {
                     Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
                     String namaUser = dataUser.get().getNama();
                     System.out.println(nikUser + "ini udah masuk postCutiApproval");
-
+                    LocalDate currentDate = LocalDate.now();
                     CutiAppEntity datanya = cutiAppRepository.findById(idApproval).get();
-                    CutiEntity dataCuti = new CutiEntity();
+                    String nikSiCuti = datanya.getNik();
+                    CutiEntity dataSakit = new CutiEntity();
+                    AbsenEntity dataAbsennya = absenRepository.findByTglAbsenAndNik(currentDate, nikSiCuti);
+                    TimesheetEntity dataTimesheetnya = timesheetRepository.findByNikAndTglMsk(nikSiCuti, currentDate);
+                    ReimburseAppEntity dataReimbursenya = reimburseAppRepository.findByNikAndTglAbsen(nikSiCuti, currentDate);
                     if ("1".equals(request.getIsApprove())) {
                         datanya.setIsApproved("1");
                         datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
@@ -863,11 +867,11 @@ public class NotifService {
                         datanya.setNoteApp(request.getNoteApp());
                         cutiAppRepository.save(datanya);
 
-                        dataCuti = CutiEntity.builder()
+                        dataSakit = CutiEntity.builder()
                         .alamatCuti(datanya.getAlamatCuti())
                         .dtmApp(datanya.getDtmApp())
                         .dtmCrt(datanya.getDtmCrt())
-                        .flagApp("1")
+                        .flagApp("-")
                         .flgKet(datanya.getFlgKet())
                         .isApproved("1")
                         .jmlCuti(datanya.getJmlCuti())
@@ -881,7 +885,11 @@ public class NotifService {
                         .tglMulai(datanya.getTglMulai())
                         .tglSelesai(datanya.getTglSelesai())
                         .build();
-                        cutiRepository.save(dataCuti);
+                        cutiRepository.save(dataSakit);
+
+                        dataAbsennya.setIsCuti("1");
+                        dataTimesheetnya.setFlgKet("cuti");
+                        dataReimbursenya.setIsCuti("1");
                     }else if ("0".equals(request.getIsApprove())) {
                         datanya.setIsApproved("0");
                         datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
@@ -1226,7 +1234,7 @@ public class NotifService {
                     String nikUser = jwtService.extractUsername(token);
                     Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
                     String namaUser = dataUser.get().getNama();
-                    System.out.println(nikUser + "ini udah masuk postLiburApproval");
+                    System.out.println(nikUser + "ini udah masuk postAbsenWebApproval");
 
                     Optional<AbsenAppUploadEntity> datanyaOptional = absenAppUploadRepository.findById(idApproval);
                     if (datanyaOptional.isPresent()) {
@@ -1459,9 +1467,13 @@ public class NotifService {
                     Optional<KaryawanEntity> dataUser = karyawanRepository.findByNik(nikUser);
                     String namaUser = dataUser.get().getNama();
                     System.out.println(nikUser + "ini udah masuk postSakitApproval");
-
+                    LocalDate currentDate = LocalDate.now();
                     CutiAppEntity datanya = cutiAppRepository.findById(idApproval).get();
+                    String nikSiSakit = datanya.getNik();
                     CutiEntity dataSakit = new CutiEntity();
+                    AbsenEntity dataAbsennya = absenRepository.findByTglAbsenAndNik(currentDate, nikSiSakit);
+                    TimesheetEntity dataTimesheetnya = timesheetRepository.findByNikAndTglMsk(nikSiSakit, currentDate);
+                    ReimburseAppEntity dataReimbursenya = reimburseAppRepository.findByNikAndTglAbsen(nikSiSakit, currentDate);
                     if ("1".equals(request.getIsApprove())) {
                         datanya.setIsApproved("1");
                         datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
@@ -1488,6 +1500,10 @@ public class NotifService {
                         .tglSelesai(datanya.getTglSelesai())
                         .build();
                         cutiRepository.save(dataSakit);
+
+                        dataAbsennya.setIsSakit("1");
+                        dataTimesheetnya.setFlgKet("sakit");
+                        dataReimbursenya.setIsSakit("1");
                     }else if ("0".equals(request.getIsApprove())) {
                         datanya.setIsApproved("0");
                         datanya.setDtmApp(Timestamp.valueOf(LocalDateTime.now()));
